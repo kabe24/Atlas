@@ -39,8 +39,14 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from atlas_voice import wrap_atlas_voice
+from storage import get_storage
 
 load_dotenv(override=True)
+
+# ─── Storage Backend ─────────────────────────────────────────
+# Switch between file-based (dev) and Supabase (prod) via STORAGE_BACKEND env var.
+# All load/save functions below delegate to this singleton.
+storage = get_storage()
 
 # ─── Version Tracking ─────────────────────────────────────
 APP_VERSION = "1.0.0"
@@ -618,22 +624,17 @@ def get_instance_path(instance_id: str) -> Path:
 
 def load_instances_registry() -> list:
     """Load the registry of all instances."""
-    data = safe_json_load(INSTANCES_REGISTRY, default={"instances": []})
-    return data.get("instances", [])
+    return storage.load_instances_registry()
 
 
 def save_instances_registry(instances: list):
     """Atomic save of instances registry."""
-    data = {"instances": instances}
-    tmp = INSTANCES_REGISTRY.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=2))
-    tmp.rename(INSTANCES_REGISTRY)
+    storage.save_instances_registry(instances)
 
 
 def load_instance_config(instance_id: str) -> dict:
     """Load instance config, creating default if missing."""
-    path = get_instance_path(instance_id) / "instance_config.json"
-    config = safe_json_load(path, default={})
+    config = storage.load_instance_config(instance_id)
     if not config:
         config = {
             "instance_id": instance_id,
@@ -665,11 +666,8 @@ def load_instance_config(instance_id: str) -> dict:
 
 
 def save_instance_config(instance_id: str, config: dict):
-    """Atomic save of instance config."""
-    path = get_instance_path(instance_id) / "instance_config.json"
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(config, indent=2))
-    tmp.rename(path)
+    """Save instance config via storage backend."""
+    storage.save_instance_config(instance_id, config)
 
 
 def create_instance(family_name: str, owner_email: str = "", default_subjects: list = None) -> dict:
@@ -811,22 +809,16 @@ def get_instance_parent_config_path(instance_id: str) -> Path:
 
 def load_instance_parent_config(instance_id: str) -> dict:
     """Load parent config for a specific instance."""
-    path = get_instance_parent_config_path(instance_id)
-    config = safe_json_load(path, default={})
+    config = storage.load_instance_parent_config(instance_id)
     if not config or "pin" not in config:
         config = {"pin": "0000", "created_at": datetime.now().isoformat(), "instance_id": instance_id}
-        tmp = path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(config, indent=2))
-        tmp.rename(path)
+        storage.save_instance_parent_config(instance_id, config)
     return config
 
 
 def save_instance_parent_config(instance_id: str, config: dict):
-    """Atomic save of instance parent config."""
-    path = get_instance_parent_config_path(instance_id)
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(config, indent=2))
-    tmp.rename(path)
+    """Save instance parent config via storage backend."""
+    storage.save_instance_parent_config(instance_id, config)
 
 
 def validate_instance_parent_pin(instance_id: str, pin: str) -> bool:
@@ -872,17 +864,12 @@ def instance_student_data_dir(instance_id: str, student_id: str) -> Path:
 
 def load_instance_student(instance_id: str, student_id: str) -> dict | None:
     """Load a student from a specific instance."""
-    path = get_instance_students_dir(instance_id) / f"{student_id}.json"
-    data = safe_json_load(path, default=None)
-    return data if isinstance(data, dict) else None
+    return storage.load_student(student_id, instance_id)
 
 
 def save_instance_student(instance_id: str, student_id: str, data: dict):
     """Save a student to a specific instance."""
-    path = get_instance_students_dir(instance_id) / f"{student_id}.json"
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=2))
-    tmp.rename(path)
+    storage.save_student(student_id, data, instance_id)
 
 
 def list_instance_students(instance_id: str) -> list:
@@ -921,19 +908,12 @@ def get_instance_student_dirs(instance_id: str, student_id: str) -> dict:
 
 def load_diagnostics_pending(instance_id: str) -> dict:
     """Load pending diagnostics for an instance."""
-    path = get_instance_path(instance_id) / "diagnostics_pending.json"
-    data = safe_json_load(path, default={})
-    if not isinstance(data, dict):
-        data = {}
-    return data
+    return storage.load_diagnostics_pending(instance_id)
 
 
 def save_diagnostics_pending(instance_id: str, data: dict):
-    """Atomic save of pending diagnostics."""
-    path = get_instance_path(instance_id) / "diagnostics_pending.json"
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=2))
-    tmp.rename(path)
+    """Save pending diagnostics via storage backend."""
+    storage.save_diagnostics_pending(instance_id, data)
 
 
 def mark_diagnostic_pending(instance_id: str, student_id: str, subject: str):
@@ -1572,42 +1552,16 @@ def student_data_dir(student_id: str, instance_id: str = None) -> Path:
 
 
 def load_student(student_id: str, instance_id: str = None) -> dict | None:
-    if instance_id:
-        return load_instance_student(instance_id, student_id)
-    path = STUDENTS_DIR / f"{student_id}.json"
-    data = safe_json_load(path, default=None)
-    return data if isinstance(data, dict) else None
+    return storage.load_student(student_id, instance_id)
 
 
 def save_student(student_id: str, data: dict, instance_id: str = None):
-    if instance_id:
-        save_instance_student(instance_id, student_id, data)
-        return
-    path = STUDENTS_DIR / f"{student_id}.json"
-    tmp = path.with_suffix(".tmp")
-    try:
-        tmp.write_text(json.dumps(data, indent=2))
-        tmp.rename(path)
-    except IOError:
-        if tmp.exists():
-            tmp.unlink()
+    storage.save_student(student_id, data, instance_id)
 
 
 def list_students(instance_id: str = None) -> list:
     """Return list of student profiles (without PINs)."""
-    base = _students_base(instance_id)
-    students = []
-    for f in base.glob("*.json"):
-        data = safe_json_load(f, default=None)
-        if isinstance(data, dict):
-            students.append({
-                "student_id": data.get("student_id", f.stem),
-                "name": data.get("name", "Student"),
-                "avatar": data.get("avatar", "\U0001f393"),
-                "grade": data.get("grade", 8),
-                "created_at": data.get("created_at"),
-            })
-    return students
+    return storage.list_students(instance_id)
 
 
 def get_student_dirs(student_id: str | None, instance_id: str = None) -> dict:
@@ -1835,20 +1789,11 @@ def session_path(subject: str, student_id: str = None, instance_id: str = None) 
 
 
 def load_session(subject: str, student_id: str = None, instance_id: str = None) -> list:
-    path = session_path(subject, student_id, instance_id)
-    data = safe_json_load(path, default=[])
-    return data if isinstance(data, list) else []
+    return storage.load_session(subject, student_id, instance_id)
 
 
 def save_session(subject: str, messages: list, student_id: str = None, instance_id: str = None):
-    path = session_path(subject, student_id, instance_id)
-    tmp_path = path.with_suffix(".tmp")
-    try:
-        tmp_path.write_text(json.dumps(messages, indent=2))
-        tmp_path.rename(path)
-    except IOError:
-        if tmp_path.exists():
-            tmp_path.unlink()
+    storage.save_session(subject, messages, student_id, instance_id)
 
 
 def diagnostic_path(subject: str, student_id: str = None, instance_id: str = None) -> Path:
@@ -1857,20 +1802,11 @@ def diagnostic_path(subject: str, student_id: str = None, instance_id: str = Non
 
 
 def load_diagnostic(subject: str, student_id: str = None, instance_id: str = None) -> dict | None:
-    path = diagnostic_path(subject, student_id, instance_id)
-    data = safe_json_load(path, default=None)
-    return data if isinstance(data, dict) else None
+    return storage.load_diagnostic(subject, student_id, instance_id)
 
 
 def save_diagnostic(subject: str, state: dict, student_id: str = None, instance_id: str = None):
-    path = diagnostic_path(subject, student_id, instance_id)
-    tmp_path = path.with_suffix(".tmp")
-    try:
-        tmp_path.write_text(json.dumps(state, indent=2))
-        tmp_path.rename(path)
-    except IOError:
-        if tmp_path.exists():
-            tmp_path.unlink()
+    storage.save_diagnostic(subject, state, student_id, instance_id)
 
 
 def profile_path(subject: str, student_id: str = None, instance_id: str = None) -> Path:
@@ -1879,24 +1815,11 @@ def profile_path(subject: str, student_id: str = None, instance_id: str = None) 
 
 
 def load_profile(subject: str, student_id: str = None, instance_id: str = None) -> dict | None:
-    path = profile_path(subject, student_id, instance_id)
-    if not path.exists():
-        return None
-    data = safe_json_load(path, default=None)
-    if not data or not isinstance(data, dict):
-        return None
-    return data
+    return storage.load_profile(subject, student_id, instance_id)
 
 
 def save_profile(subject: str, profile: dict, student_id: str = None, instance_id: str = None):
-    path = profile_path(subject, student_id, instance_id)
-    tmp_path = path.with_suffix(".tmp")
-    try:
-        tmp_path.write_text(json.dumps(profile, indent=2))
-        tmp_path.rename(path)
-    except IOError:
-        if tmp_path.exists():
-            tmp_path.unlink()
+    storage.save_profile(subject, profile, student_id, instance_id)
 
 
 def lesson_dir_for_subject(subject: str, student_id: str = None, instance_id: str = None) -> Path:
@@ -1907,38 +1830,20 @@ def lesson_dir_for_subject(subject: str, student_id: str = None, instance_id: st
 
 
 def load_lesson(subject: str, lesson_id: str, student_id: str = None, instance_id: str = None) -> dict | None:
-    path = lesson_dir_for_subject(subject, student_id, instance_id) / f"{lesson_id}.json"
-    data = safe_json_load(path, default=None)
-    return data if isinstance(data, dict) else None
+    return storage.load_lesson(subject, lesson_id, student_id, instance_id)
 
 
 def save_lesson(subject: str, lesson_id: str, state: dict, student_id: str = None, instance_id: str = None):
-    path = lesson_dir_for_subject(subject, student_id, instance_id) / f"{lesson_id}.json"
-    tmp = path.with_suffix(".tmp")
-    try:
-        tmp.write_text(json.dumps(state, indent=2))
-        tmp.rename(path)
-    except IOError:
-        if tmp.exists():
-            tmp.unlink()
+    storage.save_lesson(subject, lesson_id, state, student_id, instance_id)
 
 
 def load_lesson_log(subject: str, student_id: str = None, instance_id: str = None) -> list:
     """Load the lesson log — a list of all lessons taken for a subject."""
-    path = lesson_dir_for_subject(subject, student_id, instance_id) / "_log.json"
-    data = safe_json_load(path, default=[])
-    return data if isinstance(data, list) else []
+    return storage.load_lesson_log(subject, student_id, instance_id)
 
 
 def save_lesson_log(subject: str, log: list, student_id: str = None, instance_id: str = None):
-    path = lesson_dir_for_subject(subject, student_id, instance_id) / "_log.json"
-    tmp = path.with_suffix(".tmp")
-    try:
-        tmp.write_text(json.dumps(log, indent=2))
-        tmp.rename(path)
-    except IOError:
-        if tmp.exists():
-            tmp.unlink()
+    storage.save_lesson_log(subject, log, student_id, instance_id)
 
 
 def practice_dir_for_subject(subject: str, student_id: str = None, instance_id: str = None) -> Path:
@@ -1949,38 +1854,20 @@ def practice_dir_for_subject(subject: str, student_id: str = None, instance_id: 
 
 
 def load_practice(subject: str, practice_id: str, student_id: str = None, instance_id: str = None) -> dict | None:
-    path = practice_dir_for_subject(subject, student_id, instance_id) / f"{practice_id}.json"
-    data = safe_json_load(path, default=None)
-    return data if isinstance(data, dict) else None
+    return storage.load_practice(subject, practice_id, student_id, instance_id)
 
 
 def save_practice(subject: str, practice_id: str, state: dict, student_id: str = None, instance_id: str = None):
-    path = practice_dir_for_subject(subject, student_id, instance_id) / f"{practice_id}.json"
-    tmp = path.with_suffix(".tmp")
-    try:
-        tmp.write_text(json.dumps(state, indent=2))
-        tmp.rename(path)
-    except IOError:
-        if tmp.exists():
-            tmp.unlink()
+    storage.save_practice(subject, practice_id, state, student_id, instance_id)
 
 
 def load_practice_log(subject: str, student_id: str = None, instance_id: str = None) -> list:
     """Load the practice log — a list of all practice sessions for a subject."""
-    path = practice_dir_for_subject(subject, student_id, instance_id) / "_log.json"
-    data = safe_json_load(path, default=[])
-    return data if isinstance(data, list) else []
+    return storage.load_practice_log(subject, student_id, instance_id)
 
 
 def save_practice_log(subject: str, log: list, student_id: str = None, instance_id: str = None):
-    path = practice_dir_for_subject(subject, student_id, instance_id) / "_log.json"
-    tmp = path.with_suffix(".tmp")
-    try:
-        tmp.write_text(json.dumps(log, indent=2))
-        tmp.rename(path)
-    except IOError:
-        if tmp.exists():
-            tmp.unlink()
+    storage.save_practice_log(subject, log, student_id, instance_id)
 
 
 def get_initial_difficulty(subject: str, topic: str, student_id: str = None) -> str:
@@ -4043,7 +3930,7 @@ class ParentAddStudentRequest(BaseModel):
 
 def load_parent_config() -> dict:
     """Load parent config, creating default if missing."""
-    config = safe_json_load(PARENT_CONFIG_PATH, default={})
+    config = storage.load_parent_config()
     if not config or "pin" not in config:
         config = {"pin": "0000", "created_at": datetime.now().isoformat()}
         save_parent_config(config)
@@ -4051,10 +3938,8 @@ def load_parent_config() -> dict:
 
 
 def save_parent_config(config: dict):
-    """Atomic save of parent config."""
-    tmp = PARENT_CONFIG_PATH.with_suffix(".tmp")
-    tmp.write_text(json.dumps(config, indent=2))
-    tmp.rename(PARENT_CONFIG_PATH)
+    """Save parent config via storage backend."""
+    storage.save_parent_config(config)
 
 
 def validate_parent_pin(pin: str) -> bool:
@@ -5080,18 +4965,10 @@ async def self_service_setup(request: SetupRequest):
 INVITES_PATH = Path("data/invites.json")
 
 def load_invites() -> list:
-    if INVITES_PATH.exists():
-        try:
-            return json.loads(INVITES_PATH.read_text())
-        except (json.JSONDecodeError, IOError):
-            pass
-    return []
+    return storage.load_invites()
 
 def save_invites(invites: list):
-    INVITES_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp = INVITES_PATH.with_suffix(".tmp")
-    tmp.write_text(json.dumps(invites, indent=2))
-    tmp.rename(INVITES_PATH)
+    storage.save_invites(invites)
 
 class InviteCreateRequest(BaseModel):
     instance_id: str
@@ -5676,14 +5553,15 @@ def _reassessment_meta_path(student_id: str, instance_id: str = None) -> Path:
 
 def load_reassessment_meta(student_id: str, instance_id: str = None) -> dict:
     """Load reassessment scheduling metadata for a student."""
-    path = _reassessment_meta_path(student_id, instance_id)
     default = {
         "interval_weeks": REASSESSMENT_DEFAULTS["interval_weeks"],
         "enabled": True,
         "snoozed_until": None,
-        "history": [],           # [{id, date, subjects: {subj: {old_score, new_score, delta}}}]
+        "history": [],
     }
-    data = safe_json_load(path, default=default)
+    data = storage.load_reassessment_meta(student_id, instance_id)
+    if not data:
+        data = dict(default)
     # ensure keys exist on legacy data
     for k, v in default.items():
         if k not in data:
@@ -5692,14 +5570,7 @@ def load_reassessment_meta(student_id: str, instance_id: str = None) -> dict:
 
 
 def save_reassessment_meta(student_id: str, meta: dict, instance_id: str = None):
-    path = _reassessment_meta_path(student_id, instance_id)
-    tmp = path.with_suffix(".tmp")
-    try:
-        tmp.write_text(json.dumps(meta, indent=2))
-        tmp.rename(path)
-    except IOError:
-        if tmp.exists():
-            tmp.unlink()
+    storage.save_reassessment_meta(student_id, meta, instance_id)
 
 
 def check_reassessment_due(student_id: str, instance_id: str = None) -> dict:
@@ -6995,18 +6866,10 @@ async def admin_analytics():
 ADMIN_SAFETY_NOTES_PATH = Path("data/admin_safety_notes.json")
 
 def load_admin_safety_notes() -> dict:
-    if ADMIN_SAFETY_NOTES_PATH.exists():
-        try:
-            return json.loads(ADMIN_SAFETY_NOTES_PATH.read_text())
-        except (json.JSONDecodeError, IOError):
-            pass
-    return {}
+    return storage.load_admin_safety_notes()
 
 def save_admin_safety_notes(notes: dict):
-    ADMIN_SAFETY_NOTES_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp = ADMIN_SAFETY_NOTES_PATH.with_suffix(".tmp")
-    tmp.write_text(json.dumps(notes, indent=2))
-    tmp.rename(ADMIN_SAFETY_NOTES_PATH)
+    storage.save_admin_safety_notes(notes)
 
 @app.get("/api/admin/safety")
 async def admin_safety_logs(days: int = 30):
