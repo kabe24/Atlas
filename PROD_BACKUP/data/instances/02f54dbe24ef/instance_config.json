@@ -1,0 +1,24 @@
+{
+  "instance_id": "02f54dbe24ef",
+  "family_name": "Test Family",
+  "display_name": "Test Family Tutor",
+  "created_at": "2026-03-04T12:34:16.705349",
+  "owner_email": "test@example.com",
+  "customization": {
+    "enabled_subjects": [
+      "math",
+      "science"
+    ],
+    "custom_subjects": {},
+    "default_grade": 8,
+    "branding": {
+      "app_title": "Test Family Tutor",
+      "primary_color": "#4F46E5"
+    },
+    "feature_flags": {
+      "diagnostics_enabled": true,
+      "lessons_enabled": true,
+      "practice_enabled": true
+    }
+  }
+}

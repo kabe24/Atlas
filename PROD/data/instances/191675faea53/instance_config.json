@@ -1,0 +1,35 @@
+{
+  "instance_id": "191675faea53",
+  "family_name": "Vanderpool",
+  "display_name": "Vanderpool Tutor",
+  "created_at": "2026-03-25T23:38:00.749670",
+  "owner_email": "clcvanderpool@gmail.com",
+  "customization": {
+    "enabled_subjects": [
+      "math",
+      "science",
+      "ela",
+      "social_studies"
+    ],
+    "custom_subjects": {},
+    "default_grade": 8,
+    "branding": {
+      "app_title": "Vanderpool Tutor",
+      "primary_color": "#4F46E5"
+    },
+    "feature_flags": {
+      "diagnostics_enabled": true,
+      "lessons_enabled": true,
+      "practice_enabled": true
+    },
+    "state": "GA",
+    "learning_goals": {
+      "categories": [
+        "reinforcing",
+        "enrichment",
+        "test_prep"
+      ],
+      "notes": ""
+    }
+  }
+}

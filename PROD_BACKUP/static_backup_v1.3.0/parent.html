@@ -1,0 +1,3831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Dashboard — Atlas</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* ─── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.6; }
+a { color: #2563eb; text-decoration: none; }
+
+/* ─── Color Variables ──────────────────────────────────── */
+:root {
+  --primary: #1B4F72;
+  --primary-light: #2E86C1;
+  --accent: #4F46E5;
+  --success: #059669;
+  --warning: #D97706;
+  --danger: #DC2626;
+  --bg: #f0f2f5;
+  --card: #ffffff;
+  --text: #1a1a2e;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --advanced: #2563eb;
+  --proficient: #059669;
+  --developing: #D97706;
+  --needs-work: #DC2626;
+}
+
+/* ─── Login Screen ─────────────────────────────────────── */
+#loginScreen {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; background: linear-gradient(135deg, #1B4F72 0%, #2E86C1 100%);
+}
+.login-card {
+  background: white; border-radius: 20px; padding: 48px 40px; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-width: 400px; width: 90%;
+}
+.login-card h1 { font-size: 28px; color: var(--primary); margin-bottom: 8px; }
+.login-card p { color: var(--text-muted); margin-bottom: 32px; font-size: 15px; }
+.pin-dots { display: flex; gap: 16px; justify-content: center; margin-bottom: 24px; }
+.pin-dot {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+  background: transparent; transition: all 0.2s;
+}
+.pin-dot.filled { background: var(--primary); border-color: var(--primary); }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 260px; margin: 0 auto; }
+.pin-btn {
+  width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--border);
+  background: white; font-size: 24px; font-weight: 600; color: var(--text);
+  cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+}
+.pin-btn:hover { background: #f3f4f6; border-color: var(--primary-light); }
+.pin-btn:active { transform: scale(0.95); }
+.pin-btn.action { font-size: 14px; font-weight: 500; }
+.login-error { color: var(--danger); font-size: 14px; margin-top: 16px; min-height: 20px; }
+.login-link { margin-top: 20px; font-size: 13px; color: var(--text-muted); }
+.login-link a { color: var(--primary-light); }
+
+/* ─── Dashboard Container ──────────────────────────────── */
+#dashboardContainer { display: none; }
+.dash-header {
+  background: white; border-bottom: 1px solid var(--border); padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100;
+}
+.dash-header h1 { font-size: 22px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+.dash-header-right { display: flex; align-items: center; gap: 16px; }
+#studentSelector {
+  padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px;
+  background: white; cursor: pointer; min-width: 180px;
+}
+.header-btn {
+  padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: white;
+  font-size: 13px; cursor: pointer; color: var(--text-muted); transition: all 0.15s;
+}
+.header-btn:hover { background: #f3f4f6; color: var(--text); }
+
+.dash-main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+/* ─── Dashboard Cards ──────────────────────────────────── */
+.dash-section {
+  background: var(--card); border-radius: 16px; padding: 28px; margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid var(--border);
+}
+.dash-section h2 {
+  font-size: 18px; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+
+/* ─── Overview Metrics ─────────────────────────────────── */
+.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.metric-card {
+  background: #f8fafc; border-radius: 12px; padding: 20px; text-align: center; border: 1px solid var(--border);
+}
+.metric-icon { font-size: 28px; margin-bottom: 8px; }
+.metric-value { font-size: 32px; font-weight: 700; color: var(--primary); }
+.metric-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+/* ─── Activity Calendar ────────────────────────────────── */
+.activity-calendar { margin-top: 16px; }
+.activity-calendar h3 { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+.cal-grid { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; }
+.cal-day {
+  aspect-ratio: 1; border-radius: 4px; background: #f3f4f6; position: relative;
+  display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted);
+}
+.cal-day.active { background: var(--success); color: white; font-weight: 600; }
+.cal-day.today { outline: 2px solid var(--primary); outline-offset: 1px; }
+.cal-label { font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 6px; }
+
+/* ─── Subject Breakdown ────────────────────────────────── */
+.subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+.radar-container { position: relative; max-width: 380px; margin: 0 auto; }
+.subject-cards { display: flex; flex-direction: column; gap: 10px; }
+.subject-card {
+  display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 10px;
+  background: #f8fafc; border: 1px solid var(--border); transition: all 0.15s;
+}
+.subject-card:hover { border-color: var(--primary-light); }
+.subject-icon { font-size: 24px; }
+.subject-info { flex: 1; }
+.subject-name { font-weight: 600; font-size: 14px; }
+.subject-level { font-size: 12px; color: var(--text-muted); }
+.subject-score {
+  font-size: 22px; font-weight: 700; min-width: 50px; text-align: right;
+}
+.score-advanced { color: var(--advanced); }
+.score-proficient { color: var(--proficient); }
+.score-developing { color: var(--developing); }
+.score-needs-work { color: var(--needs-work); }
+.score-none { color: #ccc; }
+
+/* ─── Skill Gaps Table ─────────────────────────────────── */
+.gap-table { width: 100%; border-collapse: collapse; }
+.gap-table th {
+  text-align: left; font-size: 12px; text-transform: uppercase; color: var(--text-muted);
+  padding: 10px 14px; border-bottom: 2px solid var(--border); font-weight: 600;
+}
+.gap-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 14px; }
+.gap-table tr:hover { background: #f8fafc; }
+.level-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
+}
+.level-advanced { background: #dbeafe; color: var(--advanced); }
+.level-proficient { background: #d1fae5; color: var(--proficient); }
+.level-developing { background: #fef3c7; color: var(--developing); }
+.level-needs-work { background: #fee2e2; color: var(--needs-work); }
+.score-bar-bg { width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+
+/* ─── Adaptive Learning ───────────────────────────────── */
+.adaptive-subject { margin-bottom: 16px; }
+.adaptive-subject-hdr {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  font-weight: 600; font-size: 0.95rem;
+}
+.adaptive-subject-hdr .badge-tier {
+  font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+}
+.adaptive-topic-row {
+  display: flex; align-items: center; gap: 10px; padding: 6px 12px;
+  border-radius: 6px; font-size: 0.82rem;
+}
+.adaptive-topic-row:nth-child(even) { background: #f9fafb; }
+.adaptive-topic-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adaptive-score { width: 36px; text-align: right; font-weight: 600; font-size: 0.8rem; }
+.adaptive-bar { width: 80px; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; flex-shrink: 0; }
+.adaptive-bar-fill { height: 100%; border-radius: 3px; }
+.adaptive-due {
+  font-size: 0.65rem; font-weight: 600; text-transform: uppercase; padding: 2px 6px;
+  border-radius: 4px; flex-shrink: 0;
+}
+.due-yes { background: #fee2e2; color: #DC2626; }
+.due-no { background: #d1fae5; color: #059669; }
+.sp-parent-card {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  background: white; border-radius: 8px; border: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+.sp-parent-card .sp-pri {
+  width: 6px; height: 32px; border-radius: 3px; flex-shrink: 0;
+}
+.sp-pri-1 { background: #DC2626; }
+.sp-pri-2 { background: #F59E0B; }
+.sp-pri-3 { background: #3B82F6; }
+.sp-pri-4 { background: #10B981; }
+
+/* ─── Standards Report ───────────────────────────────── */
+.standards-subject { margin-bottom: 20px; }
+.standards-subject-hdr {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  font-weight: 600; font-size: 0.95rem;
+}
+.standards-overall {
+  display: flex; gap: 16px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.standards-stat {
+  background: white; border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 16px; text-align: center; min-width: 100px;
+}
+.standards-stat-value { font-size: 1.3rem; font-weight: 700; }
+.standards-stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+.standards-domain {
+  background: white; border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 16px; margin-bottom: 8px;
+}
+.standards-domain-hdr {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  font-weight: 600; font-size: 0.88rem;
+}
+.standards-domain-code {
+  font-family: monospace; font-size: 0.75rem; background: #f3f4f6;
+  padding: 2px 8px; border-radius: 4px; color: #4b5563;
+}
+.standards-bar-track { width: 120px; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+.standards-bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+.standards-detail-toggle {
+  font-size: 0.75rem; color: var(--primary); cursor: pointer; margin-left: auto;
+  background: none; border: none; text-decoration: underline;
+}
+.standards-detail { display: none; margin-top: 6px; }
+.standards-detail.open { display: block; }
+.standards-std-row {
+  display: flex; align-items: center; gap: 8px; padding: 3px 8px;
+  font-size: 0.78rem; color: #4b5563;
+}
+.standards-std-row:nth-child(even) { background: #f9fafb; border-radius: 4px; }
+.standards-std-code { font-family: monospace; font-weight: 600; min-width: 80px; }
+.standards-no-data {
+  font-size: 0.85rem; color: var(--text-muted); font-style: italic;
+  background: #f9fafb; padding: 12px 16px; border-radius: 8px; text-align: center;
+}
+
+/* ─── Growth Tracking ─────────────────────────────────── */
+.growth-status-card {
+  display: flex; align-items: center; gap: 16px; padding: 16px 20px;
+  border-radius: 12px; border: 1px solid var(--border); background: #f8fafc;
+  flex-wrap: wrap;
+}
+.growth-status-card .growth-icon { font-size: 2rem; }
+.growth-status-card .growth-info { flex: 1; min-width: 160px; }
+.growth-status-card .growth-info h4 { font-size: 0.95rem; margin: 0 0 4px; }
+.growth-status-card .growth-info p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+.growth-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.growth-actions button {
+  padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none;
+}
+.growth-chart-row {
+  display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px;
+}
+.growth-subject-card {
+  flex: 1; min-width: 260px; background: white; border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px;
+}
+.growth-subject-hdr {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-weight: 600;
+}
+.growth-delta { font-weight: 700; font-size: 0.9rem; }
+.growth-delta.positive { color: #059669; }
+.growth-delta.negative { color: #DC2626; }
+.growth-delta.neutral { color: #9ca3af; }
+.growth-timeline {
+  display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem;
+}
+.growth-timeline-entry {
+  display: flex; align-items: center; gap: 8px; padding: 4px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.growth-mini-bar {
+  height: 6px; border-radius: 3px; overflow: hidden; background: #e5e7eb; flex: 1; max-width: 100px;
+}
+.growth-mini-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.growth-schedule {
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  margin-top: 12px; padding: 12px 16px; background: #f0f7ff; border-radius: 8px;
+  font-size: 0.8rem; color: var(--text-muted);
+}
+
+/* ─── Session History ──────────────────────────────────── */
+.history-filters { display: flex; gap: 12px; margin-bottom: 16px; }
+.filter-select {
+  padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;
+  background: white; cursor: pointer;
+}
+.history-table { width: 100%; border-collapse: collapse; }
+.history-table th {
+  text-align: left; font-size: 12px; text-transform: uppercase; color: var(--text-muted);
+  padding: 10px 14px; border-bottom: 2px solid var(--border); font-weight: 600;
+}
+.history-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 14px; }
+.history-table tr:hover { background: #f8fafc; }
+.type-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;
+}
+.type-lesson { background: #dbeafe; color: var(--advanced); }
+.type-practice { background: #d1fae5; color: var(--proficient); }
+
+/* ─── Progress Section ─────────────────────────────────── */
+.progress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.bar-chart-container { position: relative; max-height: 300px; }
+.badges-timeline { display: flex; flex-direction: column; gap: 10px; }
+.badge-entry {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  background: #f8fafc; border-radius: 8px; border: 1px solid var(--border);
+}
+.badge-icon-lg { font-size: 28px; }
+.badge-details { flex: 1; }
+.badge-name { font-weight: 600; font-size: 14px; }
+.badge-date { font-size: 12px; color: var(--text-muted); }
+.badge-desc { font-size: 12px; color: var(--text-muted); }
+
+/* ─── Empty States ─────────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 40px 20px; color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+
+/* ─── Responsive ───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .subject-grid { grid-template-columns: 1fr; }
+  .progress-grid { grid-template-columns: 1fr; }
+  .cal-grid { grid-template-columns: repeat(10, 1fr); }
+}
+/* ─── Tab Navigation ──────────────────────────────────── */
+.tab-nav {
+  display: flex; gap: 0; background: white; border-bottom: 2px solid var(--border);
+  padding: 0 32px; overflow-x: auto;
+}
+.tab-btn {
+  padding: 14px 20px; border: none; background: none; cursor: pointer;
+  font-size: 14px; font-weight: 500; color: var(--text-muted);
+  border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ─── Diagnostics Tab ─────────────────────────────────── */
+.diag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.diag-card {
+  background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;
+}
+.diag-card .subject-icon { font-size: 32px; margin-bottom: 8px; }
+.diag-card .subject-name { font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+.diag-status { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+.diag-score { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.diag-btn {
+  padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer;
+  font-size: 13px; font-weight: 500; margin: 4px; transition: all 0.15s;
+}
+.diag-btn-start { background: var(--primary); color: white; border-color: var(--primary); }
+.diag-btn-start:hover { background: var(--primary-light); }
+.diag-btn-delete { background: white; color: var(--danger); border-color: var(--danger); }
+.diag-btn-delete:hover { background: #fee2e2; }
+.diag-btn-cancel { background: white; color: var(--warning); border-color: var(--warning); }
+.diag-btn-cancel:hover { background: #fef3c7; }
+
+/* ─── Customization Tab ───────────────────────────────── */
+.config-section { margin-bottom: 24px; }
+.config-section h3 { font-size: 15px; color: var(--primary); margin-bottom: 12px; }
+.subject-toggle {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px;
+}
+.subject-toggle label { flex: 1; font-weight: 500; font-size: 14px; cursor: pointer; }
+.subject-toggle input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+.config-input {
+  padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px;
+  width: 100%; max-width: 400px;
+}
+.config-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.config-label { font-size: 14px; font-weight: 500; min-width: 120px; }
+.save-btn {
+  padding: 10px 24px; background: var(--primary); color: white; border: none;
+  border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.15s;
+}
+.save-btn:hover { background: var(--primary-light); }
+.custom-subject-form {
+  background: #f8fafc; border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; margin-top: 16px;
+}
+.custom-tag {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+  background: #e5e7eb; border-radius: 6px; font-size: 12px; margin: 2px;
+}
+.custom-tag .remove { cursor: pointer; color: var(--danger); font-weight: bold; }
+
+/* ─── Feedback Tab ────────────────────────────────────── */
+.feedback-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.fb-tab-btn {
+  padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px;
+  background: white; cursor: pointer; font-size: 13px; transition: all 0.15s;
+}
+.fb-tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.feedback-item {
+  background: #f8fafc; border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px; margin-bottom: 12px;
+}
+.feedback-item .fb-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px; }
+.feedback-item .fb-title { font-weight: 600; font-size: 15px; }
+.feedback-item .fb-meta { font-size: 12px; color: var(--text-muted); }
+.feedback-item .fb-content { font-size: 14px; color: var(--text); margin-bottom: 12px; }
+.fb-type-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+}
+.fb-type-bug { background: #fee2e2; color: var(--danger); }
+.fb-type-feature { background: #dbeafe; color: var(--advanced); }
+.fb-type-content { background: #fef3c7; color: var(--warning); }
+.fb-type-general { background: #e5e7eb; color: var(--text-muted); }
+.fb-status-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+}
+.fb-status-pending { background: #fef3c7; color: var(--warning); }
+.fb-status-approved { background: #d1fae5; color: var(--success); }
+.fb-status-declined { background: #fee2e2; color: var(--danger); }
+.fb-status-promoted { background: #dbeafe; color: var(--advanced); }
+.fb-action-btn {
+  padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+  cursor: pointer; font-size: 12px; font-weight: 500; transition: all 0.15s;
+}
+.fb-approve { background: var(--success); color: white; border-color: var(--success); }
+.fb-decline { background: white; color: var(--danger); border-color: var(--danger); }
+.fb-promote { background: var(--advanced); color: white; border-color: var(--advanced); }
+
+/* ─── Settings Tab ───────────────────────────────────── */
+.avatar-pick {
+  width: 40px; height: 40px; font-size: 20px; border-radius: 8px; border: 2px solid var(--border);
+  background: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.avatar-pick:hover { border-color: var(--primary); background: #f0f0ff; }
+.avatar-pick.selected { border-color: var(--primary); background: #eef2ff; box-shadow: 0 0 0 2px rgba(79,70,229,0.2); }
+.pin-table {
+  width: 100%; border-collapse: collapse; margin-top: 8px;
+}
+.pin-table th, .pin-table td {
+  padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.pin-table th { font-weight: 600; color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+.pin-table .student-row:hover { background: #f8fafc; }
+.pin-display {
+  font-family: 'Courier New', monospace; font-size: 16px; font-weight: 700;
+  letter-spacing: 4px; color: var(--primary);
+}
+.pin-reset-btn {
+  padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+  cursor: pointer; font-size: 12px; font-weight: 500; background: white;
+  color: var(--primary); transition: all 0.15s;
+}
+.pin-reset-btn:hover { background: var(--primary); color: white; }
+.pin-reset-input {
+  width: 80px; padding: 6px 10px; border: 2px solid var(--primary); border-radius: 6px;
+  font-size: 16px; font-family: 'Courier New', monospace; letter-spacing: 4px;
+  text-align: center;
+}
+.pin-save-btn {
+  padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer;
+  font-size: 12px; font-weight: 500; background: var(--success); color: white;
+  margin-left: 6px;
+}
+.pin-cancel-btn {
+  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer;
+  font-size: 12px; font-weight: 500; background: white; color: var(--text-muted);
+  margin-left: 4px;
+}
+
+/* ─── Feature 57: Conversation Mode Toggle ─────────── */
+.conv-mode-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.conv-mode-table th, .conv-mode-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+.conv-mode-table th { font-weight: 600; color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+.conv-mode-toggle {
+  display: inline-flex; border-radius: 8px; border: 1px solid var(--border); overflow: hidden;
+}
+.conv-mode-toggle button {
+  padding: 6px 16px; border: none; cursor: pointer; font-size: 12px; font-weight: 600;
+  background: white; color: var(--text-muted); transition: all 0.15s;
+}
+.conv-mode-toggle button.active { background: var(--primary); color: white; }
+.conv-mode-toggle button:hover:not(.active) { background: #f0f0ff; }
+
+/* ─── Feature 58: Complexity Tier Display ──────────── */
+.tier-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 12px; }
+.tier-student-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.tier-student-card h4 { margin: 0 0 10px; font-size: 15px; color: var(--text); }
+.tier-subject-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; }
+.tier-badge { padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.tier-1 { background: #fef3c7; color: #92400e; }
+.tier-2 { background: #dbeafe; color: #1e40af; }
+.tier-3 { background: #d1fae5; color: #065f46; }
+.tier-4 { background: #ede9fe; color: #5b21b6; }
+
+/* ─── Confirmation Modal ─────────────────────────────── */
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: white; border-radius: 16px; padding: 32px; max-width: 480px; width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-box h3 { font-size: 18px; margin-bottom: 12px; }
+.modal-box p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+
+@media (max-width: 900px) {
+  .tab-nav { padding: 0 16px; }
+  .tab-btn { padding: 12px 14px; font-size: 13px; }
+}
+@media (max-width: 600px) {
+  .dash-header { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+  .dash-main { padding: 16px; }
+  .dash-section { padding: 20px; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; }
+  .history-filters { flex-wrap: wrap; }
+  .diag-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Product Tour ─────────────────────────────────────── */
+.tour-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 10000; display: none;
+}
+.tour-overlay.active { display: block; }
+.tour-highlight {
+  position: fixed; border-radius: 12px; z-index: 10001;
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.55);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.tour-tooltip {
+  position: fixed; z-index: 10002; background: white; border-radius: 14px;
+  padding: 20px 24px; max-width: 360px; width: 340px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2); animation: tourFadeIn 0.3s ease;
+}
+.tour-tooltip h3 { font-size: 17px; color: var(--primary); margin-bottom: 6px; }
+.tour-tooltip p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+.tour-step-indicator { font-size: 12px; color: var(--primary-light); margin-bottom: 8px; font-weight: 600; }
+.tour-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.tour-btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; }
+.tour-btn-next { background: var(--primary); color: white; }
+.tour-btn-next:hover { background: var(--primary-light); }
+.tour-btn-back { background: #f3f4f6; color: var(--text); }
+.tour-btn-skip { background: transparent; color: var(--text-muted); margin-right: auto; }
+@keyframes tourFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── Feature 59: Getting Started Card ──────────────────── */
+.gs-step {
+  display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px;
+  background: white; border-radius: 10px; border: 1px solid #e5e7eb;
+  transition: border-color 0.2s;
+}
+.gs-step.completed { border-color: #86efac; background: #f0fdf4; }
+.gs-step.completed .gs-check { color: #22c55e; }
+.gs-check { font-size: 18px; line-height: 1; margin-top: 2px; color: #cbd5e1; flex-shrink: 0; }
+
+/* ─── Feature 59: Contextual Help Tooltips ──────────────── */
+.atlas-tooltip {
+  position: relative;
+}
+.atlas-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: #1e293b; color: white; padding: 8px 12px; border-radius: 8px;
+  font-size: 12px; line-height: 1.4; white-space: nowrap; max-width: 280px;
+  white-space: normal; pointer-events: none; opacity: 0; transition: opacity 0.2s;
+  z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.atlas-tooltip:hover::after { opacity: 1; }
+
+/* ─── Help FAB ─────────────────────────────────────────── */
+.help-fab {
+  position: fixed; bottom: 24px; right: 24px; width: 52px; height: 52px;
+  border-radius: 50%; background: var(--primary); color: white;
+  font-size: 22px; font-weight: 700; border: none; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(27,79,114,0.35); z-index: 900;
+  display: none; transition: transform 0.2s;
+  align-items: center; justify-content: center;
+  line-height: 1; text-align: center;
+}
+.help-fab:hover { transform: scale(1.1); }
+.help-menu {
+  position: fixed; bottom: 84px; right: 24px; background: white;
+  border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  padding: 8px 0; display: none; z-index: 901; min-width: 220px;
+}
+.help-menu a {
+  display: flex; align-items: center; gap: 10px; padding: 12px 20px;
+  font-size: 14px; color: var(--text); cursor: pointer; transition: background 0.15s;
+}
+.help-menu a:hover { background: #f3f4f6; }
+.hm-icon { font-size: 18px; }
+</style>
+<link rel="stylesheet" href="/static/atlas-parent-theme.css">
+</head>
+<body>
+
+<!-- ─── Login Screen ─────────────────────────────────── -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div style="font-size: 48px; margin-bottom: 16px;">&#x1F393;</div>
+    <h1>Parent Dashboard</h1>
+    <p>Enter your 4-digit parent PIN to view progress</p>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot"></div><div class="pin-dot"></div>
+      <div class="pin-dot"></div><div class="pin-dot"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-btn" onclick="pinPress('1')">1</button>
+      <button class="pin-btn" onclick="pinPress('2')">2</button>
+      <button class="pin-btn" onclick="pinPress('3')">3</button>
+      <button class="pin-btn" onclick="pinPress('4')">4</button>
+      <button class="pin-btn" onclick="pinPress('5')">5</button>
+      <button class="pin-btn" onclick="pinPress('6')">6</button>
+      <button class="pin-btn" onclick="pinPress('7')">7</button>
+      <button class="pin-btn" onclick="pinPress('8')">8</button>
+      <button class="pin-btn" onclick="pinPress('9')">9</button>
+      <button class="pin-btn action" onclick="pinClear()">Clear</button>
+      <button class="pin-btn" onclick="pinPress('0')">0</button>
+      <button class="pin-btn action" onclick="pinBackspace()">&#x232B;</button>
+    </div>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-link">Default PIN is <strong>0000</strong> &mdash; <a href="/">Back to Student View</a></div>
+  </div>
+</div>
+
+<!-- ─── Dashboard ─────────────────────────────────────── -->
+<div id="dashboardContainer">
+  <header class="dash-header">
+    <h1>🧭 Atlas — Parent Dashboard</h1>
+    <div class="dash-header-right">
+      <select id="studentSelector" onchange="switchStudent()"></select>
+      <button class="header-btn" onclick="openStudentPortal()" title="Open student login page">🎒 Student Portal</button>
+      <button class="header-btn" onclick="refreshDashboard()">&#x21BB; Refresh</button>
+      <button class="header-btn" onclick="parentLogout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('overview')">📊 Overview</button>
+    <button class="tab-btn" onclick="switchTab('analytics')">📈 Analytics</button>
+    <button class="tab-btn" onclick="switchTab('diagnostics')">🔬 Diagnostics</button>
+    <button class="tab-btn" onclick="switchTab('customization')">⚙️ Customization</button>
+    <button class="tab-btn" onclick="switchTab('feedback')">💬 Feedback</button>
+    <button class="tab-btn" onclick="switchTab('settings')">🔐 Settings</button>
+    <button class="tab-btn" onclick="switchTab('invites')">🔗 Invites</button>
+    <button class="tab-btn" onclick="switchTab('safety')">🛡️ Safety</button>
+  </nav>
+
+  <main class="dash-main">
+    <!-- Student header (always visible) -->
+    <div id="studentHeader" class="dash-section" style="display: flex; align-items: center; gap: 20px; padding: 20px 28px;">
+      <div id="studentAvatar" style="font-size: 48px;"></div>
+      <div style="flex:1;">
+        <div id="studentName" style="font-size: 24px; font-weight: 700; color: var(--primary);"></div>
+        <div id="studentMeta" style="font-size: 14px; color: var(--text-muted);"></div>
+      </div>
+      <div id="gradeControl" style="display:flex; align-items:center; gap:8px;">
+        <label style="font-size:13px; color:var(--text-muted); font-weight:600;">Grade:</label>
+        <select id="studentGradeSelect" onchange="changeStudentGrade(this.value)" style="padding:6px 10px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:var(--bg); cursor:pointer;">
+          <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+          <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ═══ TAB: Overview ═══ -->
+    <div id="tab-overview" class="tab-content active">
+
+    <!-- Section 1: Overview -->
+    <section id="overviewSection" class="dash-section">
+      <h2>&#x1F4CA; Overview</h2>
+      <div class="metrics-grid" id="metricsGrid"></div>
+      <div class="activity-calendar">
+        <h3>Activity — Last 30 Days</h3>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <!-- Safety Summary Card -->
+      <div id="safetySummaryCard" style="display:none; margin-top:20px; padding:16px 20px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:20px;">🛡️</span>
+            <div>
+              <div style="font-size:14px; font-weight:600; color:var(--text);" id="safetySummaryTitle">Content Safety</div>
+              <div style="font-size:12px; color:var(--text-muted);" id="safetySummaryDetail">Loading...</div>
+            </div>
+          </div>
+          <button onclick="goToSafetyTab()" style="font-size:12px; padding:6px 14px; background:var(--primary); color:white; border:none; border-radius:6px; cursor:pointer;">View Safety Log</button>
+        </div>
+      </div>
+
+      <!-- Feature 59: Getting Started Card (low proficiency) -->
+      <div id="gettingStartedCard" style="display:none; margin-top:20px; padding:20px 24px; background:linear-gradient(135deg,#f0f0ff 0%,#faf5ff 100%); border-radius:14px; border:1px solid #e0e0ff;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+          <div>
+            <div style="font-size:16px; font-weight:700; color:#1e293b;">🧭 Getting Started with Atlas</div>
+            <div style="font-size:13px; color:#64748b; margin-top:2px;">Your first-week guide to get the most out of Atlas</div>
+          </div>
+          <button onclick="dismissGettingStarted()" style="background:none; border:none; cursor:pointer; font-size:13px; color:#94a3b8; padding:4px 8px;" title="Dismiss">✕</button>
+        </div>
+        <div id="gsSteps" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="gs-step" data-gs="diagnostic">
+            <span class="gs-check" id="gsCheck1">○</span>
+            <div>
+              <div style="font-size:14px; font-weight:600; color:#334155;">Day 1: Complete a Diagnostic</div>
+              <div style="font-size:12px; color:#64748b;">Have your child log in and complete their first diagnostic assessment</div>
+            </div>
+          </div>
+          <div class="gs-step" data-gs="review">
+            <span class="gs-check" id="gsCheck2">○</span>
+            <div>
+              <div style="font-size:14px; font-weight:600; color:#334155;">Day 2–3: Review Results</div>
+              <div style="font-size:12px; color:#64748b;">Check the dashboard to see diagnostic results and suggested focus areas</div>
+            </div>
+          </div>
+          <div class="gs-step" data-gs="expedition">
+            <span class="gs-check" id="gsCheck3">○</span>
+            <div>
+              <div style="font-size:14px; font-weight:600; color:#334155;">Day 4–5: Start an Expedition</div>
+              <div style="font-size:12px; color:#64748b;">Your child can start a lesson in their weakest territory</div>
+            </div>
+          </div>
+          <div class="gs-step" data-gs="weekly">
+            <span class="gs-check" id="gsCheck4">○</span>
+            <div>
+              <div style="font-size:14px; font-weight:600; color:#334155;">Week 1: Check Progress</div>
+              <div style="font-size:12px; color:#64748b;">Review the Analytics tab to see your child's progress over time</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:14px; text-align:center;">
+          <button onclick="dismissGettingStarted()" style="font-size:13px; padding:8px 20px; background:white; border:1px solid #d1d5db; border-radius:8px; cursor:pointer; color:#475569;">I've got it 👍</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Subject Breakdown -->
+    <section id="subjectSection" class="dash-section">
+      <h2>&#x1F4D0; Subject Breakdown</h2>
+      <div class="subject-grid">
+        <div class="radar-container"><canvas id="radarChart"></canvas></div>
+        <div class="subject-cards" id="subjectCards"></div>
+      </div>
+    </section>
+
+    <!-- Section 3: Skill Gaps -->
+    <section id="gapsSection" class="dash-section">
+      <h2>&#x1F3AF; Skill Gap Report</h2>
+      <div id="gapsContent"></div>
+    </section>
+
+    <!-- Section 4: Session History -->
+    <section id="historySection" class="dash-section">
+      <h2>&#x1F4DD; Session History</h2>
+      <div class="history-filters">
+        <select class="filter-select" id="filterSubject" onchange="filterHistory()">
+          <option value="all">All Subjects</option>
+        </select>
+        <select class="filter-select" id="filterType" onchange="filterHistory()">
+          <option value="all">All Types</option>
+          <option value="Lesson">Lessons</option>
+          <option value="Practice">Practice</option>
+          <option value="Diagnostic">Diagnostics</option>
+        </select>
+      </div>
+      <div id="historyContent"></div>
+    </section>
+
+    <!-- Section 5: Progress & Badges -->
+    <section id="progressSection" class="dash-section">
+      <h2>&#x1F4C8; Assessment & Progress</h2>
+      <div class="progress-grid">
+        <div>
+          <h3 style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;">Subject Mastery</h3>
+          <div class="bar-chart-container"><canvas id="barChart"></canvas></div>
+        </div>
+        <div>
+          <h3 style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;">Badges Earned</h3>
+          <div class="badges-timeline" id="badgesTimeline"></div>
+        </div>
+      </div>
+    </section>
+
+    </div><!-- /tab-overview -->
+
+    <!-- ═══ TAB: Analytics ═══ -->
+    <div id="tab-analytics" class="tab-content">
+
+    <!-- Reassessment Schedule & Growth Tracking -->
+    <section id="growthSection" class="dash-section">
+      <h2>📈 Growth Tracking</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">
+        Track progress over time with periodic checkpoint assessments. Checkpoints focus on areas that need improvement — topics already mastered are skipped.
+      </p>
+      <div id="reassessmentStatus" style="margin-bottom:16px;"></div>
+      <div id="growthContent"></div>
+    </section>
+
+    <!-- Adaptive Learning Engine -->
+    <section id="adaptiveSection" class="dash-section">
+      <h2>🧠 Adaptive Learning</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">
+        Blended mastery scores combine diagnostic results, practice accuracy, and lesson completions.
+        Topics due for review are flagged by spaced repetition scheduling.
+      </p>
+      <div id="adaptiveContent"></div>
+      <div id="studyPlanSection" style="margin-top:20px;">
+        <h3 style="font-size:1rem; margin-bottom:10px;">📋 Recommended Study Plan</h3>
+        <div id="parentStudyPlan"></div>
+      </div>
+    </section>
+
+    <!-- Standards Alignment -->
+    <section id="standardsSection" class="dash-section">
+      <h2>📏 Standards Alignment</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">
+        Standards alignment across Math &amp; ELA (Common Core), Science (NGSS), and Social Studies (state standards). Mastery is derived from diagnostic scores, practice accuracy, and lesson completions.
+      </p>
+      <div id="standardsContent"></div>
+    </section>
+
+    </div><!-- /tab-analytics -->
+
+    <!-- ═══ TAB: Diagnostics ═══ -->
+    <div id="tab-diagnostics" class="tab-content">
+      <section class="dash-section">
+        <h2>🔬 Diagnostic Management</h2>
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+          Schedule new diagnostics, view results, or delete diagnostic data for each subject.
+        </p>
+        <div class="diag-grid" id="diagGrid"></div>
+      </section>
+    </div>
+
+    <!-- ═══ TAB: Customization ═══ -->
+    <div id="tab-customization" class="tab-content">
+      <section class="dash-section">
+        <h2>⚙️ Customize Your Tutor</h2>
+
+        <!-- Subject Toggles -->
+        <div class="config-section">
+          <h3>📚 Enabled Subjects</h3>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">Toggle subjects on or off for this instance.</p>
+          <div id="subjectToggles"></div>
+        </div>
+
+        <!-- Custom Subjects -->
+        <div class="config-section">
+          <h3>✨ Custom Subjects</h3>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">Add your own subjects with custom topics.</p>
+          <div id="customSubjectsList"></div>
+          <button class="diag-btn diag-btn-start" onclick="toggleCustomSubjectForm()" style="margin-top: 12px;">+ Add Custom Subject</button>
+          <div id="customSubjectForm" class="custom-subject-form" style="display: none;">
+            <div class="config-row">
+              <span class="config-label">Name</span>
+              <input class="config-input" id="csName" placeholder="e.g., Music Theory">
+            </div>
+            <div class="config-row">
+              <span class="config-label">Key</span>
+              <input class="config-input" id="csKey" placeholder="e.g., music_theory (auto-generated)">
+            </div>
+            <div class="config-row">
+              <span class="config-label">Icon</span>
+              <input class="config-input" id="csIcon" placeholder="e.g., 🎵" value="📖" style="max-width: 80px;">
+            </div>
+            <div class="config-row">
+              <span class="config-label">Color</span>
+              <input type="color" id="csColor" value="#666666" style="width: 50px; height: 36px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer;">
+            </div>
+            <div class="config-row" style="align-items: start;">
+              <span class="config-label">Topics</span>
+              <div style="flex: 1;">
+                <div style="display: flex; gap: 8px;">
+                  <input class="config-input" id="csTopicInput" placeholder="Type a topic and press Add" style="flex: 1;">
+                  <button class="diag-btn" onclick="addCustomTopic()">Add</button>
+                </div>
+                <div id="csTopicsList" style="margin-top: 8px;"></div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">3-8 topics required</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 16px;">
+              <button class="save-btn" onclick="saveCustomSubject()">Save Subject</button>
+              <button class="diag-btn" onclick="toggleCustomSubjectForm()">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Branding -->
+        <div class="config-section">
+          <h3>🎨 Branding</h3>
+          <div class="config-row">
+            <span class="config-label">App Title</span>
+            <input class="config-input" id="brandTitle" placeholder="Atlas">
+          </div>
+          <div class="config-row">
+            <span class="config-label">Accent Color</span>
+            <input type="color" id="brandColor" value="#4F46E5" style="width: 50px; height: 36px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer;">
+          </div>
+        </div>
+
+        <!-- Grade Level -->
+        <div class="config-section">
+          <h3>🎓 Default Grade Level</h3>
+          <div class="config-row">
+            <span class="config-label">Grade</span>
+            <select class="config-input" id="configGrade" style="max-width: 200px;">
+              <option value="6">6th Grade</option>
+              <option value="7">7th Grade</option>
+              <option value="8" selected>8th Grade</option>
+              <option value="9">9th Grade</option>
+              <option value="10">10th Grade</option>
+              <option value="11">11th Grade</option>
+              <option value="12">12th Grade</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Feature Flags -->
+        <div class="config-section">
+          <h3>🔧 Feature Toggles</h3>
+          <div class="subject-toggle">
+            <label for="flagDiag">Diagnostics</label>
+            <input type="checkbox" id="flagDiag" checked>
+          </div>
+          <div class="subject-toggle">
+            <label for="flagLessons">Lessons</label>
+            <input type="checkbox" id="flagLessons" checked>
+          </div>
+          <div class="subject-toggle">
+            <label for="flagPractice">Practice</label>
+            <input type="checkbox" id="flagPractice" checked>
+          </div>
+        </div>
+
+        <button class="save-btn" onclick="saveInstanceConfig()">💾 Save All Changes</button>
+        <span id="configSaveStatus" style="margin-left: 12px; font-size: 14px; color: var(--success);"></span>
+
+        <!-- Socratic Mode (per-student) -->
+        <div class="config-section" style="margin-top: 24px; border-top: 2px solid var(--border); padding-top: 24px;">
+          <h3>🧠 Teaching Mode <span style="font-size: 12px; font-weight: 400; color: var(--text-muted);">(per student)</span></h3>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">
+            These settings apply to the currently selected student: <strong id="socraticStudentName"></strong>
+          </p>
+          <div class="subject-toggle">
+            <label for="flagSocratic" style="flex: 1;">
+              <strong>Socratic Mode</strong>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 2px;">
+                When on, the tutor guides students to discover answers through questions instead of giving direct explanations. Applies to Chat and Lessons only.
+              </div>
+            </label>
+            <input type="checkbox" id="flagSocratic" checked onchange="toggleSocraticMode(this.checked)">
+          </div>
+          <span id="socraticSaveStatus" style="font-size: 13px; color: var(--success);"></span>
+        </div>
+      </section>
+    </div>
+
+    <!-- ═══ TAB: Feedback ═══ -->
+    <div id="tab-feedback" class="tab-content">
+      <section class="dash-section">
+        <h2>💬 Feedback</h2>
+
+        <!-- Sub-tabs for feedback status -->
+        <div class="feedback-tabs">
+          <button class="fb-tab-btn active" onclick="filterFeedback('all', this)">All</button>
+          <button class="fb-tab-btn" onclick="filterFeedback('pending', this)">⏳ Pending</button>
+          <button class="fb-tab-btn" onclick="filterFeedback('approved', this)">✅ Approved</button>
+          <button class="fb-tab-btn" onclick="filterFeedback('declined', this)">❌ Declined</button>
+        </div>
+
+        <div id="feedbackList"></div>
+
+        <!-- Parent feedback submission -->
+        <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
+          <h3 style="font-size: 15px; color: var(--primary); margin-bottom: 12px;">Submit Your Own Feedback</h3>
+          <div class="config-row">
+            <span class="config-label">Type</span>
+            <select class="config-input" id="parentFbType" style="max-width: 200px;">
+              <option value="feature_request">Feature Request</option>
+              <option value="bug_report">Bug Report</option>
+              <option value="content_issue">Content Issue</option>
+              <option value="general">General</option>
+            </select>
+          </div>
+          <div class="config-row">
+            <span class="config-label">Title</span>
+            <input class="config-input" id="parentFbTitle" placeholder="Brief description">
+          </div>
+          <div class="config-row" style="align-items: start;">
+            <span class="config-label">Details</span>
+            <textarea class="config-input" id="parentFbContent" rows="3" placeholder="Describe your feedback..." style="max-width: 500px;"></textarea>
+          </div>
+          <button class="save-btn" onclick="submitParentFeedback()">Send Feedback</button>
+          <span id="fbSubmitStatus" style="margin-left: 12px; font-size: 14px; color: var(--success);"></span>
+        </div>
+      </section>
+    </div>
+
+    <!-- ═══ TAB: Settings ═══ -->
+    <div id="tab-settings" class="tab-content">
+      <section class="dash-section">
+        <h2>🔐 Settings</h2>
+
+        <!-- Change Parent PIN -->
+        <div class="config-section">
+          <h3>Change Parent PIN</h3>
+          <div class="config-row">
+            <span class="config-label">Current PIN</span>
+            <input class="config-input" id="settingsCurrentPin" type="password" maxlength="4" placeholder="Current 4-digit PIN" style="max-width: 200px;">
+          </div>
+          <div class="config-row">
+            <span class="config-label">New PIN</span>
+            <input class="config-input" id="settingsNewPin" type="password" maxlength="4" placeholder="New 4-digit PIN" style="max-width: 200px;">
+          </div>
+          <div class="config-row">
+            <span class="config-label">Confirm PIN</span>
+            <input class="config-input" id="settingsConfirmPin" type="password" maxlength="4" placeholder="Confirm new PIN" style="max-width: 200px;">
+          </div>
+          <button class="save-btn" onclick="changeParentPin()">Update Parent PIN</button>
+          <span id="parentPinStatus" style="margin-left: 12px; font-size: 14px;"></span>
+        </div>
+
+        <!-- Add Student -->
+        <div class="config-section" style="margin-top: 32px;">
+          <h3>Add Student</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Create a new student account for your family.</p>
+          <div class="config-row">
+            <span class="config-label">Student Name</span>
+            <input class="config-input" id="addStudentName" type="text" placeholder="Enter student's name" style="max-width: 280px;">
+          </div>
+          <div class="config-row">
+            <span class="config-label">Login PIN (4 digits)</span>
+            <input class="config-input" id="addStudentPin" type="text" maxlength="4" placeholder="e.g. 1234" style="max-width: 200px;">
+          </div>
+          <div class="config-row">
+            <span class="config-label">Avatar</span>
+            <div id="addStudentAvatarPicker" style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="avatar-pick selected" onclick="pickAddAvatar(this,'🎓')">🎓</button>
+              <button type="button" class="avatar-pick" onclick="pickAddAvatar(this,'🧑‍🎓')">🧑‍🎓</button>
+              <button type="button" class="avatar-pick" onclick="pickAddAvatar(this,'👧')">👧</button>
+              <button type="button" class="avatar-pick" onclick="pickAddAvatar(this,'👦')">👦</button>
+              <button type="button" class="avatar-pick" onclick="pickAddAvatar(this,'🦊')">🦊</button>
+              <button type="button" class="avatar-pick" onclick="pickAddAvatar(this,'🐱')">🐱</button>
+              <button type="button" class="avatar-pick" onclick="pickAddAvatar(this,'🚀')">🚀</button>
+              <button type="button" class="avatar-pick" onclick="pickAddAvatar(this,'⭐')">⭐</button>
+            </div>
+          </div>
+          <button class="save-btn" onclick="addStudent()">Add Student</button>
+          <span id="addStudentStatus" style="margin-left: 12px; font-size: 14px;"></span>
+        </div>
+
+        <!-- Student PIN Management -->
+        <div class="config-section" style="margin-top: 32px;">
+          <h3>Student PINs</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">View and reset login PINs for each student in your family.</p>
+          <div id="studentPinTable"></div>
+        </div>
+
+        <!-- Feature 57: Conversation Mode per Student -->
+        <div class="config-section" style="margin-top: 32px;">
+          <h3>Conversation Mode</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;"><strong>Guided</strong> mode shows follow-up suggestions and provides more structure. <strong>Open</strong> mode lets the student lead conversations with minimal suggestions.</p>
+          <div id="conversationModeTable"></div>
+        </div>
+
+        <!-- Feature 58: Complexity Tiers Display -->
+        <div class="config-section" style="margin-top: 32px;">
+          <h3>Response Complexity</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Atlas automatically adjusts response complexity per subject based on your child's grade, diagnostic scores, goals, and AI familiarity.</p>
+          <div id="complexityTierDisplay"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ═══ INVITES TAB ═══ -->
+    <div id="tab-invites" class="tab-content">
+      <section class="dash-section">
+        <h2>🔗 Family Invite Links</h2>
+        <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">Share invite links with other families so they can set up their own Atlas instance. You can set limits on how many families can use each link.</p>
+
+        <!-- Create Invite -->
+        <div class="config-section">
+          <h3>Create New Invite</h3>
+          <div class="config-row">
+            <span class="config-label">Label (optional)</span>
+            <input class="config-input" id="inviteLabel" type="text" placeholder="e.g. Soccer team parents" style="max-width:300px;">
+          </div>
+          <div class="config-row">
+            <span class="config-label">Max uses</span>
+            <select class="config-input" id="inviteMaxUses" style="max-width:200px;">
+              <option value="0">Unlimited</option>
+              <option value="1">1 family</option>
+              <option value="3">3 families</option>
+              <option value="5" selected>5 families</option>
+              <option value="10">10 families</option>
+              <option value="25">25 families</option>
+            </select>
+          </div>
+          <div class="config-row">
+            <span class="config-label">Expires after</span>
+            <select class="config-input" id="inviteExpiry" style="max-width:200px;">
+              <option value="0">Never</option>
+              <option value="1">1 day</option>
+              <option value="3">3 days</option>
+              <option value="7" selected>7 days</option>
+              <option value="14">14 days</option>
+              <option value="30">30 days</option>
+            </select>
+          </div>
+          <button class="save-btn" onclick="createInvite()">Generate Invite Link</button>
+          <span id="inviteCreateStatus" style="margin-left:12px; font-size:14px;"></span>
+        </div>
+
+        <!-- Invite Link Display (shown after creation) -->
+        <div id="inviteLinkDisplay" style="display:none; margin-top:20px; background:#f0f7fc; border-radius:12px; padding:16px 20px;">
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">Share this link with families:</p>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input id="inviteLinkUrl" type="text" readonly style="flex:1; padding:10px 14px; border:2px solid var(--accent); border-radius:8px; font-size:14px; font-family:monospace; background:white;">
+            <button onclick="copyInviteLink()" style="padding:10px 18px; background:var(--accent); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600; white-space:nowrap;">Copy</button>
+          </div>
+          <p id="inviteLinkMeta" style="font-size:12px; color:var(--text-muted); margin-top:8px;"></p>
+        </div>
+
+        <!-- Active Invites -->
+        <div class="config-section" style="margin-top:32px;">
+          <h3>Your Invite Links</h3>
+          <div id="invitesList" style="margin-top:12px;"><p style="color:var(--text-muted); font-size:14px;">Loading...</p></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ═══ TAB: Safety ═══ -->
+    <div id="tab-safety" class="tab-content">
+      <section class="dash-section">
+        <h2>🛡️ Safety & Content Log</h2>
+        <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">Review safety events and conversation history. The tutor pre-screens every message for inappropriate content and manipulation attempts before it reaches the AI.</p>
+
+        <!-- Safety Events -->
+        <div class="config-section">
+          <h3>Safety Events <span id="safetyEventCount" style="font-size:13px; color:var(--text-muted); font-weight:400;">(last 30 days)</span></h3>
+          <div id="safetyEventsContent" style="margin-top:12px;"><p style="color:var(--text-muted); font-size:14px;">Loading...</p></div>
+        </div>
+
+        <!-- Conversation Log Viewer -->
+        <div class="config-section" style="margin-top:32px;">
+          <h3>Conversation Log</h3>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Browse recent conversations for the selected student.</p>
+          <div style="display:flex; gap:12px; align-items:center; margin-bottom:16px; flex-wrap:wrap;">
+            <select class="config-input" id="convoLogSubject" onchange="loadConversationLog()" style="max-width:200px;">
+              <option value="">All Subjects</option>
+            </select>
+            <span style="font-size:13px; color:var(--text-muted);" id="convoLogCount"></span>
+          </div>
+          <div id="convoLogContent" style="margin-top:12px;"><p style="color:var(--text-muted); font-size:14px;">Select a student to view conversations.</p></div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+</div>
+
+<!-- Help FAB & Menu -->
+<button class="help-fab" id="helpFab" onclick="toggleHelpMenu()" title="Help" style="display:none;">?</button>
+<div class="help-menu" id="helpMenu">
+  <a onclick="startParentTour(); toggleHelpMenu();"><span class="hm-icon">🎯</span> Take the Tour</a>
+  <a onclick="showParentHelpPage(); toggleHelpMenu();"><span class="hm-icon">📖</span> Help & FAQ</a>
+  <a href="/guide" target="_blank"><span class="hm-icon">📚</span> Training Guide</a>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <h3 id="confirmTitle">Confirm Action</h3>
+    <p id="confirmMessage">Are you sure?</p>
+    <div class="modal-actions">
+      <button class="diag-btn" onclick="closeConfirmModal()">Cancel</button>
+      <button class="diag-btn diag-btn-delete" id="confirmBtn" onclick="confirmAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── State ──────────────────────────────────────────── */
+let parentPin = null;
+let currentStudentId = null;
+let dashboardData = null;
+let allHistory = [];
+let charts = {};
+const _pathMatch = window.location.pathname.match(/^\/f\/([^/]+)/);
+let instanceId = _pathMatch ? _pathMatch[1] : new URLSearchParams(window.location.search).get("instance") || "default";
+let instanceConfig = null;
+let allFeedback = [];
+let allStudents = [];
+let customTopics = [];
+let pendingConfirmAction = null;
+
+/* ─── Login Flow ─────────────────────────────────────── */
+let pinValue = "";
+
+function pinPress(digit) {
+  if (pinValue.length >= 4) return;
+  pinValue += digit;
+  updatePinDots();
+  if (pinValue.length === 4) {
+    setTimeout(submitPin, 200);
+  }
+}
+
+function pinBackspace() {
+  pinValue = pinValue.slice(0, -1);
+  updatePinDots();
+}
+
+function pinClear() {
+  pinValue = "";
+  updatePinDots();
+  document.getElementById("loginError").textContent = "";
+}
+
+function updatePinDots() {
+  const dots = document.querySelectorAll("#pinDots .pin-dot");
+  dots.forEach((dot, i) => {
+    dot.classList.toggle("filled", i < pinValue.length);
+  });
+}
+
+async function submitPin() {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/login`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({pin: pinValue}),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      parentPin = pinValue;
+      pinValue = "";
+      updatePinDots();
+      document.getElementById("loginError").textContent = "";
+      // Apply branding if present
+      if (data.branding && data.branding.app_title) {
+        document.querySelector(".dash-header h1").innerHTML = `🧭 ${esc(data.branding.app_title)} — Parent Dashboard`;
+      }
+      showDashboard();
+    } else {
+      document.getElementById("loginError").textContent = "Incorrect PIN. Please try again.";
+      pinValue = "";
+      updatePinDots();
+      // Shake animation
+      const card = document.querySelector(".login-card");
+      card.style.animation = "shake 0.4s ease";
+      setTimeout(() => card.style.animation = "", 400);
+    }
+  } catch (err) {
+    document.getElementById("loginError").textContent = "Connection error. Is the server running?";
+    pinValue = "";
+    updatePinDots();
+  }
+}
+
+// Keyboard support for PIN
+document.addEventListener("keydown", (e) => {
+  if (document.getElementById("loginScreen").style.display === "none") return;
+  if (e.key >= "0" && e.key <= "9") pinPress(e.key);
+  else if (e.key === "Backspace") pinBackspace();
+  else if (e.key === "Escape") pinClear();
+});
+
+/* ─── Dashboard Loading ──────────────────────────────── */
+async function showDashboard() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("dashboardContainer").style.display = "block";
+  document.getElementById("helpFab").style.display = "flex";
+  await loadStudents();
+
+  // Feature 59: Proficiency-based onboarding
+  const proficiency = getAIProficiency();
+  if (proficiency === "low") {
+    // Auto-launch tour on first visit for low-proficiency families
+    if (shouldShowParentTour()) {
+      setTimeout(() => startParentTour(), 600);
+    }
+    // Show Getting Started card if not dismissed
+    showGettingStartedCard();
+    // Add contextual tooltips
+    addProficiencyTooltips();
+  } else if (proficiency === "medium") {
+    // Offer tour but don't auto-launch
+    if (shouldShowParentTour()) {
+      setTimeout(() => startParentTour(), 600);
+    }
+  } else {
+    // High proficiency: tour available via help menu but not auto-triggered
+    // (no auto-launch)
+  }
+}
+
+async function loadStudents() {
+  try {
+    // Load instance config
+    const cfgRes = await fetch(`/api/instance/${instanceId}?pin=${encodeURIComponent(parentPin)}`);
+    if (cfgRes.ok) instanceConfig = (await cfgRes.json()).instance;
+
+    const res = await fetch(`/api/instance/${instanceId}/parent/students?pin=${encodeURIComponent(parentPin)}`);
+    const data = await res.json();
+    if (data.error) { parentLogout(); return; }
+    allStudents = data.students || [];
+    const sel = document.getElementById("studentSelector");
+    sel.innerHTML = "";
+    if (!allStudents || allStudents.length === 0) {
+      sel.innerHTML = '<option value="">No students found</option>';
+      return;
+    }
+    data.students.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s.student_id;
+      opt.textContent = `${s.avatar || ""} ${s.name} (Grade ${s.grade})`;
+      sel.appendChild(opt);
+    });
+    // Populate subject filter from instance subjects
+    const filterSubj = document.getElementById("filterSubject");
+    filterSubj.innerHTML = '<option value="all">All Subjects</option>';
+    const subjectsRes = await fetch(`/api/instance/${instanceId}/subjects`);
+    const subjectsData = await subjectsRes.json();
+    Object.values(subjectsData).forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s.name;
+      opt.textContent = s.name;
+      filterSubj.appendChild(opt);
+    });
+    currentStudentId = data.students[0].student_id;
+    await loadDashboard(currentStudentId);
+    // Load customization tab data
+    if (instanceConfig) renderCustomization();
+  } catch (err) {
+    console.error("Failed to load students:", err);
+  }
+}
+
+async function switchStudent() {
+  const sel = document.getElementById("studentSelector");
+  currentStudentId = sel.value;
+  if (currentStudentId) await loadDashboard(currentStudentId);
+}
+
+async function refreshDashboard() {
+  if (currentStudentId) await loadDashboard(currentStudentId);
+}
+
+async function loadDashboard(studentId) {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/dashboard/${studentId}?pin=${encodeURIComponent(parentPin)}`);
+    const data = await res.json();
+    if (data.error) {
+      console.error("Dashboard error:", data.error);
+      return;
+    }
+    dashboardData = data;
+    if (data.instance) instanceConfig = data.instance;
+    // Compute adaptive data client-side if not provided by server
+    if (!dashboardData.adaptive || !dashboardData.adaptive.subjects || Object.keys(dashboardData.adaptive.subjects).length === 0) {
+      dashboardData.adaptive = computeAdaptiveClientSide(dashboardData);
+    }
+    renderDashboard();
+  } catch (err) {
+    console.error("Failed to load dashboard:", err);
+  }
+}
+
+/* ─── Client-Side Adaptive Engine ──────────────────────
+   Mirrors the Python adaptive engine logic using data already
+   available in the dashboard response. Computes blended mastery
+   scores from diagnostic scores, practice history, and lesson history.
+   ─────────────────────────────────────────────────────── */
+function computeAdaptiveClientSide(data) {
+  const WEIGHTS = { diagnostic: 0.40, practice: 0.45, lessons: 0.15 };
+  const SPACED_INTERVALS = { needs_work: 1, developing: 3, proficient: 7, advanced: 14 };
+  const subjects = data.subjects || {};
+  const history = data.history || [];
+  const now = new Date();
+
+  // Group history by subject_key → topic → type
+  const histBySubjTopic = {};
+  history.forEach(h => {
+    const sk = h.subject_key;
+    const tp = h.topic;
+    const ty = h.type;
+    if (!sk || !tp) return;
+    if (!histBySubjTopic[sk]) histBySubjTopic[sk] = {};
+    if (!histBySubjTopic[sk][tp]) histBySubjTopic[sk][tp] = { practices: [], lessons: [] };
+    if (ty === 'Practice') histBySubjTopic[sk][tp].practices.push(h);
+    if (ty === 'Lesson') histBySubjTopic[sk][tp].lessons.push(h);
+  });
+
+  function tierFromScore(s) {
+    if (s >= 85) return 'advanced';
+    if (s >= 65) return 'proficient';
+    if (s >= 40) return 'developing';
+    return 'needs_work';
+  }
+
+  const adaptiveSubjects = {};
+  let totalDue = 0, totalWeak = 0;
+  const allTopicEntries = [];
+
+  for (const [subjKey, subjData] of Object.entries(subjects)) {
+    const topicScores = subjData.topics || {};
+    const adaptiveTopics = {};
+    let subjScoreSum = 0, subjCount = 0;
+
+    for (const [topicName, topicData] of Object.entries(topicScores)) {
+      const diagScore = topicData.score || 0;
+
+      // Get practice data for this topic
+      const topicHist = histBySubjTopic[subjKey]?.[topicName] || { practices: [], lessons: [] };
+      const practices = topicHist.practices;
+      const lessons = topicHist.lessons;
+
+      // Practice accuracy: average of practice scores
+      let practiceAcc = 0;
+      let practiceCount = practices.length;
+      if (practiceCount > 0) {
+        const totalScore = practices.reduce((sum, p) => sum + (p.score || 0), 0);
+        practiceAcc = totalScore / practiceCount;
+      }
+
+      // Lesson completion ratio (0 or 100)
+      const lessonCount = lessons.filter(l => l.complete).length;
+      const lessonScore = lessonCount > 0 ? 100 : 0;
+
+      // Blended mastery score
+      let blended;
+      if (practiceCount === 0 && lessonCount === 0) {
+        blended = diagScore; // Only diagnostic available
+      } else if (practiceCount === 0) {
+        blended = diagScore * 0.70 + lessonScore * 0.30;
+      } else {
+        blended = diagScore * WEIGHTS.diagnostic + practiceAcc * WEIGHTS.practice + lessonScore * WEIGHTS.lessons;
+      }
+
+      // Spaced repetition: days since last practice
+      let daysSince = null;
+      let lastPracticed = null;
+      if (practices.length > 0) {
+        const latest = practices.reduce((a, b) => new Date(a.timestamp) > new Date(b.timestamp) ? a : b);
+        lastPracticed = latest.timestamp;
+        daysSince = Math.floor((now - new Date(latest.timestamp)) / 86400000);
+      }
+
+      const tier = tierFromScore(blended);
+      const interval = SPACED_INTERVALS[tier] || 7;
+      const isDue = daysSince !== null ? daysSince >= interval : true; // Due if never practiced
+
+      adaptiveTopics[topicName] = {
+        score: Math.round(blended * 10) / 10,
+        tier: tier,
+        due: isDue,
+        days_since: daysSince
+      };
+
+      subjScoreSum += blended;
+      subjCount++;
+      if (isDue) totalDue++;
+      if (tier === 'needs_work') totalWeak++;
+
+      // Collect for study plan
+      allTopicEntries.push({
+        subject: subjKey,
+        subject_name: subjData.name || subjKey,
+        subject_icon: subjData.icon || '📚',
+        topic: topicName,
+        mastery: { score: Math.round(blended * 10) / 10, tier },
+        isDue,
+        isWeak: tier === 'needs_work' || tier === 'developing',
+        practiceCount,
+        lessonCount
+      });
+    }
+
+    const overallScore = subjCount > 0 ? Math.round((subjScoreSum / subjCount) * 10) / 10 : 0;
+    adaptiveSubjects[subjKey] = {
+      overall_score: overallScore,
+      overall_tier: tierFromScore(overallScore),
+      due_count: Object.values(adaptiveTopics).filter(t => t.due).length,
+      weak_count: Object.values(adaptiveTopics).filter(t => t.tier === 'needs_work').length,
+      topics: adaptiveTopics
+    };
+  }
+
+  // Generate study plan (top 5 priority items)
+  const studyPlan = allTopicEntries
+    .map(e => {
+      let priority = 4;
+      let reason = 'Continue progressing';
+      let action = 'practice';
+      if (e.isWeak && e.isDue) { priority = 1; reason = 'Weak topic — due for review'; action = e.lessonCount === 0 ? 'lesson' : 'practice'; }
+      else if (e.isDue) { priority = 2; reason = 'Due for spaced review'; action = 'practice'; }
+      else if (e.isWeak) { priority = 3; reason = 'Needs more practice'; action = e.lessonCount === 0 ? 'lesson' : 'practice'; }
+      return { ...e, priority, reason, action };
+    })
+    .sort((a, b) => a.priority - b.priority || a.mastery.score - b.mastery.score)
+    .slice(0, 5);
+
+  return {
+    subjects: adaptiveSubjects,
+    total_due_for_review: totalDue,
+    total_weak_topics: totalWeak,
+    study_plan: studyPlan
+  };
+}
+
+function openStudentPortal() {
+  // Build the student portal URL from the current instance
+  const pathMatch = window.location.pathname.match(/^\/f\/([^/]+)/);
+  if (pathMatch) {
+    window.open(`/f/${pathMatch[1]}`, '_blank');
+  } else {
+    window.open(`/?instance=${encodeURIComponent(instanceId)}`, '_blank');
+  }
+}
+
+function parentLogout() {
+  parentPin = null;
+  currentStudentId = null;
+  dashboardData = null;
+  document.getElementById("dashboardContainer").style.display = "none";
+  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("helpFab").style.display = "none";
+  document.getElementById("helpMenu").style.display = "none";
+}
+
+/* ─── Render Dashboard ───────────────────────────────── */
+function renderDashboard() {
+  if (!dashboardData) return;
+  renderStudentHeader();
+  renderOverview();
+  renderSubjectBreakdown();
+  renderSkillGaps();
+  renderGrowth();
+  renderAdaptive();
+  renderStandards();
+  renderHistory();
+  renderProgress();
+  // Reload tab-specific data if that tab is currently active
+  const activeTab = document.querySelector(".tab-content.active");
+  if (activeTab && activeTab.id === "tab-analytics") { renderGrowth(); renderAdaptive(); renderStandards(); }
+  if (activeTab && activeTab.id === "tab-diagnostics") loadDiagnostics();
+  if (activeTab && activeTab.id === "tab-feedback") loadFeedback();
+  if (activeTab && activeTab.id === "tab-safety") loadSafetyTab();
+}
+
+/* ─── Student Header ─────────────────────────────────── */
+function renderStudentHeader() {
+  const s = dashboardData.student;
+  document.getElementById("studentAvatar").textContent = s.avatar || "\u{1F393}";
+  document.getElementById("studentName").textContent = s.name;
+  const created = s.created_at ? new Date(s.created_at).toLocaleDateString() : "";
+  document.getElementById("studentMeta").textContent =
+    `Grade ${s.grade} \u2022 ${s.badges_count} badge${s.badges_count !== 1 ? "s" : ""} earned \u2022 Member since ${created}`;
+  // Set grade dropdown to current student grade
+  const gradeSelect = document.getElementById("studentGradeSelect");
+  if (gradeSelect) gradeSelect.value = s.grade || 8;
+}
+
+async function changeStudentGrade(newGrade) {
+  const sid = document.getElementById("studentSelector").value;
+  if (!sid) return;
+  try {
+    const res = await fetch("/api/student/update", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ student_id: sid, grade: parseInt(newGrade), instance_id: instanceId })
+    });
+    if (res.ok) {
+      showToast(`Grade updated to ${newGrade}th grade`);
+      // Reload student list (updates selector label) then reload dashboard
+      await loadStudents();
+      loadDashboard(sid);
+    } else {
+      showToast("Failed to update grade", true);
+    }
+  } catch (e) {
+    showToast("Error updating grade", true);
+  }
+}
+
+/* ─── Section 1: Overview ────────────────────────────── */
+function renderOverview() {
+  const o = dashboardData.overview;
+  const metrics = [
+    {icon: "\u{1F4CA}", value: o.total_sessions, label: "Total Sessions"},
+    {icon: "\u{1F4DA}", value: o.completed_lessons, label: "Lessons Completed"},
+    {icon: "\u{1F3AF}", value: o.overall_mastery != null ? o.overall_mastery + "%" : "--", label: "Overall Mastery"},
+    {icon: "\u{1F4C5}", value: o.days_active, label: "Days Active"},
+  ];
+  const grid = document.getElementById("metricsGrid");
+  grid.innerHTML = metrics.map(m => `
+    <div class="metric-card">
+      <div class="metric-icon">${m.icon}</div>
+      <div class="metric-value">${m.value}</div>
+      <div class="metric-label">${m.label}</div>
+    </div>
+  `).join("");
+
+  // Activity calendar
+  renderActivityCalendar(o.activity_dates || []);
+
+  // Safety summary
+  loadSafetySummary();
+}
+
+async function loadSafetySummary() {
+  const card = document.getElementById("safetySummaryCard");
+  const title = document.getElementById("safetySummaryTitle");
+  const detail = document.getElementById("safetySummaryDetail");
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/safety-summary?pin=${parentPin}`);
+    const data = await res.json();
+    if (data.error) { card.style.display = "none"; return; }
+    card.style.display = "block";
+    const total = data.total_events_30d || 0;
+    if (total === 0) {
+      title.textContent = "Content Safety — All Clear";
+      detail.textContent = "No safety events in the last 30 days.";
+      card.style.background = "#f0fdf4";
+      card.style.borderColor = "#bbf7d0";
+    } else {
+      title.textContent = `Content Safety — ${total} Event${total !== 1 ? "s" : ""}`;
+      const parts = [];
+      if (data.blocked_topics) parts.push(`${data.blocked_topics} blocked topic${data.blocked_topics !== 1 ? "s" : ""}`);
+      if (data.injection_attempts) parts.push(`${data.injection_attempts} injection attempt${data.injection_attempts !== 1 ? "s" : ""}`);
+      detail.textContent = parts.join(", ") + " in the last 30 days.";
+      card.style.background = "#fefce8";
+      card.style.borderColor = "#fde68a";
+    }
+  } catch (err) {
+    card.style.display = "none";
+  }
+}
+
+function renderActivityCalendar(activeDates) {
+  const grid = document.getElementById("calGrid");
+  const today = new Date();
+  const dateSet = new Set(activeDates);
+  let html = "";
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().slice(0, 10);
+    const isActive = dateSet.has(dateStr);
+    const isToday = i === 0;
+    const dayNum = d.getDate();
+    html += `<div class="cal-day ${isActive ? "active" : ""} ${isToday ? "today" : ""}" title="${dateStr}">${dayNum}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+/* ─── Section 2: Subject Breakdown ───────────────────── */
+function renderSubjectBreakdown() {
+  const subjects = dashboardData.subjects;
+  const keys = Object.keys(subjects);
+  const labels = keys.map(k => subjects[k].name);
+  const scores = keys.map(k => subjects[k].mastery ?? 0);
+  const hasAnyData = scores.some(s => s > 0);
+
+  // Radar Chart
+  if (charts.radar) charts.radar.destroy();
+  const ctx = document.getElementById("radarChart").getContext("2d");
+
+  if (hasAnyData) {
+    charts.radar = new Chart(ctx, {
+      type: "radar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Mastery %",
+          data: scores,
+          borderColor: "#2E86C1",
+          backgroundColor: "rgba(46, 134, 193, 0.15)",
+          borderWidth: 2,
+          pointBackgroundColor: "#2E86C1",
+          pointRadius: 5,
+        }],
+      },
+      options: {
+        responsive: true,
+        scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 25, font: { size: 11 } } } },
+        plugins: { legend: { display: false } },
+      },
+    });
+  } else {
+    charts.radar = new Chart(ctx, {
+      type: "radar",
+      data: { labels: labels, datasets: [{ data: [0,0,0,0,0], borderColor: "#e5e7eb", backgroundColor: "rgba(0,0,0,0.02)" }] },
+      options: { responsive: true, scales: { r: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } },
+    });
+  }
+
+  // Subject cards
+  const cardsHtml = keys.map(k => {
+    const s = subjects[k];
+    const score = s.mastery;
+    const scoreClass = getScoreClass(score);
+    const topicCount = Object.keys(s.topics).length;
+    return `
+      <div class="subject-card">
+        <div class="subject-icon">${s.icon}</div>
+        <div class="subject-info">
+          <div class="subject-name">${s.name}</div>
+          <div class="subject-level">${s.level ? s.level + " \u2022 " + topicCount + " topics assessed" : "Not yet assessed"}</div>
+        </div>
+        <div class="subject-score ${scoreClass}">${score != null ? score + "%" : "--"}</div>
+      </div>
+    `;
+  }).join("");
+  document.getElementById("subjectCards").innerHTML = cardsHtml;
+}
+
+/* ─── Section 3: Skill Gaps ──────────────────────────── */
+function renderSkillGaps() {
+  const gaps = dashboardData.skill_gaps;
+  const container = document.getElementById("gapsContent");
+
+  if (!gaps || gaps.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">\u{1F50D}</div><p>No diagnostic data yet. Complete assessments to see skill gap analysis.</p></div>`;
+    return;
+  }
+
+  let html = `<table class="gap-table"><thead><tr>
+    <th>Topic</th><th>Subject</th><th>Score</th><th>Level</th><th>Recommendation</th>
+  </tr></thead><tbody>`;
+
+  gaps.forEach(g => {
+    const levelClass = getLevelClass(g.level);
+    html += `<tr>
+      <td><strong>${esc(g.topic)}</strong></td>
+      <td>${esc(g.subject)}</td>
+      <td>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div class="score-bar-bg" style="width: 80px;">
+            <div class="score-bar-fill" style="width: ${g.score}%; background: ${getScoreColor(g.score)};"></div>
+          </div>
+          <span>${g.score}%</span>
+        </div>
+      </td>
+      <td><span class="level-badge ${levelClass}">${esc(g.level)}</span></td>
+      <td style="font-size: 13px; color: var(--text-muted);">${esc(g.recommendation)}</td>
+    </tr>`;
+  });
+
+  html += "</tbody></table>";
+  container.innerHTML = html;
+}
+
+/* ─── Section 3.5: Adaptive Learning ────────────────── */
+function renderAdaptive() {
+  const adaptive = dashboardData.adaptive;
+  const container = document.getElementById("adaptiveContent");
+  const planContainer = document.getElementById("parentStudyPlan");
+  if (!adaptive || !container) return;
+
+  const subjects = adaptive.subjects || {};
+  if (Object.keys(subjects).length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🧠</div><p>No learning data yet. Complete diagnostics and practice sessions to see adaptive mastery.</p></div>`;
+    planContainer.innerHTML = '';
+    return;
+  }
+
+  let html = '';
+  const tierColors = {advanced:'#059669', proficient:'#2563EB', developing:'#D97706', needs_work:'#DC2626'};
+  const tierBg = {advanced:'#d1fae5', proficient:'#dbeafe', developing:'#fef3c7', needs_work:'#fee2e2'};
+  const tierLabel = {advanced:'Advanced', proficient:'Proficient', developing:'Developing', needs_work:'Needs Work'};
+
+  for (const [subj, data] of Object.entries(subjects)) {
+    const config = dashboardData.subjects?.[subj] || {};
+    const icon = config.icon || '📚';
+    const name = config.name || subj;
+    const tier = data.overall_tier;
+    html += `<div class="adaptive-subject">
+      <div class="adaptive-subject-hdr">
+        <span>${icon}</span> ${esc(name)}
+        <span style="font-size:0.8rem; color:var(--text-muted); font-weight:400;">${data.overall_score}%</span>
+        <span class="badge-tier" style="background:${tierBg[tier]||'#eee'};color:${tierColors[tier]||'#666'}">${tierLabel[tier]||tier}</span>
+        <span style="font-size:0.7rem; color:var(--text-muted); margin-left:auto;">${data.due_count} due · ${data.weak_count} weak</span>
+      </div>`;
+    const topics = data.topics || {};
+    for (const [topic, tm] of Object.entries(topics)) {
+      const sc = tm.score || 0;
+      const fc = tierColors[tm.tier] || '#888';
+      html += `<div class="adaptive-topic-row">
+        <span class="adaptive-topic-name">${esc(topic)}</span>
+        <div class="adaptive-bar"><div class="adaptive-bar-fill" style="width:${sc}%;background:${fc}"></div></div>
+        <span class="adaptive-score" style="color:${fc}">${Math.round(sc)}%</span>
+        <span class="adaptive-due ${tm.due ? 'due-yes' : 'due-no'}">${tm.due ? '⏰ Due' : '✓ OK'}</span>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  container.innerHTML = html;
+
+  // Study plan
+  const plan = adaptive.study_plan || [];
+  if (plan.length === 0) {
+    planContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted);">No study plan items — all topics are up to date!</p>';
+    return;
+  }
+  planContainer.innerHTML = plan.map(item => {
+    const score = item.mastery?.score || 0;
+    return `<div class="sp-parent-card">
+      <div class="sp-pri sp-pri-${item.priority}"></div>
+      <span style="font-size:1.1rem;">${item.subject_icon}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:0.85rem;">${esc(item.topic)}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);">${esc(item.subject_name)} — ${esc(item.reason)}</div>
+      </div>
+      <span style="font-size:0.75rem;font-weight:600;color:var(--text-muted);">${item.action === 'lesson' ? '📖' : '🏋️'} ${item.action}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ─── Section 3.6: Standards Alignment ───────────────── */
+function renderStandards() {
+  const container = document.getElementById("standardsContent");
+  if (!container) return;
+
+  // Try server data first, then compute client-side
+  let standards = dashboardData.standards;
+  if (!standards || !standards.subjects || Object.keys(standards.subjects).length === 0) {
+    standards = computeStandardsClientSide(dashboardData);
+  }
+
+  if (!standards || !standards.subjects || Object.keys(standards.subjects).length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📏</div><p>No standards data available. Complete diagnostics to see standards alignment.</p></div>`;
+    return;
+  }
+
+  const tierColors = {advanced:'#059669', proficient:'#2563EB', developing:'#D97706', needs_work:'#DC2626', not_assessed:'#9ca3af'};
+  const tierBg = {advanced:'#d1fae5', proficient:'#dbeafe', developing:'#fef3c7', needs_work:'#fee2e2', not_assessed:'#f3f4f6'};
+  const tierLabel = {advanced:'Advanced', proficient:'Proficient', developing:'Developing', needs_work:'Needs Work', not_assessed:'Not Assessed'};
+
+  const subjectIcons = { math: '📐', ela: '📚', science: '🔬', social_studies: '🌍' };
+  const frameworkLabels = { math: 'Common Core', ela: 'Common Core', science: 'NGSS', social_studies: 'State Standards' };
+  const standardsSubjects = ['math', 'ela', 'science', 'social_studies'];
+  const enabledSubjects = instanceConfig?.customization?.enabled_subjects || [];
+  const coveredSubjects = standardsSubjects.filter(s => standards.subjects[s]);
+  const uncoveredSubjects = enabledSubjects.filter(s => !standardsSubjects.includes(s));
+
+  let html = '';
+
+  for (const subj of standardsSubjects) {
+    const data = standards.subjects[subj];
+    if (!data) continue;
+    const icon = subjectIcons[subj] || '📚';
+    const name = data.subject_name || subj;
+    const overallTier = data.overall_tier || 'not_assessed';
+    const fwk = data.framework || frameworkLabels[subj] || '';
+    const fwkShort = fwk.length > 40 ? fwk.substring(0, 37) + '...' : fwk;
+
+    html += `<div class="standards-subject">
+      <div class="standards-subject-hdr">
+        <span>${icon}</span> ${esc(name)} — Grade ${data.grade || '?'}
+        <span class="badge-tier" style="background:${tierBg[overallTier]};color:${tierColors[overallTier]}">${tierLabel[overallTier]}</span>
+        <span style="font-size:0.65rem;color:var(--text-muted);margin-left:auto;">${esc(fwkShort)}</span>
+      </div>
+      <div class="standards-overall">
+        <div class="standards-stat">
+          <div class="standards-stat-value" style="color:${tierColors[overallTier]}">${data.overall_mastery != null ? data.overall_mastery + '%' : '—'}</div>
+          <div class="standards-stat-label">Overall Mastery</div>
+        </div>
+        <div class="standards-stat">
+          <div class="standards-stat-value">${data.assessed_standards || 0}</div>
+          <div class="standards-stat-label">Standards Assessed</div>
+        </div>
+        <div class="standards-stat">
+          <div class="standards-stat-value">${data.total_standards || 0}</div>
+          <div class="standards-stat-label">Total Standards</div>
+        </div>
+        <div class="standards-stat">
+          <div class="standards-stat-value">${data.domains ? data.domains.length : 0}</div>
+          <div class="standards-stat-label">Domains</div>
+        </div>
+      </div>`;
+
+    const domains = data.domains || [];
+    for (const dom of domains) {
+      const domTier = dom.tier || 'not_assessed';
+      const domScore = dom.mastery != null ? dom.mastery : null;
+      const barWidth = domScore != null ? domScore : 0;
+      const domId = `std-detail-${subj}-${dom.code.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+      html += `<div class="standards-domain">
+        <div class="standards-domain-hdr">
+          <span class="standards-domain-code">${esc(dom.code)}</span>
+          <span>${esc(dom.name)}</span>
+          <div class="standards-bar-track">
+            <div class="standards-bar-fill" style="width:${barWidth}%;background:${tierColors[domTier]}"></div>
+          </div>
+          <span style="font-size:0.8rem;font-weight:600;color:${tierColors[domTier]}">${domScore != null ? domScore + '%' : '—'}</span>
+          <span class="badge-tier" style="font-size:0.65rem;padding:1px 6px;background:${tierBg[domTier]};color:${tierColors[domTier]}">${tierLabel[domTier]}</span>
+          <button class="standards-detail-toggle" onclick="toggleStdDetail('${domId}')">
+            ${dom.standards.length} standard${dom.standards.length !== 1 ? 's' : ''} ▾
+          </button>
+        </div>
+        <div class="standards-detail" id="${domId}">`;
+      for (const std of dom.standards) {
+        const sTier = std.tier || 'not_assessed';
+        html += `<div class="standards-std-row">
+          <span class="standards-std-code">${esc(std.code)}</span>
+          <span style="flex:1;">${esc(std.topic)}</span>
+          <span style="font-weight:600;color:${tierColors[sTier]}">${std.mastery != null ? Math.round(std.mastery) + '%' : '—'}</span>
+        </div>`;
+      }
+      html += `</div></div>`;
+    }
+
+    html += '</div>';
+  }
+
+  // Custom/non-standard subjects note
+  if (uncoveredSubjects.length > 0) {
+    const names = uncoveredSubjects.map(s => {
+      const cfg = dashboardData.subjects?.[s] || {};
+      return (cfg.icon || '') + ' ' + (cfg.name || s);
+    }).join(', ');
+    html += `<div class="standards-no-data">
+      ${names} — No standards framework mapped for these subjects.
+    </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function toggleStdDetail(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+/* ─── Growth Tracking & Reassessment ──────────────────── */
+function renderGrowth() {
+  renderReassessmentStatus();
+  renderGrowthCharts();
+}
+
+function renderReassessmentStatus() {
+  const container = document.getElementById("reassessmentStatus");
+  if (!container) return;
+  const ra = dashboardData.reassessment;
+  if (!ra) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const tierColors = {due:'#059669', snoozed:'#D97706', scheduled:'#2563EB', disabled:'#9ca3af'};
+  let icon, title, detail, actionBtns;
+
+  if (ra.due) {
+    icon = '🔔';
+    title = 'Checkpoint Due';
+    const subjNames = ra.subjects.map(s => s.name).join(', ');
+    detail = `Progress checkpoint is ${ra.days_overdue > 0 ? ra.days_overdue + ' day(s) overdue' : 'ready'}. Subjects: ${subjNames}`;
+    actionBtns = `
+      <button onclick="snoozeReassessment(7)" style="background:#D97706;color:white;">Snooze 1 Week</button>
+      <button onclick="triggerReassessmentNow()" style="background:#059669;color:white;">Start Now</button>`;
+  } else if (ra.reason === 'snoozed') {
+    icon = '💤';
+    title = 'Snoozed';
+    const until = new Date(ra.snoozed_until).toLocaleDateString();
+    detail = `Checkpoint snoozed until ${until}.`;
+    actionBtns = `<button onclick="snoozeReassessment(0)" style="background:var(--primary);color:white;">Cancel Snooze</button>`;
+  } else if (ra.reason === 'disabled') {
+    icon = '⏸️';
+    title = 'Checkpoints Disabled';
+    detail = 'Periodic checkpoints are turned off.';
+    actionBtns = `<button onclick="toggleReassessment(true)" style="background:var(--primary);color:white;">Enable</button>`;
+  } else if (ra.reason === 'not_yet') {
+    icon = '📅';
+    title = `Next Checkpoint in ${ra.days_until} Day${ra.days_until !== 1 ? 's' : ''}`;
+    detail = `Scheduled for ${new Date(ra.next_date).toLocaleDateString()}. Interval: every ${ra.interval_weeks} week(s).`;
+    actionBtns = `
+      <button onclick="triggerReassessmentNow()" style="background:var(--primary);color:white;">Start Early</button>
+      <button onclick="showScheduleSettings()" style="background:#f3f4f6;color:var(--text);">⚙ Settings</button>`;
+  } else {
+    icon = '📊';
+    title = 'No Diagnostics Yet';
+    detail = 'Complete a diagnostic first — checkpoints begin after the initial assessment.';
+    actionBtns = '';
+  }
+
+  container.innerHTML = `
+    <div class="growth-status-card">
+      <div class="growth-icon">${icon}</div>
+      <div class="growth-info">
+        <h4>${esc(title)}</h4>
+        <p>${esc(detail)}</p>
+      </div>
+      <div class="growth-actions">${actionBtns}</div>
+    </div>`;
+}
+
+function renderGrowthCharts() {
+  const container = document.getElementById("growthContent");
+  if (!container) return;
+  const growth = dashboardData.growth;
+  if (!growth || !growth.has_history) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📈</div>
+      <p>No growth data yet. After the first checkpoint assessment, you'll see progress charts here.</p></div>`;
+    return;
+  }
+
+  const tierColors = {advanced:'#059669', proficient:'#2563EB', developing:'#D97706', needs_work:'#DC2626', not_assessed:'#9ca3af'};
+  let html = `<p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;">${growth.assessment_count} checkpoint(s) completed</p>`;
+  html += '<div class="growth-chart-row">';
+
+  for (const [subj, data] of Object.entries(growth.growth_by_subject)) {
+    const deltaClass = data.total_growth > 0 ? 'positive' : data.total_growth < 0 ? 'negative' : 'neutral';
+    const deltaSign = data.total_growth > 0 ? '+' : '';
+    html += `<div class="growth-subject-card">
+      <div class="growth-subject-hdr">
+        <span>${data.icon}</span> ${esc(data.name)}
+        <span class="growth-delta ${deltaClass}">${deltaSign}${data.total_growth}%</span>
+        <span class="badge-tier" style="margin-left:auto;font-size:0.65rem;padding:1px 6px;background:${tierColors[data.current_tier] || '#9ca3af'}20;color:${tierColors[data.current_tier] || '#9ca3af'}">${data.current_tier.replace('_', ' ')}</span>
+      </div>
+      <div style="margin-bottom:8px;font-size:0.85rem;">Current: <strong>${data.current_score}%</strong></div>
+      <div class="growth-timeline">`;
+
+    for (const entry of data.timeline) {
+      const date = new Date(entry.date).toLocaleDateString();
+      const label = entry.type === 'initial' ? 'Initial' : 'Checkpoint';
+      const entryDelta = entry.delta != null ? (entry.delta > 0 ? `<span class="growth-delta positive">+${entry.delta}%</span>` : entry.delta < 0 ? `<span class="growth-delta negative">${entry.delta}%</span>` : '') : '';
+      const barColor = tierColors[entry.tier] || '#9ca3af';
+      html += `<div class="growth-timeline-entry">
+        <span style="min-width:70px;color:var(--text-muted);">${date}</span>
+        <span style="min-width:65px;font-weight:500;">${label}</span>
+        <div class="growth-mini-bar"><div class="growth-mini-fill" style="width:${entry.score}%;background:${barColor}"></div></div>
+        <span style="font-weight:600;min-width:35px;">${entry.score}%</span>
+        ${entryDelta}
+      </div>`;
+    }
+
+    // Show level-ups
+    if (data.level_ups > 0) {
+      html += `<div style="margin-top:6px;font-size:0.75rem;color:#059669;">🎉 ${data.level_ups} topic level-up${data.level_ups > 1 ? 's' : ''}</div>`;
+    }
+
+    html += '</div></div>';
+  }
+
+  html += '</div>';
+
+  // Schedule info
+  if (growth.schedule) {
+    const s = growth.schedule;
+    html += `<div class="growth-schedule">
+      <span>📅 Checkpoint interval: <strong>every ${s.interval_weeks} week(s)</strong></span>
+      <span>Status: <strong>${s.enabled ? 'Active' : 'Disabled'}</strong></span>
+      ${s.snoozed_until ? `<span>💤 Snoozed until ${new Date(s.snoozed_until).toLocaleDateString()}</span>` : ''}
+      <button onclick="showScheduleSettings()" style="margin-left:auto;font-size:0.75rem;padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:white;cursor:pointer;">⚙ Settings</button>
+    </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+async function snoozeReassessment(days) {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/reassessment/schedule`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ pin: parentPin, student_id: currentStudentId, snooze_days: days })
+    });
+    if (res.ok) refreshDashboard();
+  } catch(e) { console.error('Snooze failed:', e); }
+}
+
+async function toggleReassessment(enabled) {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/reassessment/schedule`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ pin: parentPin, student_id: currentStudentId, enabled })
+    });
+    if (res.ok) refreshDashboard();
+  } catch(e) { console.error('Toggle failed:', e); }
+}
+
+function triggerReassessmentNow() {
+  // Navigate parent to student view with checkpoint mode (inform them)
+  const sid = document.getElementById("studentSelector").value;
+  const studentName = dashboardData?.student?.name || 'your student';
+  alert(`To start the checkpoint, have ${studentName} log in to the student view. A "Progress Checkpoint" button will appear on their home screen when a checkpoint is due or when you trigger it early.\n\nYou can also force-start by adjusting the interval to make it immediately due.`);
+}
+
+function showScheduleSettings() {
+  const ra = dashboardData.reassessment || {};
+  const growth = dashboardData.growth || {};
+  const schedule = growth.schedule || {};
+  const currentInterval = schedule.interval_weeks || ra.interval_weeks || 2;
+  const enabled = schedule.enabled !== false;
+
+  const html = `<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;" id="scheduleModal" onclick="if(event.target===this)this.remove()">
+    <div style="background:white;border-radius:12px;padding:24px;max-width:400px;width:90%;">
+      <h3 style="margin:0 0 16px;">⚙ Checkpoint Schedule</h3>
+      <label style="display:block;margin-bottom:12px;font-size:0.85rem;">
+        Interval (weeks):
+        <select id="schedInterval" style="margin-left:8px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;">
+          ${[1,2,3,4,6,8,12].map(w => `<option value="${w}" ${w===currentInterval?'selected':''}>${w} week${w>1?'s':''}</option>`).join('')}
+        </select>
+      </label>
+      <label style="display:block;margin-bottom:16px;font-size:0.85rem;">
+        <input type="checkbox" id="schedEnabled" ${enabled?'checked':''} style="margin-right:6px;">
+        Enable periodic checkpoints
+      </label>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="document.getElementById('scheduleModal').remove()" style="padding:6px 14px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;">Cancel</button>
+        <button onclick="saveScheduleSettings()" style="padding:6px 14px;border:none;border-radius:6px;background:var(--primary);color:white;cursor:pointer;">Save</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+async function saveScheduleSettings() {
+  const interval = parseInt(document.getElementById('schedInterval').value);
+  const enabled = document.getElementById('schedEnabled').checked;
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/reassessment/schedule`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ pin: parentPin, student_id: currentStudentId, interval_weeks: interval, enabled })
+    });
+    if (res.ok) {
+      document.getElementById('scheduleModal').remove();
+      refreshDashboard();
+    }
+  } catch(e) { console.error('Save schedule failed:', e); }
+}
+
+function computeStandardsClientSide(data) {
+  // Client-side fallback: compute standards from adaptive/subject data
+  // This mirrors the server's build_standards_report using embedded standards mapping
+  if (!data || !data.adaptive || !data.adaptive.subjects) return null;
+
+  const grade = data.student?.grade || 8;
+  const gradeStr = String(grade);
+
+  const allSubjects = ['math', 'ela', 'science', 'social_studies'];
+  const subjectNames = { math: 'Math', ela: 'ELA', science: 'Science', social_studies: 'Social Studies' };
+  const subjectFrameworks = {
+    math: 'Common Core State Standards',
+    ela: 'Common Core State Standards',
+    science: 'Next Generation Science Standards (NGSS)',
+    social_studies: 'Georgia Standards of Excellence (GSE)'
+  };
+  const subjects = {};
+
+  for (const subj of allSubjects) {
+    const adaptiveSubj = data.adaptive.subjects[subj];
+    if (!adaptiveSubj || !adaptiveSubj.topics) continue;
+
+    const topics = adaptiveSubj.topics;
+    const topicEntries = Object.entries(topics);
+    if (topicEntries.length === 0) continue;
+
+    // Group topics into domains based on common keywords
+    const domainMap = {};
+    let totalScore = 0;
+    let assessedCount = 0;
+
+    for (const [topicName, topicData] of topicEntries) {
+      const score = topicData.score || 0;
+      const tier = topicData.tier || 'not_assessed';
+      const domainCode = guessStandardsDomain(subj, topicName, grade);
+      const domainName = guessDomainName(subj, topicName);
+
+      if (!domainMap[domainCode]) {
+        domainMap[domainCode] = { code: domainCode, name: domainName, standards: [], scores: [] };
+      }
+
+      // Estimate ~3-5 standards per topic
+      const stdCodes = estimateStdCodes(domainCode, domainMap[domainCode].standards.length);
+      for (const code of stdCodes) {
+        domainMap[domainCode].standards.push({
+          code: code, topic: topicName, mastery: score > 0 ? score : null, tier: score > 0 ? tier : 'not_assessed'
+        });
+        if (score > 0) {
+          domainMap[domainCode].scores.push(score);
+          totalScore += score;
+          assessedCount++;
+        }
+      }
+    }
+
+    const domains = Object.values(domainMap).map(d => {
+      const dm = d.scores.length > 0 ? Math.round(d.scores.reduce((a,b)=>a+b,0)/d.scores.length * 10)/10 : null;
+      return {
+        code: d.code, name: d.name, mastery: dm,
+        tier: dm != null ? scoreTier(dm) : 'not_assessed',
+        standards_count: d.standards.length,
+        assessed_count: d.scores.length,
+        topics: [...new Set(d.standards.map(s=>s.topic))],
+        standards: d.standards
+      };
+    }).sort((a,b) => (a.mastery===null)-(b.mastery===null) || (a.mastery||0)-(b.mastery||0));
+
+    const overall = assessedCount > 0 ? Math.round(totalScore/assessedCount*10)/10 : null;
+    subjects[subj] = {
+      subject_name: subjectNames[subj] || subj,
+      framework: subjectFrameworks[subj] || '',
+      grade: grade,
+      domains: domains,
+      total_standards: domains.reduce((s,d)=>s+d.standards_count,0),
+      assessed_standards: domains.reduce((s,d)=>s+d.assessed_count,0),
+      overall_mastery: overall,
+      overall_tier: overall != null ? scoreTier(overall) : 'not_assessed'
+    };
+  }
+
+  const frameworks = [...new Set(Object.values(subjects).map(s => s.framework).filter(Boolean))];
+  return { subjects, grade, frameworks };
+}
+
+function scoreTier(score) {
+  if (score == null) return 'not_assessed';
+  if (score < 40) return 'needs_work';
+  if (score < 65) return 'developing';
+  if (score < 85) return 'proficient';
+  return 'advanced';
+}
+
+function guessStandardsDomain(subj, topic, grade) {
+  const g = grade <= 8 ? String(grade) : 'HS';
+  if (subj === 'math') {
+    const t = topic.toLowerCase();
+    if (t.includes('equation') || t.includes('expression') || t.includes('exponent') || t.includes('scientific')) return g <= 8 ? `${g}.EE` : 'HSA-REI';
+    if (t.includes('function') || t.includes('graph')) return g <= 8 ? `${g}.F` : 'HSF-IF';
+    if (t.includes('geometry') || t.includes('transform') || t.includes('pythagorean') || t.includes('triangle') || t.includes('circle') || t.includes('congruence') || t.includes('similarity') || t.includes('proof') || t.includes('surface') || t.includes('volume') || t.includes('area')) return g <= 8 ? `${g}.G` : 'HSG-CO';
+    if (t.includes('statistic') || t.includes('probability')) return g <= 8 ? `${g}.SP` : 'HSS-ID';
+    if (t.includes('ratio') || t.includes('proportion')) return `${g}.RP`;
+    if (t.includes('number') || t.includes('decimal') || t.includes('fraction') || t.includes('rational')) return `${g}.NS`;
+    if (t.includes('polynomial') || t.includes('factor')) return 'HSA-APR';
+    if (t.includes('trig')) return 'HSF-TF';
+    if (t.includes('limit') || t.includes('derivative') || t.includes('integral') || t.includes('calculus')) return 'HSF-IF';
+    if (t.includes('vector') || t.includes('matrix') || t.includes('matrices')) return 'HSN-VM';
+    if (t.includes('sequence') || t.includes('series')) return 'HSF-BF';
+    if (t.includes('conic')) return 'HSG-GPE';
+    if (t.includes('logarith') || t.includes('exponential')) return 'HSF-LE';
+    return g <= 8 ? `${g}.EE` : 'HSA-REI';
+  }
+  if (subj === 'ela') {
+    const t = topic.toLowerCase();
+    if (t.includes('reading') || t.includes('literary') || t.includes('comprehension') || t.includes('literature') || t.includes('novel') || t.includes('poetry') || t.includes('drama') || t.includes('shakespeare') || t.includes('satire')) return g <= 8 ? `RL.${g}` : 'RL.9-10';
+    if (t.includes('writing') || t.includes('essay') || t.includes('research') || t.includes('argument') || t.includes('narrative')) return g <= 8 ? `W.${g}` : 'W.9-10';
+    if (t.includes('grammar') || t.includes('vocabulary') || t.includes('language') || t.includes('diction') || t.includes('rhetoric') || t.includes('style')) return g <= 8 ? `L.${g}` : 'L.9-10';
+    if (t.includes('speaking') || t.includes('listening') || t.includes('media') || t.includes('persuasive')) return g <= 8 ? `SL.${g}` : 'SL.9-10';
+    if (t.includes('informational') || t.includes('text analysis')) return g <= 8 ? `RI.${g}` : 'RI.9-10';
+    return g <= 8 ? `RL.${g}` : 'RL.9-10';
+  }
+  if (subj === 'science') {
+    const t = topic.toLowerCase();
+    const ms = grade <= 8;
+    if (t.includes('force') || t.includes('motion') || t.includes('energy') || t.includes('wave') || t.includes('newton')) return ms ? 'MS-PS' : 'HS-PS';
+    if (t.includes('cell') || t.includes('genetic') || t.includes('dna') || t.includes('evolution') || t.includes('ecosystem') || t.includes('organism') || t.includes('heredit') || t.includes('photosynthesis') || t.includes('biodiversity')) return ms ? 'MS-LS' : 'HS-LS';
+    if (t.includes('earth') || t.includes('weather') || t.includes('climate') || t.includes('rock') || t.includes('plate') || t.includes('space') || t.includes('solar') || t.includes('atmosphere') || t.includes('water cycle') || t.includes('geolog')) return ms ? 'MS-ESS' : 'HS-ESS';
+    if (t.includes('chemical') || t.includes('atom') || t.includes('element') || t.includes('reaction') || t.includes('molecule') || t.includes('matter') || t.includes('periodic')) return ms ? 'MS-PS' : 'HS-PS';
+    if (t.includes('engineer') || t.includes('design') || t.includes('technolog')) return ms ? 'MS-ETS' : 'HS-ETS';
+    return ms ? 'MS-PS' : 'HS-PS';
+  }
+  if (subj === 'social_studies') {
+    const t = topic.toLowerCase();
+    const gp = grade <= 8 ? `SS${grade}` : 'SS';
+    if (t.includes('geography') || t.includes('map') || t.includes('region') || t.includes('location')) return `${gp}G1`;
+    if (t.includes('government') || t.includes('constitution') || t.includes('citizen') || t.includes('politic') || t.includes('civil right') || t.includes('judicial')) return grade <= 8 ? `${gp}CG1` : 'SSCG1';
+    if (t.includes('econom') || t.includes('trade') || t.includes('supply') || t.includes('demand') || t.includes('finance')) return grade <= 8 ? `${gp}E1` : 'SSEIN1';
+    if (t.includes('war') || t.includes('revolution') || t.includes('civil') || t.includes('reconstruction') || t.includes('colonial') || t.includes('independence') || t.includes('progressive') || t.includes('depression') || t.includes('cold war') || t.includes('modern')) return grade <= 8 ? `${gp}H5` : 'SSUSH1';
+    if (t.includes('ancient') || t.includes('civiliz') || t.includes('rome') || t.includes('greece') || t.includes('medieval') || t.includes('renaissance') || t.includes('explor') || t.includes('imperial')) return grade <= 8 ? `${gp}H1` : 'SSWH1';
+    if (t.includes('religion') || t.includes('culture')) return `${gp}H3`;
+    return grade <= 8 ? `${gp}H1` : 'SSUSH1';
+  }
+  return 'Unknown';
+}
+
+function guessDomainName(subj, topic) {
+  if (subj === 'math') {
+    const t = topic.toLowerCase();
+    if (t.includes('equation') || t.includes('expression') || t.includes('exponent') || t.includes('scientific')) return 'Expressions & Equations';
+    if (t.includes('function') || t.includes('graph')) return 'Functions';
+    if (t.includes('geometry') || t.includes('transform') || t.includes('pythagorean') || t.includes('triangle') || t.includes('congruence') || t.includes('proof') || t.includes('circle') || t.includes('surface') || t.includes('volume') || t.includes('area') || t.includes('similarity')) return 'Geometry';
+    if (t.includes('statistic') || t.includes('probability')) return 'Statistics & Probability';
+    if (t.includes('ratio') || t.includes('proportion')) return 'Ratios & Proportional Relationships';
+    if (t.includes('number') || t.includes('decimal') || t.includes('fraction') || t.includes('rational')) return 'The Number System';
+    if (t.includes('polynomial') || t.includes('factor')) return 'Algebra';
+    if (t.includes('trig')) return 'Trigonometric Functions';
+    if (t.includes('logarith') || t.includes('exponential')) return 'Exponential & Logarithmic Functions';
+    if (t.includes('vector') || t.includes('matrix')) return 'Number & Quantity';
+    if (t.includes('sequence') || t.includes('series')) return 'Building Functions';
+    if (t.includes('conic')) return 'Expressing Geometric Properties';
+    return 'Algebra';
+  }
+  if (subj === 'ela') {
+    const t = topic.toLowerCase();
+    if (t.includes('reading') || t.includes('literary') || t.includes('comprehension') || t.includes('literature') || t.includes('novel') || t.includes('poetry') || t.includes('drama')) return 'Reading: Literature';
+    if (t.includes('writing') || t.includes('essay') || t.includes('research') || t.includes('argument') || t.includes('narrative')) return 'Writing';
+    if (t.includes('grammar') || t.includes('vocabulary') || t.includes('language') || t.includes('diction') || t.includes('style')) return 'Language';
+    if (t.includes('speaking') || t.includes('listening') || t.includes('media')) return 'Speaking & Listening';
+    if (t.includes('informational')) return 'Reading: Informational Text';
+    return 'Reading: Literature';
+  }
+  if (subj === 'science') {
+    const t = topic.toLowerCase();
+    if (t.includes('force') || t.includes('motion') || t.includes('energy') || t.includes('wave') || t.includes('newton')) return 'Physical Science';
+    if (t.includes('chemical') || t.includes('atom') || t.includes('element') || t.includes('reaction') || t.includes('molecule') || t.includes('matter') || t.includes('periodic')) return 'Physical Science';
+    if (t.includes('cell') || t.includes('genetic') || t.includes('dna') || t.includes('evolution') || t.includes('ecosystem') || t.includes('organism') || t.includes('heredit') || t.includes('photosynthesis') || t.includes('biodiversity')) return 'Life Science';
+    if (t.includes('earth') || t.includes('weather') || t.includes('climate') || t.includes('rock') || t.includes('plate') || t.includes('space') || t.includes('solar') || t.includes('atmosphere') || t.includes('geolog')) return 'Earth & Space Science';
+    if (t.includes('engineer') || t.includes('design') || t.includes('technolog')) return 'Engineering & Technology';
+    return 'Physical Science';
+  }
+  if (subj === 'social_studies') {
+    const t = topic.toLowerCase();
+    if (t.includes('geography') || t.includes('map') || t.includes('region') || t.includes('location')) return 'Geography';
+    if (t.includes('government') || t.includes('constitution') || t.includes('citizen') || t.includes('politic') || t.includes('civil right') || t.includes('judicial')) return 'Civics & Government';
+    if (t.includes('econom') || t.includes('trade') || t.includes('supply') || t.includes('demand') || t.includes('finance')) return 'Economics';
+    if (t.includes('war') || t.includes('revolution') || t.includes('civil') || t.includes('reconstruction') || t.includes('colonial') || t.includes('independence') || t.includes('progressive') || t.includes('depression') || t.includes('cold war') || t.includes('modern')) return 'History';
+    if (t.includes('ancient') || t.includes('civiliz') || t.includes('rome') || t.includes('greece') || t.includes('medieval') || t.includes('renaissance') || t.includes('explor') || t.includes('imperial')) return 'History';
+    if (t.includes('religion') || t.includes('culture')) return 'History / Culture';
+    return 'History';
+  }
+  return 'Unknown';
+}
+
+function estimateStdCodes(domainCode, existingCount) {
+  // Generate estimated standard codes
+  const cluster = String.fromCharCode(65 + Math.floor(existingCount / 3)); // A, B, C...
+  const num = (existingCount % 3) + 1;
+  return [`${domainCode}.${cluster}.${num}`, `${domainCode}.${cluster}.${num+1}`, `${domainCode}.${cluster}.${num+2}`];
+}
+
+/* ─── Section 4: Session History ─────────────────────── */
+function renderHistory() {
+  allHistory = dashboardData.history || [];
+  filterHistory();
+}
+
+function filterHistory() {
+  const subjFilter = document.getElementById("filterSubject").value;
+  const typeFilter = document.getElementById("filterType").value;
+
+  let filtered = allHistory;
+  if (subjFilter !== "all") filtered = filtered.filter(h => h.subject === subjFilter);
+  if (typeFilter !== "all") filtered = filtered.filter(h => h.type === typeFilter);
+
+  const container = document.getElementById("historyContent");
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">\u{1F4DD}</div><p>No sessions found${subjFilter !== "all" || typeFilter !== "all" ? " with current filters" : ""}. Start learning to build history!</p></div>`;
+    return;
+  }
+
+  let html = `<table class="history-table"><thead><tr>
+    <th>Date</th><th>Subject</th><th>Type</th><th>Topic</th><th>Score</th><th>Duration</th>
+  </tr></thead><tbody>`;
+
+  filtered.forEach(h => {
+    const typeClass = h.type === "Lesson" ? "type-lesson" : "type-practice";
+    const scoreDisplay = h.score != null ? h.score + "%" : (h.complete ? "\u2713" : "...");
+    const durationDisplay = h.duration != null ? formatDuration(h.duration) : "--";
+    html += `<tr>
+      <td>${h.date || "--"}</td>
+      <td>${esc(h.subject)}</td>
+      <td><span class="type-badge ${typeClass}">${h.type}</span></td>
+      <td>${esc(h.topic || "")}</td>
+      <td>${scoreDisplay}</td>
+      <td>${durationDisplay}</td>
+    </tr>`;
+  });
+
+  html += "</tbody></table>";
+  container.innerHTML = html;
+}
+
+/* ─── Section 5: Progress & Badges ───────────────────── */
+function renderProgress() {
+  const prog = dashboardData.progression;
+  if (!prog) return;
+
+  // Bar chart of subject scores
+  const subjects = prog.subjects || {};
+  const keys = Object.keys(subjects);
+  const labels = keys.map(k => subjects[k].name);
+  const scores = keys.map(k => subjects[k].score ?? 0);
+  const colors = keys.map(k => subjects[k].color || "#999");
+  const hasData = scores.some(s => s > 0);
+
+  if (charts.bar) charts.bar.destroy();
+  const ctx = document.getElementById("barChart").getContext("2d");
+
+  if (hasData) {
+    charts.bar = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{ label: "Mastery %", data: scores, backgroundColor: colors.map(c => c + "CC"), borderColor: colors, borderWidth: 1 }],
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true, max: 100, ticks: { stepSize: 25 } } },
+        plugins: { legend: { display: false } },
+      },
+    });
+  } else {
+    charts.bar = new Chart(ctx, {
+      type: "bar",
+      data: { labels: labels, datasets: [{ data: [0,0,0,0,0], backgroundColor: "#e5e7eb" }] },
+      options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } },
+    });
+  }
+
+  // Badges timeline
+  const badges = prog.badges_timeline || [];
+  const badgesDiv = document.getElementById("badgesTimeline");
+  if (badges.length === 0) {
+    badgesDiv.innerHTML = `<div class="empty-state"><div class="empty-icon">\u{1F3C6}</div><p>No badges earned yet. Complete diagnostics, lessons, and practice to unlock badges!</p></div>`;
+    return;
+  }
+
+  badgesDiv.innerHTML = badges.map(b => {
+    const date = b.earned_at ? new Date(b.earned_at).toLocaleDateString() : "";
+    return `
+      <div class="badge-entry">
+        <div class="badge-icon-lg">${b.icon}</div>
+        <div class="badge-details">
+          <div class="badge-name">${esc(b.name)}</div>
+          <div class="badge-desc">${esc(b.desc)}</div>
+        </div>
+        <div class="badge-date">${date}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ─── Tab Switching ─────────────────────────────────── */
+function switchTab(tabName) {
+  document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+  document.getElementById("tab-" + tabName).classList.add("active");
+  event.target.classList.add("active");
+
+  // Load tab-specific data
+  if (tabName === "analytics" && dashboardData) { renderGrowth(); renderAdaptive(); renderStandards(); }
+  if (tabName === "diagnostics" && currentStudentId) loadDiagnostics();
+  if (tabName === "feedback") loadFeedback();
+  if (tabName === "customization" && instanceConfig) renderCustomization();
+  if (tabName === "settings") loadSettings();
+  if (tabName === "invites") loadInvites();
+  if (tabName === "safety") loadSafetyTab();
+}
+
+/* ─── Feature 9: Diagnostics Tab ────────────────────── */
+async function loadDiagnostics() {
+  if (!currentStudentId) return;
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/diagnostic/status/${currentStudentId}?pin=${encodeURIComponent(parentPin)}`);
+    const data = await res.json();
+    renderDiagnostics(data.diagnostics || {});
+  } catch (err) {
+    console.error("Failed to load diagnostics:", err);
+  }
+}
+
+function renderDiagnostics(diagnostics) {
+  const grid = document.getElementById("diagGrid");
+  let html = "";
+  for (const [subj, info] of Object.entries(diagnostics)) {
+    const icon = info.icon || "📖";
+    const name = info.name || subj;
+    let statusHtml = "";
+    let actionsHtml = "";
+
+    if (info.status === "completed") {
+      const scoreClass = getScoreClass(info.score);
+      statusHtml = `<div class="diag-score ${scoreClass}">${info.score}%</div>
+        <div class="diag-status">${info.level || "Completed"}</div>`;
+      actionsHtml = `
+        <button class="diag-btn diag-btn-start" onclick="scheduleDiagnostic('${subj}')">🔄 Re-run</button>
+        <button class="diag-btn diag-btn-delete" onclick="confirmDeleteDiagnostic('${subj}', '${esc(name)}')">🗑️ Delete</button>`;
+    } else if (info.status === "pending") {
+      statusHtml = `<div class="diag-status" style="color: var(--warning); font-weight: 600;">⏳ Scheduled</div>`;
+      actionsHtml = `<button class="diag-btn diag-btn-cancel" onclick="cancelDiagnostic('${subj}')">Cancel</button>`;
+    } else {
+      statusHtml = `<div class="diag-status">Not yet taken</div>`;
+      actionsHtml = `<button class="diag-btn diag-btn-start" onclick="scheduleDiagnostic('${subj}')">▶️ Start Diagnostic</button>`;
+    }
+
+    html += `<div class="diag-card">
+      <div class="subject-icon">${icon}</div>
+      <div class="subject-name">${name}</div>
+      ${statusHtml}
+      <div>${actionsHtml}</div>
+    </div>`;
+  }
+  grid.innerHTML = html || '<p style="color: var(--text-muted);">No subjects configured.</p>';
+}
+
+async function scheduleDiagnostic(subject) {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/diagnostic/schedule/${currentStudentId}/${subject}`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({pin: parentPin}),
+    });
+    if (res.ok) loadDiagnostics();
+  } catch (err) { console.error(err); }
+}
+
+async function cancelDiagnostic(subject) {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/diagnostic/cancel/${currentStudentId}/${subject}`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({pin: parentPin}),
+    });
+    if (res.ok) loadDiagnostics();
+  } catch (err) { console.error(err); }
+}
+
+function confirmDeleteDiagnostic(subject, name) {
+  showConfirmModal(
+    "Delete Diagnostic Results",
+    `Are you sure you want to delete ${name} diagnostic results for this student? This cannot be undone.`,
+    async () => {
+      try {
+        const res = await fetch(`/api/instance/${instanceId}/parent/diagnostic/delete/${currentStudentId}/${subject}`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({pin: parentPin}),
+        });
+        if (res.ok) loadDiagnostics();
+      } catch (err) { console.error(err); }
+    }
+  );
+}
+
+/* ─── Feature 8: Customization Tab ──────────────────── */
+function renderCustomization() {
+  if (!instanceConfig) return;
+  const cust = instanceConfig.customization || {};
+
+  // Subject toggles
+  const enabled = cust.enabled_subjects || [];
+  const custom = cust.custom_subjects || {};
+  const toggles = document.getElementById("subjectToggles");
+  let html = "";
+
+  // Master subjects
+  const masterSubjects = ["math", "science", "ela", "social_studies", "latin"];
+  const masterNames = {math: "📐 Math", science: "🔬 Science", ela: "📚 ELA", social_studies: "🌍 Social Studies", latin: "🏛️ Latin"};
+  masterSubjects.forEach(key => {
+    const checked = enabled.includes(key) ? "checked" : "";
+    html += `<div class="subject-toggle">
+      <label for="toggle-${key}">${masterNames[key] || key}</label>
+      <input type="checkbox" id="toggle-${key}" data-subject="${key}" ${checked} onchange="toggleSubject('${key}', this.checked)">
+    </div>`;
+  });
+  toggles.innerHTML = html;
+
+  // Custom subjects list
+  const customList = document.getElementById("customSubjectsList");
+  let cHtml = "";
+  for (const [key, subj] of Object.entries(custom)) {
+    cHtml += `<div class="subject-toggle">
+      <label>${subj.icon} ${subj.name} <span style="color: var(--text-muted); font-size: 12px;">(custom • ${subj.topics.length} topics)</span></label>
+      <button class="diag-btn diag-btn-delete" onclick="deleteCustomSubject('${key}')" style="font-size: 12px;">Remove</button>
+    </div>`;
+  }
+  customList.innerHTML = cHtml || '<p style="color: var(--text-muted); font-size: 13px;">No custom subjects yet.</p>';
+
+  // Branding
+  const branding = cust.branding || {};
+  document.getElementById("brandTitle").value = branding.app_title || "Atlas";
+  document.getElementById("brandColor").value = branding.primary_color || "#4F46E5";
+
+  // Grade
+  document.getElementById("configGrade").value = cust.default_grade || 8;
+
+  // Feature flags
+  const flags = cust.feature_flags || {};
+  document.getElementById("flagDiag").checked = flags.diagnostics_enabled !== false;
+  document.getElementById("flagLessons").checked = flags.lessons_enabled !== false;
+  document.getElementById("flagPractice").checked = flags.practice_enabled !== false;
+
+  // Per-student: Socratic mode
+  renderSocraticToggle();
+}
+
+async function toggleSubject(key, enabled) {
+  if (!instanceConfig) return;
+  const cust = instanceConfig.customization;
+  if (enabled && !cust.enabled_subjects.includes(key)) {
+    cust.enabled_subjects.push(key);
+  } else if (!enabled) {
+    cust.enabled_subjects = cust.enabled_subjects.filter(s => s !== key);
+  }
+  // Save immediately
+  await saveInstanceConfig();
+}
+
+function toggleCustomSubjectForm() {
+  const form = document.getElementById("customSubjectForm");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+  customTopics = [];
+  renderCustomTopics();
+}
+
+function addCustomTopic() {
+  const input = document.getElementById("csTopicInput");
+  const topic = input.value.trim();
+  if (topic && !customTopics.includes(topic)) {
+    customTopics.push(topic);
+    renderCustomTopics();
+  }
+  input.value = "";
+}
+
+function removeCustomTopic(idx) {
+  customTopics.splice(idx, 1);
+  renderCustomTopics();
+}
+
+function renderCustomTopics() {
+  const list = document.getElementById("csTopicsList");
+  list.innerHTML = customTopics.map((t, i) =>
+    `<span class="custom-tag">${esc(t)} <span class="remove" onclick="removeCustomTopic(${i})">×</span></span>`
+  ).join("");
+}
+
+async function saveCustomSubject() {
+  const name = document.getElementById("csName").value.trim();
+  let key = document.getElementById("csKey").value.trim();
+  if (!key) key = name.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+  const icon = document.getElementById("csIcon").value.trim() || "📖";
+  const color = document.getElementById("csColor").value;
+
+  if (!name || customTopics.length < 3) {
+    alert("Please provide a name and at least 3 topics.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/subjects/custom`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({pin: parentPin, key, name, icon, color, topics: customTopics}),
+    });
+    const data = await res.json();
+    if (data.error) { alert(data.error); return; }
+    // Refresh config
+    const cfgRes = await fetch(`/api/instance/${instanceId}?pin=${encodeURIComponent(parentPin)}`);
+    if (cfgRes.ok) instanceConfig = (await cfgRes.json()).instance;
+    renderCustomization();
+    toggleCustomSubjectForm();
+  } catch (err) { console.error(err); }
+}
+
+async function deleteCustomSubject(key) {
+  if (!confirm(`Remove custom subject "${key}"?`)) return;
+  try {
+    await fetch(`/api/instance/${instanceId}/subjects/custom/${key}?pin=${encodeURIComponent(parentPin)}`, {method: "DELETE"});
+    const cfgRes = await fetch(`/api/instance/${instanceId}?pin=${encodeURIComponent(parentPin)}`);
+    if (cfgRes.ok) instanceConfig = (await cfgRes.json()).instance;
+    renderCustomization();
+  } catch (err) { console.error(err); }
+}
+
+async function saveInstanceConfig() {
+  if (!instanceConfig) return;
+  const cust = instanceConfig.customization;
+  cust.branding = {
+    app_title: document.getElementById("brandTitle").value.trim() || "Atlas",
+    primary_color: document.getElementById("brandColor").value,
+  };
+  cust.default_grade = parseInt(document.getElementById("configGrade").value) || 8;
+  cust.feature_flags = {
+    diagnostics_enabled: document.getElementById("flagDiag").checked,
+    lessons_enabled: document.getElementById("flagLessons").checked,
+    practice_enabled: document.getElementById("flagPractice").checked,
+  };
+
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/config`, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({pin: parentPin, customization: cust}),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      instanceConfig = data.config;
+      const status = document.getElementById("configSaveStatus");
+      status.textContent = "✅ Saved!";
+      setTimeout(() => status.textContent = "", 3000);
+    }
+  } catch (err) { console.error(err); }
+}
+
+/* ─── Feature 18: Socratic Mode Toggle ────────────────── */
+function renderSocraticToggle() {
+  if (!dashboardData || !dashboardData.student) return;
+  const prefs = dashboardData.student.preferences || {};
+  // Default to true if not explicitly set
+  const socraticOn = prefs.socratic_mode !== false;
+  document.getElementById("flagSocratic").checked = socraticOn;
+  document.getElementById("socraticStudentName").textContent = dashboardData.student.name || "Unknown";
+}
+
+async function toggleSocraticMode(enabled) {
+  if (!currentStudentId || !instanceId) return;
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/student/preferences`, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        pin: parentPin,
+        student_id: currentStudentId,
+        preferences: { socratic_mode: enabled },
+      }),
+    });
+    const data = await res.json();
+    if (data.error) { alert(data.error); return; }
+    // Update local dashboard data
+    if (dashboardData && dashboardData.student) {
+      dashboardData.student.preferences = data.preferences;
+    }
+    const status = document.getElementById("socraticSaveStatus");
+    status.textContent = enabled ? "✅ Socratic mode on" : "✅ Socratic mode off";
+    setTimeout(() => status.textContent = "", 3000);
+  } catch (err) { console.error(err); }
+}
+
+/* ─── Feature 10: Feedback Tab ──────────────────────── */
+async function loadFeedback() {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/feedback?pin=${encodeURIComponent(parentPin)}`);
+    const data = await res.json();
+    allFeedback = data.feedback || [];
+    renderFeedbackList(allFeedback);
+  } catch (err) { console.error(err); }
+}
+
+function filterFeedback(status, btn) {
+  document.querySelectorAll(".fb-tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  const filtered = status === "all" ? allFeedback : allFeedback.filter(f => f.status === status);
+  renderFeedbackList(filtered);
+}
+
+function renderFeedbackList(items) {
+  const container = document.getElementById("feedbackList");
+  if (!items.length) {
+    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 24px;">No feedback items found.</p>';
+    return;
+  }
+
+  container.innerHTML = items.map(f => {
+    const typeClass = `fb-type-${f.type === "bug_report" ? "bug" : f.type === "feature_request" ? "feature" : f.type === "content_issue" ? "content" : "general"}`;
+    const typeLabel = f.type === "bug_report" ? "🐛 Bug" : f.type === "feature_request" ? "⭐ Feature" : f.type === "content_issue" ? "📖 Content" : "💬 General";
+    const statusClass = `fb-status-${f.status}`;
+    const statusLabel = f.status.charAt(0).toUpperCase() + f.status.slice(1);
+    const date = f.submitted_at ? new Date(f.submitted_at).toLocaleDateString() : "";
+    const submitter = f.submitted_by === "parent" ? "Parent" : "Student";
+
+    let actionsHtml = "";
+    if (f.status === "pending") {
+      actionsHtml = `
+        <button class="fb-action-btn fb-approve" onclick="actionFeedback('${f.feedback_id}', 'approve')">✅ Approve</button>
+        <button class="fb-action-btn fb-decline" onclick="actionFeedback('${f.feedback_id}', 'decline')">❌ Decline</button>`;
+    } else if (f.status === "approved" && f.scope !== "platform") {
+      actionsHtml = `<button class="fb-action-btn fb-promote" onclick="actionFeedback('${f.feedback_id}', 'promote')">🚀 Promote to Platform</button>`;
+    }
+
+    return `<div class="feedback-item">
+      <div class="fb-header">
+        <div>
+          <span class="fb-type-badge ${typeClass}">${typeLabel}</span>
+          <span class="fb-status-badge ${statusClass}">${statusLabel}</span>
+          ${f.scope === "platform" ? '<span class="fb-status-badge fb-status-promoted">🌐 Platform</span>' : ""}
+        </div>
+        <div class="fb-meta">${submitter} • ${date}</div>
+      </div>
+      <div class="fb-title">${esc(f.title)}</div>
+      <div class="fb-content">${esc(f.content)}</div>
+      <div>${actionsHtml}</div>
+    </div>`;
+  }).join("");
+}
+
+async function actionFeedback(feedbackId, action) {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/feedback/${feedbackId}`, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({pin: parentPin, action}),
+    });
+    if (res.ok) loadFeedback();
+  } catch (err) { console.error(err); }
+}
+
+async function submitParentFeedback() {
+  const type = document.getElementById("parentFbType").value;
+  const title = document.getElementById("parentFbTitle").value.trim();
+  const content = document.getElementById("parentFbContent").value.trim();
+  if (!title) { alert("Please enter a title."); return; }
+
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/feedback`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({submitted_by: "parent", feedback_type: type, title, content}),
+    });
+    if (res.ok) {
+      document.getElementById("parentFbTitle").value = "";
+      document.getElementById("parentFbContent").value = "";
+      const status = document.getElementById("fbSubmitStatus");
+      status.textContent = "✅ Feedback submitted!";
+      setTimeout(() => status.textContent = "", 3000);
+      loadFeedback();
+    }
+  } catch (err) { console.error(err); }
+}
+
+/* ─── Confirmation Modal ────────────────────────────── */
+function showConfirmModal(title, message, onConfirm) {
+  document.getElementById("confirmTitle").textContent = title;
+  document.getElementById("confirmMessage").textContent = message;
+  pendingConfirmAction = onConfirm;
+  document.getElementById("confirmModal").classList.add("open");
+}
+
+function closeConfirmModal() {
+  document.getElementById("confirmModal").classList.remove("open");
+  pendingConfirmAction = null;
+}
+
+function confirmAction() {
+  if (pendingConfirmAction) pendingConfirmAction();
+  closeConfirmModal();
+}
+
+/* ─── Utility Functions ──────────────────────────────── */
+function getScoreClass(score) {
+  if (score == null) return "score-none";
+  if (score >= 85) return "score-advanced";
+  if (score >= 65) return "score-proficient";
+  if (score >= 40) return "score-developing";
+  return "score-needs-work";
+}
+
+function getLevelClass(level) {
+  if (!level) return "";
+  const l = level.toLowerCase();
+  if (l === "advanced") return "level-advanced";
+  if (l === "proficient") return "level-proficient";
+  if (l === "developing") return "level-developing";
+  return "level-needs-work";
+}
+
+function getScoreColor(score) {
+  if (score >= 85) return "var(--advanced)";
+  if (score >= 65) return "var(--proficient)";
+  if (score >= 40) return "var(--developing)";
+  return "var(--needs-work)";
+}
+
+function formatDuration(minutes) {
+  if (minutes == null || minutes <= 0) return "--";
+  if (minutes < 1) return "<1m";
+  if (minutes < 60) return Math.round(minutes) + "m";
+  const h = Math.floor(minutes / 60);
+  const m = Math.round(minutes % 60);
+  return h + "h " + (m > 0 ? m + "m" : "");
+}
+
+function esc(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+/* ─── Settings Tab ────────────────────────────────────── */
+let addStudentAvatar = "🎓";
+function pickAddAvatar(btn, emoji) {
+  addStudentAvatar = emoji;
+  document.querySelectorAll("#addStudentAvatarPicker .avatar-pick").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+async function addStudent() {
+  const name = document.getElementById("addStudentName").value.trim();
+  const pin = document.getElementById("addStudentPin").value.trim();
+  const statusEl = document.getElementById("addStudentStatus");
+  statusEl.textContent = "";
+
+  if (!name) { statusEl.textContent = "❌ Name is required"; statusEl.style.color = "#dc2626"; return; }
+  if (pin.length !== 4 || !/^\d{4}$/.test(pin)) { statusEl.textContent = "❌ PIN must be 4 digits"; statusEl.style.color = "#dc2626"; return; }
+
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/add-student`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ pin: parentPin, name, student_pin: pin, avatar: addStudentAvatar })
+    });
+    const data = await res.json();
+    if (data.error) { statusEl.textContent = "❌ " + data.error; statusEl.style.color = "#dc2626"; return; }
+    statusEl.textContent = `✅ ${data.name} added!`;
+    statusEl.style.color = "#16a34a";
+    document.getElementById("addStudentName").value = "";
+    document.getElementById("addStudentPin").value = "";
+    loadSettings(); // refresh the student PIN table
+    loadStudents(); // refresh the student selector dropdown
+  } catch (err) {
+    statusEl.textContent = "❌ " + err.message;
+    statusEl.style.color = "#dc2626";
+  }
+}
+
+async function loadSettings() {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/students/with-pins?pin=${encodeURIComponent(parentPin)}`);
+    const data = await res.json();
+    renderStudentPinTable(data.students || []);
+    // Feature 57: Load conversation modes for each student
+    renderConversationModeTable(data.students || []);
+  } catch (err) {
+    console.error("Failed to load settings:", err);
+  }
+  // Feature 58: Load complexity tiers
+  loadComplexityTiers();
+}
+
+function renderStudentPinTable(students) {
+  const container = document.getElementById("studentPinTable");
+  if (!students.length) {
+    container.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">No students in this family yet.</p>';
+    return;
+  }
+  let html = `<table class="pin-table">
+    <thead><tr><th>Student</th><th>PIN</th><th>Actions</th></tr></thead>
+    <tbody>`;
+  for (const s of students) {
+    html += `<tr class="student-row" id="pin-row-${s.student_id}">
+      <td>${s.avatar || "🎓"} ${esc(s.name)}</td>
+      <td><span class="pin-display" id="pin-val-${s.student_id}">${esc(s.pin)}</span></td>
+      <td id="pin-actions-${s.student_id}">
+        <button class="pin-reset-btn" onclick="showResetPinInput('${s.student_id}')">Reset PIN</button>
+      </td>
+    </tr>`;
+  }
+  html += "</tbody></table>";
+  container.innerHTML = html;
+}
+
+function showResetPinInput(studentId) {
+  const actionsEl = document.getElementById("pin-actions-" + studentId);
+  actionsEl.innerHTML = `
+    <input class="pin-reset-input" id="new-pin-${studentId}" type="text" maxlength="4" placeholder="0000"
+      onkeydown="if(event.key==='Enter')saveStudentPin('${studentId}')">
+    <button class="pin-save-btn" onclick="saveStudentPin('${studentId}')">Save</button>
+    <button class="pin-cancel-btn" onclick="loadSettings()">Cancel</button>
+  `;
+  document.getElementById("new-pin-" + studentId).focus();
+}
+
+async function saveStudentPin(studentId) {
+  const newPin = document.getElementById("new-pin-" + studentId).value.trim();
+  if (newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+    alert("PIN must be exactly 4 digits");
+    return;
+  }
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/reset-student-pin`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ pin: parentPin, student_id: studentId, new_pin: newPin })
+    });
+    const data = await res.json();
+    if (data.error) { alert(data.error); return; }
+    loadSettings();
+  } catch (err) {
+    alert("Failed to reset PIN: " + err.message);
+  }
+}
+
+/* ─── Feature 57: Conversation Mode Management ─────── */
+async function loadConversationModes() {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/students/with-pins?pin=${encodeURIComponent(parentPin)}`);
+    const data = await res.json();
+    const students = data.students || [];
+    renderConversationModeTable(students);
+  } catch (err) {
+    console.error("Failed to load conversation modes:", err);
+  }
+}
+
+function renderConversationModeTable(students) {
+  const container = document.getElementById("conversationModeTable");
+  if (!container) return;
+  if (!students.length) {
+    container.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">No students in this family yet.</p>';
+    return;
+  }
+  let html = `<table class="conv-mode-table">
+    <thead><tr><th>Student</th><th>Mode</th></tr></thead>
+    <tbody>`;
+  for (const s of students) {
+    const mode = s.conversation_mode || "guided";
+    html += `<tr>
+      <td>${s.avatar || "🎓"} ${esc(s.name)}</td>
+      <td>
+        <div class="conv-mode-toggle" id="conv-toggle-${s.student_id}">
+          <button class="${mode === 'guided' ? 'active' : ''}" onclick="setConversationMode('${s.student_id}','guided')">🧭 Guided</button>
+          <button class="${mode === 'open' ? 'active' : ''}" onclick="setConversationMode('${s.student_id}','open')">💬 Open</button>
+        </div>
+      </td>
+    </tr>`;
+  }
+  html += "</tbody></table>";
+  container.innerHTML = html;
+}
+
+async function setConversationMode(studentId, mode) {
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/student/${studentId}/conversation-mode?pin=${encodeURIComponent(parentPin)}&mode=${mode}`, {
+      method: "PUT"
+    });
+    const data = await res.json();
+    if (data.error) { alert(data.error); return; }
+    // Update the toggle UI
+    const toggle = document.getElementById("conv-toggle-" + studentId);
+    if (toggle) {
+      toggle.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
+      toggle.querySelector(`button:${mode === 'guided' ? 'first-child' : 'last-child'}`).classList.add("active");
+    }
+  } catch (err) {
+    alert("Failed to update conversation mode: " + err.message);
+  }
+}
+
+/* ─── Feature 58: Complexity Tier Display ──────────── */
+async function loadComplexityTiers() {
+  const container = document.getElementById("complexityTierDisplay");
+  if (!container) return;
+  try {
+    const studRes = await fetch(`/api/instance/${instanceId}/parent/students/with-pins?pin=${encodeURIComponent(parentPin)}`);
+    const studData = await studRes.json();
+    const students = studData.students || [];
+    if (!students.length) {
+      container.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">No students in this family yet.</p>';
+      return;
+    }
+    let html = '<div class="tier-grid">';
+    for (const s of students) {
+      try {
+        const tierRes = await fetch(`/api/instance/${instanceId}/student/${s.student_id}/complexity-tiers?pin=${encodeURIComponent(parentPin)}`);
+        const tierData = await tierRes.json();
+        const tiers = tierData.tiers || {};
+        html += `<div class="tier-student-card"><h4>${s.avatar || "🎓"} ${esc(s.name)}</h4>`;
+        const tierEntries = Object.entries(tiers);
+        if (tierEntries.length === 0) {
+          html += '<p style="font-size:12px;color:var(--text-muted);">No subjects configured.</p>';
+        } else {
+          for (const [subj, info] of tierEntries) {
+            const subjectConfig = dashboardData?.subjects?.[subj];
+            const icon = subjectConfig?.icon || "📘";
+            const name = subjectConfig?.name || subj;
+            html += `<div class="tier-subject-row">
+              <span>${icon} ${esc(name)}</span>
+              <span class="tier-badge tier-${info.tier}">${esc(info.label)}</span>
+            </div>`;
+          }
+        }
+        html += '</div>';
+      } catch (err) {
+        html += `<div class="tier-student-card"><h4>${s.avatar || "🎓"} ${esc(s.name)}</h4><p style="font-size:12px;color:#dc2626;">Could not load tiers</p></div>`;
+      }
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  } catch (err) {
+    container.innerHTML = '<p style="color:#dc2626;font-size:14px;">Failed to load complexity tiers.</p>';
+  }
+}
+
+async function changeParentPin() {
+  const current = document.getElementById("settingsCurrentPin").value.trim();
+  const newPin = document.getElementById("settingsNewPin").value.trim();
+  const confirm = document.getElementById("settingsConfirmPin").value.trim();
+  const statusEl = document.getElementById("parentPinStatus");
+
+  if (!current || !newPin || !confirm) {
+    statusEl.style.color = "var(--danger)";
+    statusEl.textContent = "All fields are required";
+    return;
+  }
+  if (newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+    statusEl.style.color = "var(--danger)";
+    statusEl.textContent = "PIN must be exactly 4 digits";
+    return;
+  }
+  if (newPin !== confirm) {
+    statusEl.style.color = "var(--danger)";
+    statusEl.textContent = "New PINs do not match";
+    return;
+  }
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/setup`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ pin: current, new_pin: newPin })
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = "var(--danger)";
+      statusEl.textContent = data.error;
+      return;
+    }
+    parentPin = newPin;
+    statusEl.style.color = "var(--success)";
+    statusEl.textContent = "Parent PIN updated successfully!";
+    document.getElementById("settingsCurrentPin").value = "";
+    document.getElementById("settingsNewPin").value = "";
+    document.getElementById("settingsConfirmPin").value = "";
+    setTimeout(() => { statusEl.textContent = ""; }, 3000);
+  } catch (err) {
+    statusEl.style.color = "var(--danger)";
+    statusEl.textContent = "Failed to update PIN: " + err.message;
+  }
+}
+
+/* ─── Feature 13 (Phase 14): Invite Links ──────────────── */
+async function loadInvites() {
+  const container = document.getElementById("invitesList");
+  try {
+    const res = await fetch(`/api/invites/list?instance_id=${encodeURIComponent(instanceId)}&parent_pin=${encodeURIComponent(parentPin)}`);
+    const data = await res.json();
+    if (data.error) { container.innerHTML = `<p style="color:red">${esc(data.error)}</p>`; return; }
+    renderInvitesList(data.invites || []);
+  } catch (err) {
+    container.innerHTML = `<p style="color:var(--text-muted)">Failed to load invites.</p>`;
+  }
+}
+
+function renderInvitesList(invites) {
+  const container = document.getElementById("invitesList");
+  if (!invites.length) {
+    container.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">No invite links created yet. Create one above to share with other families.</p>';
+    return;
+  }
+  // Sort: active first, then by created_at desc
+  invites.sort((a, b) => {
+    if (a.is_active !== b.is_active) return a.is_active ? -1 : 1;
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
+  let html = '';
+  for (const inv of invites) {
+    const created = new Date(inv.created_at).toLocaleDateString();
+    const expires = inv.expires_at ? new Date(inv.expires_at).toLocaleDateString() : "Never";
+    const maxLabel = inv.max_uses ? `${inv.use_count} / ${inv.max_uses}` : `${inv.use_count} (unlimited)`;
+    let statusBadge, statusColor;
+    if (inv.revoked) { statusBadge = "Revoked"; statusColor = "#e74c3c"; }
+    else if (inv.is_expired) { statusBadge = "Expired"; statusColor = "#95a5a6"; }
+    else if (inv.is_maxed) { statusBadge = "Max Reached"; statusColor = "#f39c12"; }
+    else { statusBadge = "Active"; statusColor = "#27ae60"; }
+
+    const inviteUrl = `${window.location.origin}/invite/${inv.code}`;
+    html += `
+      <div style="border:1px solid #e0e6ed; border-radius:10px; padding:14px 18px; margin-bottom:12px; background:${inv.is_active ? '#fff' : '#f9f9f9'};">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <strong style="font-size:14px;">${esc(inv.label)}</strong>
+          <span style="font-size:12px; padding:3px 10px; border-radius:12px; background:${statusColor}15; color:${statusColor}; font-weight:600;">${statusBadge}</span>
+        </div>
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">
+          Created ${created} · Expires ${expires} · Uses: ${maxLabel}
+        </div>
+        ${inv.is_active ? `
+          <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
+            <input type="text" value="${inviteUrl}" readonly style="flex:1; padding:6px 10px; border:1px solid #ddd; border-radius:6px; font-size:12px; font-family:monospace; background:#f8f9fa;">
+            <button onclick="navigator.clipboard.writeText('${inviteUrl}');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)" style="padding:6px 14px; background:var(--accent); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;">Copy</button>
+          </div>
+          <button onclick="revokeInvite('${inv.code}')" style="padding:4px 12px; background:none; border:1px solid #e74c3c; color:#e74c3c; border-radius:6px; cursor:pointer; font-size:12px;">Revoke</button>
+        ` : ''}
+        ${inv.used_by && inv.used_by.length ? `
+          <div style="margin-top:8px; font-size:12px; color:var(--text-muted);">
+            <strong>Used by:</strong> ${inv.used_by.map(u => esc(u.family_name)).join(', ')}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+async function createInvite() {
+  const label = document.getElementById("inviteLabel").value.trim();
+  const maxUses = parseInt(document.getElementById("inviteMaxUses").value) || 0;
+  const expiryDays = parseInt(document.getElementById("inviteExpiry").value) || 0;
+  const status = document.getElementById("inviteCreateStatus");
+
+  try {
+    const res = await fetch("/api/invites/create", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        instance_id: instanceId,
+        parent_pin: parentPin,
+        label: label,
+        max_uses: maxUses,
+        expires_in_days: expiryDays,
+      }),
+    });
+    const data = await res.json();
+    if (data.error) { status.textContent = "❌ " + data.error; return; }
+
+    // Show the generated link
+    const inviteUrl = `${window.location.origin}/invite/${data.invite.code}`;
+    document.getElementById("inviteLinkUrl").value = inviteUrl;
+    const meta = [];
+    if (maxUses) meta.push(`Max ${maxUses} uses`);
+    if (expiryDays) meta.push(`Expires in ${expiryDays} day${expiryDays > 1 ? 's' : ''}`);
+    document.getElementById("inviteLinkMeta").textContent = meta.length ? meta.join(" · ") : "Unlimited uses, never expires";
+    document.getElementById("inviteLinkDisplay").style.display = "block";
+
+    status.textContent = "✅ Invite created!";
+    document.getElementById("inviteLabel").value = "";
+    setTimeout(() => { status.textContent = ""; }, 3000);
+
+    // Refresh list
+    loadInvites();
+  } catch (err) {
+    status.textContent = "❌ Failed to create invite.";
+  }
+}
+
+function copyInviteLink() {
+  const url = document.getElementById("inviteLinkUrl").value;
+  navigator.clipboard.writeText(url);
+  const btn = event.target;
+  btn.textContent = "Copied!";
+  setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+}
+
+async function revokeInvite(code) {
+  if (!confirm("Revoke this invite link? Families who haven't used it yet won't be able to.")) return;
+  try {
+    const res = await fetch("/api/invites/revoke", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        instance_id: instanceId,
+        parent_pin: parentPin,
+        invite_code: code,
+      }),
+    });
+    const data = await res.json();
+    if (data.error) { alert(data.error); return; }
+    loadInvites();
+  } catch (err) {
+    alert("Failed to revoke invite.");
+  }
+}
+
+/* ─── Feature 27: Safety Tab ────────────────────────────── */
+function goToSafetyTab() {
+  document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+  document.getElementById("tab-safety").classList.add("active");
+  const safetyBtn = document.querySelector("button.tab-btn[onclick*='safety']");
+  if (safetyBtn) safetyBtn.classList.add("active");
+  loadSafetyTab();
+}
+
+async function loadSafetyTab() {
+  await loadSafetyEvents();
+  await loadConversationLog();
+}
+
+async function loadSafetyEvents() {
+  const container = document.getElementById("safetyEventsContent");
+  const countEl = document.getElementById("safetyEventCount");
+  try {
+    const res = await fetch(`/api/instance/${instanceId}/parent/safety-log?pin=${parentPin}&days=30`);
+    const data = await res.json();
+    if (data.error) { container.innerHTML = `<p style="color:#ef4444;">${data.error}</p>`; return; }
+    const events = data.events || [];
+    countEl.textContent = `(${events.length} event${events.length !== 1 ? "s" : ""} in last 30 days)`;
+
+    if (events.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:32px; background:#f0fdf4; border-radius:12px; border:1px solid #bbf7d0;">
+          <div style="font-size:32px; margin-bottom:8px;">✅</div>
+          <p style="font-size:15px; color:#166534; font-weight:600;">No safety events in the last 30 days</p>
+          <p style="font-size:13px; color:#16a34a;">All student messages have been within content guidelines.</p>
+        </div>`;
+      return;
+    }
+
+    // Get student names for display
+    const studentNames = {};
+    if (allStudents) allStudents.forEach(s => { studentNames[s.student_id] = s.name; });
+
+    container.innerHTML = events.map(evt => {
+      const date = new Date(evt.timestamp);
+      const dateStr = date.toLocaleDateString() + " " + date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+      const studentName = studentNames[evt.student_id] || evt.student_id || "Unknown";
+      const isBT = evt.event_type === "blocked_topic";
+      const typeBadge = isBT
+        ? `<span style="background:#fef2f2; color:#dc2626; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600;">Blocked Topic</span>`
+        : `<span style="background:#fefce8; color:#ca8a04; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600;">Injection Attempt</span>`;
+      const preview = evt.message_preview ? evt.message_preview.substring(0, 120) + (evt.message_preview.length > 120 ? "..." : "") : "";
+      return `
+        <div style="padding:14px 16px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:white;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              ${typeBadge}
+              <span style="font-size:13px; font-weight:600; color:var(--text);">${studentName}</span>
+              <span style="font-size:12px; color:var(--text-muted);">· ${evt.subject || ""}</span>
+            </div>
+            <span style="font-size:12px; color:var(--text-muted);">${dateStr}</span>
+          </div>
+          ${preview ? `<p style="font-size:13px; color:#64748b; margin-top:6px; font-style:italic; word-break:break-word;">"${preview}"</p>` : ""}
+        </div>`;
+    }).join("");
+  } catch (err) {
+    container.innerHTML = `<p style="color:#ef4444;">Failed to load safety events.</p>`;
+  }
+}
+
+async function loadConversationLog() {
+  const container = document.getElementById("convoLogContent");
+  const countEl = document.getElementById("convoLogCount");
+  if (!currentStudentId) {
+    container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Select a student to view conversations.</p>`;
+    return;
+  }
+
+  // Populate subject filter
+  const subjectSelect = document.getElementById("convoLogSubject");
+  if (subjectSelect.options.length <= 1 && dashboardData && dashboardData.subjects) {
+    for (const [key, subj] of Object.entries(dashboardData.subjects)) {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = subj.name || key;
+      subjectSelect.appendChild(opt);
+    }
+  }
+
+  const subjFilter = subjectSelect.value;
+  const url = `/api/instance/${instanceId}/parent/conversation-log/${currentStudentId}?pin=${parentPin}&limit=50${subjFilter ? "&subject=" + subjFilter : ""}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.error) { container.innerHTML = `<p style="color:#ef4444;">${data.error}</p>`; return; }
+
+    const entries = data.entries || [];
+    countEl.textContent = `${entries.length} conversation${entries.length !== 1 ? "s" : ""} shown`;
+
+    if (entries.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:24px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
+          <p style="font-size:14px; color:var(--text-muted);">No conversations logged yet${subjFilter ? " for this subject" : ""}.</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = entries.map(entry => {
+      const date = new Date(entry.timestamp);
+      const dateStr = date.toLocaleDateString() + " " + date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+      const subj = entry.subject || "";
+      const mode = entry.mode || "";
+      const modeBadge = mode ? `<span style="background:#eff6ff; color:#2563eb; padding:1px 6px; border-radius:4px; font-size:11px;">${mode}</span>` : "";
+      const userMsg = (entry.user_message || "").substring(0, 200);
+      const assistMsg = (entry.assistant_message || "").substring(0, 300);
+      return `
+        <div style="padding:14px 16px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:white;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:4px;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-size:13px; font-weight:600; color:var(--text);">${subj}</span>
+              ${modeBadge}
+            </div>
+            <span style="font-size:12px; color:var(--text-muted);">${dateStr}</span>
+          </div>
+          <div style="font-size:13px; margin-bottom:6px;">
+            <span style="color:#7c3aed; font-weight:600;">Student:</span>
+            <span style="color:#475569; word-break:break-word;">${userMsg}${entry.user_message && entry.user_message.length > 200 ? "..." : ""}</span>
+          </div>
+          <div style="font-size:13px;">
+            <span style="color:#059669; font-weight:600;">Tutor:</span>
+            <span style="color:#475569; word-break:break-word;">${assistMsg}${entry.assistant_message && entry.assistant_message.length > 300 ? "..." : ""}</span>
+          </div>
+        </div>`;
+    }).join("");
+  } catch (err) {
+    container.innerHTML = `<p style="color:#ef4444;">Failed to load conversation log.</p>`;
+  }
+}
+
+/* ─── Product Tour (Parent) ────────────────────────────── */
+const PARENT_TOUR_STEPS = [
+    { target: ".dash-header", title: "Welcome to the Dashboard", text: "This is your Atlas Parent Dashboard. Here you can monitor your children's learning progress, manage settings, and customize Atlas.", position: "bottom" },
+    { target: "#studentSelector", title: "Student Selector", text: "Switch between your children to view each student's individual progress and activity.", position: "bottom" },
+    { target: "[onclick='openStudentPortal()']", title: "Student Portal", text: "Opens the student login page in a new tab. Share this link with your child so they can access their tutor.", position: "bottom" },
+    { target: "[onclick=\"switchTab('overview')\"]", title: "Overview Tab", text: "See a high-level summary of your child's learning: activity calendar, subject breakdown, skill gaps, session history, and badges.", position: "bottom" },
+    { target: "[onclick=\"switchTab('analytics')\"]", title: "Analytics Tab", text: "Deep insights: adaptive learning mastery, standards alignment, and growth tracking with periodic checkpoint results.", position: "bottom" },
+    { target: "[onclick=\"switchTab('diagnostics')\"]", title: "Diagnostics Tab", text: "Manage diagnostic assessments. Schedule new ones, view results, or reset diagnostics for each subject.", position: "bottom" },
+    { target: "[onclick=\"switchTab('customization')\"]", title: "Customization Tab", text: "Enable/disable subjects, add your own custom subjects, change branding, set grade levels, and toggle features.", position: "bottom" },
+    { target: "[onclick=\"switchTab('feedback')\"]", title: "Feedback Tab", text: "View feedback from your students, submit your own feedback, and manage feedback status.", position: "bottom" },
+    { target: "[onclick=\"switchTab('invites')\"]", title: "Invites Tab", text: "Create shareable invite links for other families. Set usage limits, track who signed up, and revoke invites you no longer need.", position: "bottom" },
+    { target: "[onclick=\"switchTab('safety')\"]", title: "Safety Tab", text: "Review content safety events and browse your child's conversation history. See what was blocked and why, and read any conversation the tutor had with your student.", position: "bottom" },
+    { target: "[onclick=\"switchTab('settings')\"]", title: "Settings Tab", text: "Change your parent PIN, add new students, and manage student PINs from here.", position: "bottom" },
+        { target: "[onclick=\"switchTab('overview')\"]", title: "Book Mastery", text: "Students can use Book Mastery to prove they've read a book. They answer chapter-by-chapter quizzes to verify comprehension. Check the Overview tab to see their bookshelf and completed books.", position: "bottom" },
+    { target: "#helpFab", title: "Need Help?", text: "Click the ? button anytime to replay this tour, open the Help page, or access the full training guide. Happy monitoring! 🎓", position: "left" },
+];
+
+let parentTourStep = 0;
+let parentTourActive = false;
+let parentTourOverlay = null;
+let parentTourTooltip = null;
+let parentTourHighlight = null;
+
+function startParentTour() {
+    parentTourStep = 0;
+    parentTourActive = true;
+    if (!parentTourOverlay) {
+        parentTourOverlay = document.createElement("div");
+        parentTourOverlay.className = "tour-overlay";
+        parentTourOverlay.id = "parentTourOverlay";
+        parentTourHighlight = document.createElement("div");
+        parentTourHighlight.className = "tour-highlight";
+        parentTourOverlay.appendChild(parentTourHighlight);
+        parentTourTooltip = document.createElement("div");
+        parentTourTooltip.className = "tour-tooltip";
+        parentTourOverlay.appendChild(parentTourTooltip);
+        document.body.appendChild(parentTourOverlay);
+    }
+    parentTourOverlay.classList.add("active");
+    parentTourOverlay.style.display = "block";
+    showParentTourStep();
+}
+
+function showParentTourStep() {
+    if (parentTourStep >= PARENT_TOUR_STEPS.length) { endParentTour(); return; }
+    const step = PARENT_TOUR_STEPS[parentTourStep];
+    const el = document.querySelector(step.target);
+    if (!el || el.offsetParent === null) { parentTourStep++; showParentTourStep(); return; }
+
+    const rect = el.getBoundingClientRect();
+    const pad = 8;
+    parentTourHighlight.style.left = (rect.left - pad) + "px";
+    parentTourHighlight.style.top = (rect.top - pad) + "px";
+    parentTourHighlight.style.width = (rect.width + pad * 2) + "px";
+    parentTourHighlight.style.height = (rect.height + pad * 2) + "px";
+
+    parentTourTooltip.innerHTML = `
+        <div class="tour-step-indicator">Step ${parentTourStep + 1} of ${PARENT_TOUR_STEPS.length}</div>
+        <h3>${step.title}</h3>
+        <p>${step.text}</p>
+        <div class="tour-actions">
+            <button class="tour-btn tour-btn-skip" onclick="endParentTour()">Skip Tour</button>
+            ${parentTourStep > 0 ? '<button class="tour-btn tour-btn-back" onclick="prevParentTourStep()">Back</button>' : ''}
+            <button class="tour-btn tour-btn-next" onclick="nextParentTourStep()">${parentTourStep === PARENT_TOUR_STEPS.length - 1 ? 'Done! 🎉' : 'Next →'}</button>
+        </div>
+    `;
+
+    const ttWidth = 340;
+    let ttLeft, ttTop;
+    if (step.position === "bottom") {
+        ttLeft = rect.left + rect.width / 2 - ttWidth / 2;
+        ttTop = rect.bottom + pad + 16;
+    } else if (step.position === "top") {
+        ttLeft = rect.left + rect.width / 2 - ttWidth / 2;
+        ttTop = rect.top - pad - 200;
+    } else if (step.position === "right") {
+        ttLeft = rect.right + pad + 16;
+        ttTop = rect.top;
+    } else {
+        ttLeft = rect.left - ttWidth - pad - 16;
+        ttTop = rect.top;
+    }
+    ttLeft = Math.max(12, Math.min(ttLeft, window.innerWidth - ttWidth - 20));
+    ttTop = Math.max(12, Math.min(ttTop, window.innerHeight - 250));
+    parentTourTooltip.style.left = ttLeft + "px";
+    parentTourTooltip.style.top = ttTop + "px";
+}
+
+function nextParentTourStep() { parentTourStep++; showParentTourStep(); }
+function prevParentTourStep() { if (parentTourStep > 0) { parentTourStep--; showParentTourStep(); } }
+
+function endParentTour() {
+    parentTourActive = false;
+    if (parentTourOverlay) {
+        parentTourOverlay.classList.remove("active");
+        parentTourOverlay.style.display = "none";
+    }
+    try { localStorage.setItem("tour_seen_parent_" + instanceId, "1"); } catch(e) {}
+}
+
+function shouldShowParentTour() {
+    try { return !localStorage.getItem("tour_seen_parent_" + instanceId); } catch(e) { return false; }
+}
+
+/* ─── Feature 59: AI Proficiency Helpers ───────────────── */
+function getAIProficiency() {
+    if (!instanceConfig) return "medium";
+    const c = instanceConfig.customization || instanceConfig;
+    return c.ai_proficiency || "medium";
+}
+
+function showGettingStartedCard() {
+    try {
+        if (localStorage.getItem("gs_dismissed_" + instanceId)) return;
+    } catch(e) {}
+    const card = document.getElementById("gettingStartedCard");
+    if (card) card.style.display = "block";
+    // Auto-detect completed steps from dashboard data
+    setTimeout(updateGettingStartedSteps, 1000);
+}
+
+function updateGettingStartedSteps() {
+    if (!dashboardData) return;
+    // Step 1: Diagnostic completed?
+    const hasDiag = dashboardData.diagnostics && Object.values(dashboardData.diagnostics).some(d => d.status === "completed");
+    if (hasDiag) markGSStep("gsCheck1");
+    // Step 2: Parent visited dashboard (they're here now!)
+    markGSStep("gsCheck2");
+    // Step 3: Has lesson sessions?
+    const hasLessons = dashboardData.recent_sessions && dashboardData.recent_sessions.some(s => s.type === "lesson");
+    if (hasLessons) markGSStep("gsCheck3");
+    // Step 4: Visited analytics (track via localStorage)
+    try {
+        if (localStorage.getItem("visited_analytics_" + instanceId)) markGSStep("gsCheck4");
+    } catch(e) {}
+}
+
+function markGSStep(checkId) {
+    const el = document.getElementById(checkId);
+    if (el) {
+        el.textContent = "✓";
+        el.closest(".gs-step").classList.add("completed");
+    }
+}
+
+function dismissGettingStarted() {
+    const card = document.getElementById("gettingStartedCard");
+    if (card) card.style.display = "none";
+    try { localStorage.setItem("gs_dismissed_" + instanceId, "1"); } catch(e) {}
+}
+
+function addProficiencyTooltips() {
+    // Add contextual tooltips to key dashboard elements for low-proficiency users
+    const tooltips = [
+        { sel: "#metricsGrid", tip: "These numbers show your child's learning activity at a glance" },
+        { sel: ".activity-calendar", tip: "Green squares show days your child used Atlas — more color means more activity" },
+        { sel: "#safetySummaryCard", tip: "Atlas monitors conversations for safety — this shows the summary" },
+    ];
+    tooltips.forEach(({ sel, tip }) => {
+        const el = document.querySelector(sel);
+        if (el) {
+            el.classList.add("atlas-tooltip");
+            el.setAttribute("data-tooltip", tip);
+        }
+    });
+}
+
+// Track analytics tab visits for Getting Started card
+const _origTabSwitch = typeof switchTab === 'function' ? switchTab : null;
+if (_origTabSwitch) {
+    // We'll hook into tab switching after it's defined
+}
+// Alternative: use event delegation on tab buttons
+document.addEventListener("click", function(e) {
+    const tabBtn = e.target.closest("[data-tab='tab-analytics']");
+    if (tabBtn) {
+        try { localStorage.setItem("visited_analytics_" + instanceId, "1"); } catch(e2) {}
+    }
+});
+
+/* ─── Help FAB ─────────────────────────────────────────── */
+function toggleHelpMenu() {
+    const menu = document.getElementById("helpMenu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+document.addEventListener("click", function(e) {
+    const fab = document.getElementById("helpFab");
+    const menu = document.getElementById("helpMenu");
+    if (fab && menu && !fab.contains(e.target) && !menu.contains(e.target)) {
+        menu.style.display = "none";
+    }
+});
+
+/* ─── Help / FAQ Page (Parent) ─────────────────────────── */
+function showParentHelpPage() {
+    // Hide all tab contents
+    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+
+    let helpPanel = document.getElementById("parentHelpPanel");
+    if (!helpPanel) {
+        helpPanel = document.createElement("div");
+        helpPanel.id = "parentHelpPanel";
+        helpPanel.className = "tab-content";
+        document.querySelector(".dash-main").appendChild(helpPanel);
+    }
+    helpPanel.classList.add("active");
+    helpPanel.innerHTML = `
+        <section class="dash-section">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <button class="diag-btn" onclick="closeParentHelp()">← Back</button>
+                <h2 style="font-size: 22px;">📖 Help & FAQ</h2>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🧭 Dashboard Overview</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    The Parent Dashboard gives you a complete view of your child's Atlas learning journey. Use the student selector at the top to switch between children. Click the <strong>🎒 Student Portal</strong> button to open the Atlas login page in a new tab — handy for sharing the student URL or getting your child started. The <strong>Overview</strong> tab shows key metrics, activity history, territory breakdowns, and landmarks. The <strong>Analytics</strong> tab provides deeper insights with adaptive learning mastery and standards alignment reports.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🔬 Diagnostics</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Diagnostic assessments measure your child's current skill levels across topics within each subject. From the Diagnostics tab, you can schedule new diagnostics, view detailed results with topic-level breakdowns, or reset diagnostics so your child can retake them.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">⚙️ Customization</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Personalize Atlas for your family. Toggle territories on or off, create custom territories with your own topics, customize the app title and accent color, set the default grade level, and enable or disable features like diagnostics, expeditions, and practice. At the bottom, you'll find per-student Teaching Mode settings including Socratic Mode.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🧠 Socratic Mode</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    When Socratic Mode is on (the default), Atlas guides your child to discover answers through questions instead of giving direct explanations. This applies to Chat and Expeditions only — diagnostics and practice are unaffected. You can toggle it per student from the Customization tab, so one child can have it on while another has it off.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🃏 Study Mode</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Students can review topics using AI-generated <strong>flashcards</strong> (flip cards with Got It / Study Again sorting) and timed <strong>quizzes</strong> (multiple-choice with instant feedback). Both modes calibrate difficulty based on diagnostic results. Students earn XP for completing sessions, with a bonus for perfect quiz scores. Study mode is available from the student sidebar after completing a diagnostic.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">📖 Book Mastery</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Students can prove they've read a book by completing chapter-by-chapter comprehension quizzes. They enter a book title, author, and number of chapters, then the AI generates a mix of multiple-choice and open-ended questions for each chapter. A score of 70% or higher is required to advance to the next chapter. After completing all chapters, the student receives a congratulatory book summary and earns XP. Students earn 15 XP per chapter passed, 50 XP for finishing, and a 75 XP bonus if all chapters score 90%+. Their bookshelf tracks all books in progress and mastered.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">💬 Feedback</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Students can submit feedback (feature requests, bug reports, content issues) while they learn. Review all submitted feedback here, approve or decline requests, and submit your own feedback. Feedback helps improve the tutor experience.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🔗 Invites</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Share Atlas with other families by creating invite links. Set optional usage limits (max uses and expiration), then share the generated link. Track who signed up using your invites, copy links to reshare, or revoke invites you no longer want active. Each invited family gets their own completely separate Atlas instance.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🔐 Settings</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Manage security and student accounts. Change your parent PIN, add new students with their own PINs and avatars, and view or reset any student's login PIN if they forget it.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🛡️ Content Safety</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">
+                    Atlas enforces multiple layers of content safety to keep your child's learning experience age-appropriate. Here are the rules the AI follows at all times:
+                </p>
+                <div style="font-size: 13px; color: var(--text-muted); line-height: 1.7; background: white; border-radius: 8px; padding: 16px; border: 1px solid #e2e8f0;">
+                    <p style="margin-bottom: 8px;"><strong style="color: var(--text);">1. Age-appropriate content only.</strong> All content is calibrated to the student's grade level. Sensitive academic topics (human reproduction, historical violence, substance abuse) use only clinical/scientific terminology at a textbook level — no graphic descriptions, slang, or innuendo.</p>
+                    <p style="margin-bottom: 8px;"><strong style="color: var(--text);">2. No inappropriate content.</strong> The AI will never produce content that is sexual, violent, profane, or otherwise inappropriate for a minor.</p>
+                    <p style="margin-bottom: 8px;"><strong style="color: var(--text);">3. Subject-focused redirection.</strong> If a student asks about something outside their current subject, the tutor gently redirects them back to the topic at hand.</p>
+                    <p style="margin-bottom: 8px;"><strong style="color: var(--text);">4. Role-play and manipulation protection.</strong> If a student tries to get the AI to act as a different character, ignore its rules, or discuss non-academic topics, it politely declines and redirects to learning.</p>
+                    <p style="margin-bottom: 8px;"><strong style="color: var(--text);">5. Prompt protection.</strong> The AI will never reveal its internal instructions or rules, even if asked directly.</p>
+                    <p style="margin-bottom: 8px;"><strong style="color: var(--text);">6. Language standards.</strong> If a student uses inappropriate language, the tutor redirects without repeating it.</p>
+                    <p style="margin-bottom: 8px;"><strong style="color: var(--text);">7. No personal or medical advice.</strong> The tutor sticks strictly to academics and will not provide personal, medical, or non-academic guidance.</p>
+                    <p style="margin-bottom: 8px;"><strong style="color: var(--text);">8. Conservative by default.</strong> When in doubt about whether content is appropriate, the AI errs on the side of caution.</p>
+                </div>
+                <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-top: 12px;">
+                    <strong style="color: var(--text);">Additional protections:</strong> Messages are pre-screened before reaching the AI. Attempts to manipulate the tutor (prompt injection) are detected and blocked using 15 pattern checks. Explicitly harmful topics (weapons, drugs, self-harm) are blocked outright and never reach the AI. All blocked events are logged with timestamps for review.
+                </p>
+            </div>
+
+            <div style="background: #f0faf4; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid #a7d7c5;">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🎓 Grade Scaling (6–12)</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Atlas supports grades 6 through 12. All expeditions, diagnostics, practice, flashcards, and quizzes adapt to each student's grade level automatically.
+                    <br><br>
+                    <strong>Changing a student's grade:</strong> Use the grade dropdown next to the student's name at the top of the dashboard. The change takes effect immediately for all new sessions.
+                    <br><br>
+                    <strong>What adapts:</strong> Topic lists, AI vocabulary and teaching style, content safety age ranges, and question difficulty all adjust based on grade. Younger students (6–7) get simpler language and more encouragement. Older students (11–12) get academic rigor and college-prep expectations.
+                </p>
+            </div>
+
+            <div style="background: #eef2ff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid #c7d2fe;">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🧠 Adaptive Learning Engine</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Atlas uses a smart adaptive engine that tracks mastery across every topic using diagnostic scores, practice accuracy, and expedition completions.
+                    <br><br>
+                    <strong>Spaced repetition:</strong> Topics are scheduled for review at increasing intervals based on mastery — daily for weak topics, up to every 2 weeks for advanced topics. The study plan on the home screen shows what to work on next.
+                    <br><br>
+                    <strong>Adaptive difficulty:</strong> Practice difficulty is set from blended mastery, not just diagnostics. The more a student practices, the smarter the system gets.
+                    <br><br>
+                    <strong>Parent dashboard:</strong> Click the <strong>📈 Analytics</strong> tab to see per-topic mastery breakdowns, review status, and the recommended study plan under "Adaptive Learning."
+                </p>
+            </div>
+
+            <div style="background: #f0f7ff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid #b8d4f0;">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">📏 Standards Alignment</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Atlas maps student progress to academic standards across all four core territories (grades 6–12):
+                    <strong>Math &amp; ELA</strong> use Common Core (CCSS), <strong>Science</strong> uses NGSS, and <strong>Social Studies</strong> uses your state's standards (e.g., Georgia Standards of Excellence).
+                    <br><br>
+                    <strong>What you'll see:</strong> Click the <strong>📈 Analytics</strong> tab to find the "Standards Alignment" section, showing mastery per domain, the number of standards assessed vs. total, and each standard code linked to its source topic. Each subject displays its framework name.
+                    <br><br>
+                    <strong>Grade-specific:</strong> Standards are mapped to each student's grade level. A Grade 8 student sees 8.EE (Math), RL.8 (ELA), MS-PS (Science), and SS8H5 (Social Studies).
+                    <br><br>
+                    <strong>Coverage:</strong> Custom subjects (Latin, Spanish, etc.) do not have mapped standards and are noted as such.
+                </p>
+                <div style="margin-top: 16px; padding: 14px 16px; background: #fefce8; border-radius: 8px; border: 1px solid #fde68a; font-size: 12px; color: #92400e; line-height: 1.6;">
+                    <strong style="color: #78350f;">⚖️ Standards Disclaimer:</strong> Atlas practice content is original and independently authored. It is aligned to Common Core State Standards (CCSS), Next Generation Science Standards (NGSS), and applicable state standards frameworks. Atlas is not affiliated with, endorsed by, or licensed by any standardized test publisher. Standardized test names (Iowa Assessments, ITBS, etc.) are trademarks of their respective owners. Atlas does not reproduce or distribute any licensed test content. Proficiency scores shown in Atlas reflect performance on Atlas-authored content and should not be interpreted as predicted standardized test scores.
+                </div>
+            </div>
+
+            <div style="background: #eff6ff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid #93c5fd;">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">📈 Progress Checkpoints & Growth Tracking</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Periodic checkpoints automatically track your child's growth over time. Unlike full diagnostics, checkpoints are shorter (6-10 questions) and focus only on topics below 90% mastery — areas already mastered are skipped.
+                    <br><br>
+                    <strong>Scheduling:</strong> Checkpoints are auto-scheduled every 2 weeks (configurable from 1 to 8 weeks). Use the <strong>📈 Analytics</strong> tab → Growth Tracking to adjust the interval, snooze a due checkpoint, enable/disable the feature, or trigger one immediately.
+                    <br><br>
+                    <strong>Student experience:</strong> When a checkpoint is due, a blue banner appears on the student's home screen. After completing it, students see a growth summary with per-topic score changes and level-up celebrations.
+                    <br><br>
+                    <strong>Growth charts:</strong> The Analytics tab shows a per-subject timeline of all assessments (initial diagnostic + checkpoints) with score trends, deltas, and tier improvements over time.
+                </p>
+            </div>
+
+            <div style="background: #f0f7ff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid #b8d4f0;">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">🚀 Coming Soon</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    <strong>ADD/ADHD Adaptability:</strong> Parent-configurable accommodations including shorter lesson chunks, break reminders, reduced cognitive load mode, refocus prompts for inactivity, session length presets with Pomodoro breaks, and adjustable encouragement frequency.
+                </p>
+            </div>
+
+            <div style="background: #f0f4ff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid #c7d2fe;">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">👨‍💼 Admin Dashboard</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    If you are an administrator with access to the Admin Dashboard (available at <code style="background: white; padding: 2px 4px; border-radius: 3px; border: 1px solid #e0e6ed;">/admin</code>), you can manage all family instances and feedback across the platform. The dashboard includes instance management, unified feedback management, student oversight, invite management, safety & moderation (review flagged messages and add admin notes), usage analytics, and system health monitoring (server status, API usage tracking, cost estimates, and error logs). See the full <a href="/guide#admin-dashboard" target="_blank" style="color: #2563eb;">Admin Dashboard guide</a> for complete details.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid var(--border);">
+                <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 8px;">❓ Frequently Asked Questions</h3>
+                <div style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    <p style="margin-bottom: 12px;"><strong style="color: var(--text);">How do diagnostics work?</strong><br>
+                    Each diagnostic asks ~15-18 adaptive questions across the territory's topics. Results show skill levels (Needs Work → Developing → Proficient → Advanced) for each topic, which then guide personalized expeditions.</p>
+
+                    <p style="margin-bottom: 12px;"><strong style="color: var(--text);">Can I add my own subjects?</strong><br>
+                    Yes! Go to the Customization tab and use "Custom Territories" to create territories with your own name, icon, color, and 3-8 topics.</p>
+
+                    <p style="margin-bottom: 12px;"><strong style="color: var(--text);">What if my child forgets their PIN?</strong><br>
+                    Go to Settings → Student PINs to view or reset any student's PIN.</p>
+
+                    <p style="margin-bottom: 12px;"><strong style="color: var(--text);">How do lessons work?</strong><br>
+                    Each expedition follows a 5-step structure: Hook (engagement), Concept (teaching), Guided Practice, Independent Practice, and Wrap Up. Expeditions are personalized based on diagnostic results.</p>
+
+                    <p style="margin-bottom: 12px;"><strong style="color: var(--text);">How does practice mode adjust difficulty?</strong><br>
+                    Practice tracks streaks and accuracy. After 3+ correct answers, difficulty increases. After 2+ wrong answers, it decreases. Students can use hints when stuck.</p>
+
+                    <p style="margin-bottom: 12px;"><strong style="color: var(--text);">How do invite links work?</strong><br>
+                    Go to the Invites tab to generate a shareable link. You can set max uses and an expiration. When someone opens the link, they complete the setup wizard and get their own tutor instance. Their data is completely separate from yours.</p>
+
+                    <p style="margin-bottom: 12px;"><strong style="color: var(--text);">What is Study Mode?</strong><br>
+                    Study mode offers two quick review activities: flashcards and timed quizzes. Both are AI-generated and personalized to the student's diagnostic level. Students access it from the 🃏 Study button in the sidebar (available after completing a diagnostic). Flashcards earn 20 XP, quizzes earn 25 XP, and a perfect quiz earns a 40 XP bonus.</p>
+
+                    <p style="margin-bottom: 12px;"><strong style="color: var(--text);">What is Book Mastery?</strong><br>
+                    Book Mastery verifies that a student has actually read a book. They enter the title, author, and number of chapters, then answer chapter-by-chapter comprehension quizzes with a mix of multiple-choice and open-ended questions. A score of 70%+ per chapter is required to advance. Completed books appear on their bookshelf with scores.</p>
+
+                    <p style="margin-bottom: 12px;"><strong style="color: var(--text);">What are Progress Checkpoints?</strong><br>
+                    Shorter reassessments (6-10 questions) that happen every 2 weeks to track growth. They only cover topics where your child scored below 90%. Manage scheduling from the Analytics tab → Growth Tracking. Results merge into the student's profile so all future sessions adapt accordingly.</p>
+
+                    <p><strong style="color: var(--text);">What is Socratic Mode?</strong><br>
+                    When on (the default), Atlas asks guiding questions instead of giving direct answers. This helps students develop deeper understanding. You can toggle it per student in the Customization tab under Teaching Mode. It only affects Chat and Expeditions — diagnostics, practice, and study mode work the same either way.</p>
+                </div>
+            </div>
+        </section>
+    `;
+}
+
+function closeParentHelp() {
+    const helpPanel = document.getElementById("parentHelpPanel");
+    if (helpPanel) helpPanel.classList.remove("active");
+    switchTab("overview");
+}
+</script>
+
+<style>
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  50% { transform: translateX(8px); }
+  75% { transform: translateX(-4px); }
+}
+</style>
+</body>
+</html>

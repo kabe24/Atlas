@@ -1,0 +1,32 @@
+{
+  "subject": "math",
+  "topics": {
+    "Linear Equations & Inequalities": {
+      "score": 85,
+      "level": "Advanced"
+    },
+    "Functions & Graphing": {
+      "score": 70,
+      "level": "Proficient"
+    },
+    "Geometry & Transformations": {
+      "score": 95,
+      "level": "Advanced"
+    },
+    "Statistics & Probability": {
+      "score": 90,
+      "level": "Advanced"
+    },
+    "Exponents & Scientific Notation": {
+      "score": 90,
+      "level": "Advanced"
+    },
+    "Pythagorean Theorem & Distance": {
+      "score": 95,
+      "level": "Advanced"
+    }
+  },
+  "overall_score": 87,
+  "overall_level": "Advanced",
+  "summary": "Strong mathematical skills across all topics with particular excellence in geometry, statistics, and the Pythagorean theorem. Minor weakness in function evaluation but quickly corrected with practice."
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "role": "user",
+    "content": "What is the Pythagorean theorem?",
+    "timestamp": "2026-04-04T20:30:08.347155"
+  },
+  {
+    "role": "assistant",
+    "content": "Hey Theo! Great question about the Pythagorean theorem. Before we dive into exploring this landmark mathematical idea, what do you already know about right triangles? \n\nHave you noticed anything special about the sides of a right triangle when you've worked with them before?\n\n===FOLLOWUPS===\n[\"I know about right triangles\", \"What's a right triangle?\", \"Show me an example\"]\n===END_FOLLOWUPS===",
+    "timestamp": "2026-04-04T20:30:12.165109"
+  }
+]

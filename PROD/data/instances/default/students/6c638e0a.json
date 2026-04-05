@@ -1,0 +1,35 @@
+{
+  "student_id": "6c638e0a",
+  "name": "Test Kid",
+  "pin": "4321",
+  "avatar": "\ud83d\ude80",
+  "grade": 8,
+  "created_at": "2026-03-06T00:05:58.949746",
+  "badges": {},
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-06",
+    "2026-03-24",
+    "2026-03-27",
+    "2026-03-31"
+  ],
+  "xp": 30,
+  "xp_log": [
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-24T20:21:35.124503"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-27T18:29:13.063067"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-31T18:54:10.547923"
+    }
+  ],
+  "session_count": 1
+}

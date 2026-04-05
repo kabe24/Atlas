@@ -1,0 +1,30 @@
+[
+  {
+    "code": "94075ac562",
+    "created_by_instance": "aea9b4fb3810",
+    "label": "Test invite",
+    "created_at": "2026-03-15T10:28:51.470700",
+    "max_uses": 3,
+    "use_count": 1,
+    "expires_at": "2026-03-22T10:28:51.470700",
+    "revoked": false,
+    "used_by": [
+      {
+        "instance_id": "d3dfcb3a3480",
+        "family_name": "InviteTest",
+        "created_at": "2026-03-15T10:29:07.746978"
+      }
+    ]
+  },
+  {
+    "code": "531c1c20d7",
+    "created_by_instance": "__admin__",
+    "label": "Demo Invite",
+    "created_at": "2026-03-19T18:35:24.387483",
+    "max_uses": 5,
+    "use_count": 0,
+    "expires_at": "2026-03-26T18:35:24.387483",
+    "revoked": false,
+    "used_by": []
+  }
+]

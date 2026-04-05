@@ -1,0 +1,14 @@
+{
+  "feedback_id": "605f38dc50ab",
+  "instance_id": "728cdc18d302",
+  "student_id": "65c9918f",
+  "submitted_by": "student",
+  "type": "bug_report",
+  "subject": "math",
+  "title": "Test Bug",
+  "content": "This is a test bug report",
+  "submitted_at": "2026-03-26T22:48:28.516285",
+  "status": "approved",
+  "reviewed_at": "2026-03-26T22:48:28.520896",
+  "scope": "instance"
+}

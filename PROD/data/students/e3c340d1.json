@@ -1,0 +1,17 @@
+{
+  "student_id": "e3c340d1",
+  "name": "Theo Benson",
+  "pin": "8326",
+  "avatar": "\ud83c\udfc0",
+  "grade": 8,
+  "created_at": "2026-03-05T19:04:23.480685",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-05T21:10:17.555238"
+    }
+  },
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-05"
+  ]
+}

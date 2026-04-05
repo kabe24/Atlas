@@ -1,0 +1,19 @@
+{
+  "student_id": "da9a1d30",
+  "name": "MigrateTest",
+  "pin": "9999",
+  "avatar": "\ud83e\uddea",
+  "grade": 8,
+  "created_at": "2026-03-03T23:23:52.675099",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-03T23:24:06.254618"
+    }
+  },
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-03",
+    "2026-03-04",
+    "2026-03-05"
+  ]
+}

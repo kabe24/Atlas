@@ -1,0 +1,15 @@
+{
+  "feedback_id": "191e4621d24e",
+  "instance_id": "02f54dbe24ef",
+  "student_id": "test-student",
+  "submitted_by": "student",
+  "type": "feature_request",
+  "subject": null,
+  "title": "Add games",
+  "content": "I want math games",
+  "submitted_at": "2026-03-04T12:34:16.712961",
+  "status": "approved",
+  "reviewed_at": "2026-03-04T12:34:16.715755",
+  "scope": "platform",
+  "promoted_at": "2026-03-04T12:34:16.717752"
+}

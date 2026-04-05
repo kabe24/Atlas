@@ -1,0 +1,15 @@
+{
+  "upload_id": "d511e599-5c8",
+  "filename": "test_hw.png",
+  "file_type": "image",
+  "content_type": "image/png",
+  "upload_type": "homework",
+  "size_bytes": 51,
+  "uploaded_at": "2026-03-26T23:58:27.351627",
+  "subject_hint": "Math",
+  "analysis": {
+    "error": "Analysis failed: TypeError"
+  },
+  "practice_generated": false,
+  "saved_file": "d511e599-5c8.png"
+}

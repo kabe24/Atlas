@@ -1,0 +1,32 @@
+{
+  "subject": "social_studies",
+  "topics": {
+    "U.S. Constitution & Government": {
+      "score": 72,
+      "level": "Proficient"
+    },
+    "Civil War & Reconstruction": {
+      "score": 58,
+      "level": "Developing"
+    },
+    "Industrialization & Immigration": {
+      "score": 75,
+      "level": "Proficient"
+    },
+    "World War I & II": {
+      "score": 68,
+      "level": "Proficient"
+    },
+    "Geography & Map Skills": {
+      "score": 85,
+      "level": "Advanced"
+    },
+    "Economics & Trade": {
+      "score": 35,
+      "level": "Needs Work"
+    }
+  },
+  "overall_score": 65,
+  "overall_level": "Proficient",
+  "summary": "Alex Jr. shows strong knowledge in geography and good understanding of government, wars, and industrialization. Economics concepts need more practice and development."
+}

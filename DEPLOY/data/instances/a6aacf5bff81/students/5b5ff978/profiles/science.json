@@ -1,0 +1,32 @@
+{
+  "subject": "science",
+  "topics": {
+    "Forces & Motion": {
+      "score": 70,
+      "level": "Proficient"
+    },
+    "Energy & Waves": {
+      "score": 85,
+      "level": "Advanced"
+    },
+    "Matter & Chemical Reactions": {
+      "score": 75,
+      "level": "Proficient"
+    },
+    "Cell Biology & Genetics": {
+      "score": 60,
+      "level": "Developing"
+    },
+    "Ecology & Ecosystems": {
+      "score": 90,
+      "level": "Advanced"
+    },
+    "Earth Systems & Space": {
+      "score": 65,
+      "level": "Proficient"
+    }
+  },
+  "overall_score": 74,
+  "overall_level": "Proficient",
+  "summary": "Strong understanding of energy concepts and ecosystems, with solid foundations in most areas. Could benefit from more practice with genetics concepts and some physics applications."
+}

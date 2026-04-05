@@ -1,0 +1,32 @@
+{
+  "subject": "math",
+  "topics": {
+    "Linear Equations & Inequalities": {
+      "score": 85,
+      "level": "Advanced"
+    },
+    "Functions & Graphing": {
+      "score": 82,
+      "level": "Proficient"
+    },
+    "Geometry & Transformations": {
+      "score": 88,
+      "level": "Advanced"
+    },
+    "Statistics & Probability": {
+      "score": 85,
+      "level": "Advanced"
+    },
+    "Exponents & Scientific Notation": {
+      "score": 90,
+      "level": "Advanced"
+    },
+    "Pythagorean Theorem & Distance": {
+      "score": 65,
+      "level": "Proficient"
+    }
+  },
+  "overall_score": 82,
+  "overall_level": "Proficient",
+  "summary": "Theo shows strong mathematical reasoning and mental math skills across most topics. He excels with algebraic manipulation, transformations, and basic statistics. The Pythagorean Theorem and distance calculations need some reinforcement, but he grasps the concepts when guided."
+}

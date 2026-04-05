@@ -1,0 +1,32 @@
+{
+  "subject": "math",
+  "topics": {
+    "Linear Equations & Inequalities": {
+      "score": 45,
+      "level": "Developing"
+    },
+    "Functions & Graphing": {
+      "score": 40,
+      "level": "Developing"
+    },
+    "Geometry & Transformations": {
+      "score": 70,
+      "level": "Proficient"
+    },
+    "Statistics & Probability": {
+      "score": 65,
+      "level": "Proficient"
+    },
+    "Exponents & Scientific Notation": {
+      "score": 55,
+      "level": "Developing"
+    },
+    "Pythagorean Theorem & Distance": {
+      "score": 75,
+      "level": "Proficient"
+    }
+  },
+  "overall_score": 58,
+  "overall_level": "Developing",
+  "summary": "Strong foundational skills in geometry, statistics, and the Pythagorean theorem. Would benefit from more practice with linear equations, functions, and basic exponent operations."
+}

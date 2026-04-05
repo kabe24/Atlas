@@ -1,0 +1,20 @@
+{
+  "feedback_id": "eedcd408cbcb",
+  "instance_id": "0650b2bc1a95",
+  "student_id": "test-student",
+  "submitted_by": "student",
+  "type": "feature_request",
+  "subject": null,
+  "title": "Add games",
+  "content": "I want math games",
+  "submitted_at": "2026-03-04T12:35:03.635051",
+  "status": "responded",
+  "reviewed_at": "2026-03-19T16:04:28.173588",
+  "scope": "instance",
+  "admin_replies": [
+    {
+      "text": "Thanks for the suggestion! We'll look into adding games.",
+      "replied_at": "2026-03-19T16:04:28.173572"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "code": "94075ac562",
+    "created_by_instance": "aea9b4fb3810",
+    "label": "Test invite",
+    "created_at": "2026-03-15T10:28:51.470700",
+    "max_uses": 3,
+    "use_count": 1,
+    "expires_at": "2026-03-22T10:28:51.470700",
+    "revoked": false,
+    "used_by": [
+      {
+        "instance_id": "d3dfcb3a3480",
+        "family_name": "InviteTest",
+        "created_at": "2026-03-15T10:29:07.746978"
+      }
+    ]
+  },
+  {
+    "code": "531c1c20d7",
+    "created_by_instance": "__admin__",
+    "label": "Demo Invite",
+    "created_at": "2026-03-19T18:35:24.387483",
+    "max_uses": 5,
+    "use_count": 0,
+    "expires_at": "2026-03-26T18:35:24.387483",
+    "revoked": false,
+    "used_by": []
+  },
+  {
+    "code": "d4b6f329ec",
+    "created_by_instance": "f1f3ea757f4a",
+    "label": "Invite d4b6f3",
+    "created_at": "2026-03-30T16:59:10.036053",
+    "max_uses": 5,
+    "use_count": 0,
+    "expires_at": "2026-04-06T16:59:10.036053",
+    "revoked": true,
+    "used_by": []
+  },
+  {
+    "code": "569fd4fb43",
+    "created_by_instance": "f1f3ea757f4a",
+    "label": "Invite 569fd4",
+    "created_at": "2026-03-30T17:07:02.373925",
+    "max_uses": 5,
+    "use_count": 0,
+    "expires_at": null,
+    "revoked": false,
+    "used_by": []
+  }
+]

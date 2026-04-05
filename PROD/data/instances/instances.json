@@ -1,0 +1,46 @@
+{
+  "instances": [
+    {
+      "instance_id": "default",
+      "family_name": "Default Family",
+      "owner_email": "",
+      "created_at": "2026-03-04T07:33:49.505069",
+      "status": "active"
+    },
+    {
+      "instance_id": "a6aacf5bff81",
+      "family_name": "Garcia Family",
+      "owner_email": "",
+      "created_at": "2026-03-06T13:27:08.828876",
+      "status": "active"
+    },
+    {
+      "instance_id": "a79de56afa0a",
+      "family_name": "Benson",
+      "owner_email": "kabe34@hotmail.com",
+      "created_at": "2026-03-21T20:11:49.842783",
+      "status": "active"
+    },
+    {
+      "instance_id": "f1f3ea757f4a",
+      "family_name": "Hill Fam",
+      "owner_email": "breehill1013@gmail.com",
+      "created_at": "2026-03-25T17:50:54.173977",
+      "status": "active"
+    },
+    {
+      "instance_id": "191675faea53",
+      "family_name": "Vanderpool",
+      "owner_email": "clcvanderpool@gmail.com",
+      "created_at": "2026-03-25T23:38:00.749670",
+      "status": "active"
+    },
+    {
+      "instance_id": "58eed2323148",
+      "family_name": "PROD Test Family",
+      "owner_email": "",
+      "created_at": "2026-03-26T15:39:03.602142",
+      "status": "active"
+    }
+  ]
+}

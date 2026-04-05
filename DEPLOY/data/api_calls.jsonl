@@ -1,0 +1,17 @@
+{"ts": "2026-03-25T12:44:01.507970", "model": "claude-sonnet-4-20250514", "input_tokens": 0, "output_tokens": 0, "duration_ms": 1342.0, "error": "APIConnectionError"}
+{"ts": "2026-03-25T12:44:41.013073", "model": "claude-sonnet-4-20250514", "input_tokens": 0, "output_tokens": 0, "duration_ms": 1420.3, "error": "APIConnectionError"}
+{"ts": "2026-03-25T12:47:26.867940", "model": "claude-sonnet-4-20250514", "input_tokens": 356, "output_tokens": 521, "duration_ms": 9929.6, "error": null}
+{"ts": "2026-03-25T12:48:06.690209", "model": "claude-sonnet-4-20250514", "input_tokens": 428, "output_tokens": 350, "duration_ms": 8033.3, "error": null}
+{"ts": "2026-03-25T12:48:32.211265", "model": "claude-sonnet-4-20250514", "input_tokens": 356, "output_tokens": 520, "duration_ms": 10825.5, "error": null}
+{"ts": "2026-03-25T12:48:48.539929", "model": "claude-sonnet-4-20250514", "input_tokens": 437, "output_tokens": 394, "duration_ms": 8678.5, "error": null}
+{"ts": "2026-03-25T12:49:11.663530", "model": "claude-sonnet-4-20250514", "input_tokens": 171, "output_tokens": 557, "duration_ms": 15047.7, "error": null}
+{"ts": "2026-03-25T12:50:15.986403", "model": "claude-sonnet-4-20250514", "input_tokens": 360, "output_tokens": 644, "duration_ms": 17852.0, "error": null}
+{"ts": "2026-03-25T12:50:33.541933", "model": "claude-sonnet-4-20250514", "input_tokens": 360, "output_tokens": 380, "duration_ms": 8642.2, "error": null}
+{"ts": "2026-03-25T12:50:46.029172", "model": "claude-sonnet-4-20250514", "input_tokens": 0, "output_tokens": 0, "duration_ms": 3833.7, "error": "OverloadedError"}
+{"ts": "2026-03-25T12:51:15.442508", "model": "claude-sonnet-4-20250514", "input_tokens": 360, "output_tokens": 814, "duration_ms": 17899.1, "error": null}
+{"ts": "2026-03-26T12:27:31.935680", "model": "claude-sonnet-4-20250514", "input_tokens": 0, "output_tokens": 0, "duration_ms": 1382.5, "error": "APIConnectionError"}
+{"ts": "2026-03-26T12:27:40.539408", "model": "claude-sonnet-4-20250514", "input_tokens": 0, "output_tokens": 0, "duration_ms": 1415.2, "error": "APIConnectionError"}
+{"ts": "2026-03-26T12:39:58.248966", "model": "claude-sonnet-4-20250514", "input_tokens": 2043, "output_tokens": 95, "duration_ms": 3681.6, "error": null}
+{"ts": "2026-03-26T12:45:24.075963", "model": "claude-sonnet-4-20250514", "input_tokens": 2145, "output_tokens": 128, "duration_ms": 4107.6, "error": null}
+{"ts": "2026-03-26T12:46:11.457259", "model": "claude-sonnet-4-20250514", "input_tokens": 2413, "output_tokens": 159, "duration_ms": 4799.9, "error": null}
+{"ts": "2026-03-26T12:46:23.058671", "model": "claude-sonnet-4-20250514", "input_tokens": 2598, "output_tokens": 167, "duration_ms": 4719.5, "error": null}

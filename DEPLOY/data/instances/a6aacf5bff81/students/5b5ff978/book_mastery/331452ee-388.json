@@ -1,0 +1,20 @@
+{
+  "session_id": "331452ee-388",
+  "book_title": "The Giver",
+  "author": "Lois Lowry",
+  "total_chapters": 2,
+  "current_chapter": 1,
+  "status": "in_progress",
+  "started_at": "2026-03-25T12:49:43.746581",
+  "chapters": {
+    "chapter_1": {
+      "score": 60,
+      "passed": false,
+      "attempts": 1,
+      "completed_at": "2026-03-25T12:50:33.543431"
+    }
+  },
+  "overall_score": 0,
+  "total_questions": 5,
+  "total_correct": 3
+}

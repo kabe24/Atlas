@@ -1,0 +1,50 @@
+{
+  "student_id": "5b5ff978",
+  "name": "T-Max",
+  "pin": "2222",
+  "avatar": "\ud83c\udf93",
+  "grade": 8,
+  "created_at": "2026-03-06T19:35:50.491139",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-06T19:54:46.003338"
+    },
+    "first_book_mastery": {
+      "earned_at": "2026-03-25T12:52:54.862307"
+    }
+  },
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-06",
+    "2026-03-07",
+    "2026-03-25"
+  ],
+  "xp": 165,
+  "xp_log": [
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-25T12:28:29.355525"
+    },
+    {
+      "amount": 15,
+      "reason": "book_mastery_chapter",
+      "timestamp": "2026-03-25T12:48:06.694382"
+    },
+    {
+      "amount": 15,
+      "reason": "book_mastery_chapter",
+      "timestamp": "2026-03-25T12:48:48.542304"
+    },
+    {
+      "amount": 50,
+      "reason": "book_mastery_complete",
+      "timestamp": "2026-03-25T12:48:48.545678"
+    },
+    {
+      "amount": 75,
+      "reason": "book_mastery_perfect",
+      "timestamp": "2026-03-25T12:48:48.549171"
+    }
+  ]
+}

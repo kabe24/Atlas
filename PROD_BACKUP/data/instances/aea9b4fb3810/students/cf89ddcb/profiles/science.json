@@ -1,0 +1,32 @@
+{
+  "subject": "science",
+  "topics": {
+    "Forces & Motion": {
+      "score": 67,
+      "level": "Proficient"
+    },
+    "Energy & Waves": {
+      "score": 50,
+      "level": "Developing"
+    },
+    "Matter & Chemical Reactions": {
+      "score": 67,
+      "level": "Proficient"
+    },
+    "Cell Biology & Genetics": {
+      "score": 100,
+      "level": "Advanced"
+    },
+    "Ecology & Ecosystems": {
+      "score": 67,
+      "level": "Proficient"
+    },
+    "Earth Systems & Space": {
+      "score": 67,
+      "level": "Proficient"
+    }
+  },
+  "overall_score": 70,
+  "overall_level": "Proficient",
+  "summary": "Alex shows strong understanding across most science topics, with particular strength in biology. Areas to focus on include wave properties and atmospheric layers, but overall demonstrates solid middle school science knowledge."
+}

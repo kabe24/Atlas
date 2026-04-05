@@ -1,0 +1,24 @@
+[
+  {
+    "practice_id": "math_20260314_132409",
+    "topic": "Linear Equations & Inequalities",
+    "difficulty": "medium",
+    "started_at": "2026-03-14T13:24:14.009802",
+    "completed_at": "2026-03-14T13:30:31.711680",
+    "complete": true,
+    "question_count": 3,
+    "correct_count": 1,
+    "best_streak": 1
+  },
+  {
+    "practice_id": "math_20260314_133038",
+    "topic": "Pythagorean Theorem & Distance",
+    "difficulty": "medium",
+    "started_at": "2026-03-14T13:30:41.487734",
+    "completed_at": "2026-03-14T13:37:06.640530",
+    "complete": true,
+    "question_count": 7,
+    "correct_count": 5,
+    "best_streak": 3
+  }
+]

@@ -1,0 +1,545 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "Common Core State Standards mapping for Atlas topics",
+    "coverage": ["math", "ela"],
+    "grades": [6, 7, 8, 9, 10, 11, 12],
+    "note": "Each topic maps to one or more CCSS domains/clusters. Mastery of a topic implies progress toward the listed standards."
+  },
+  "math": {
+    "6": {
+      "Ratios & Proportional Relationships": {
+        "standards": ["6.RP.A.1", "6.RP.A.2", "6.RP.A.3"],
+        "domain": "Ratios & Proportional Relationships",
+        "domain_code": "6.RP",
+        "description": "Understand ratio concepts and use ratio reasoning to solve problems"
+      },
+      "Intro to Expressions & Equations": {
+        "standards": ["6.EE.A.1", "6.EE.A.2", "6.EE.A.3", "6.EE.A.4", "6.EE.B.5", "6.EE.B.6", "6.EE.B.7", "6.EE.B.8"],
+        "domain": "Expressions & Equations",
+        "domain_code": "6.EE",
+        "description": "Apply and extend previous understandings of arithmetic to algebraic expressions"
+      },
+      "Area, Surface Area & Volume": {
+        "standards": ["6.G.A.1", "6.G.A.2", "6.G.A.3", "6.G.A.4"],
+        "domain": "Geometry",
+        "domain_code": "6.G",
+        "description": "Solve real-world and mathematical problems involving area, surface area, and volume"
+      },
+      "The Number System (Decimals & Fractions)": {
+        "standards": ["6.NS.A.1", "6.NS.B.2", "6.NS.B.3", "6.NS.B.4", "6.NS.C.5", "6.NS.C.6", "6.NS.C.7", "6.NS.C.8"],
+        "domain": "The Number System",
+        "domain_code": "6.NS",
+        "description": "Apply and extend previous understandings of multiplication and division to divide fractions"
+      },
+      "Statistical Variability": {
+        "standards": ["6.SP.A.1", "6.SP.A.2", "6.SP.A.3", "6.SP.B.4", "6.SP.B.5"],
+        "domain": "Statistics & Probability",
+        "domain_code": "6.SP",
+        "description": "Develop understanding of statistical variability and summarize distributions"
+      },
+      "Geometry on the Coordinate Plane": {
+        "standards": ["6.G.A.3", "6.NS.C.6", "6.NS.C.8"],
+        "domain": "Geometry / The Number System",
+        "domain_code": "6.G",
+        "description": "Draw polygons on the coordinate plane and find distances between points"
+      }
+    },
+    "7": {
+      "Proportional Relationships": {
+        "standards": ["7.RP.A.1", "7.RP.A.2", "7.RP.A.3"],
+        "domain": "Ratios & Proportional Relationships",
+        "domain_code": "7.RP",
+        "description": "Analyze proportional relationships and use them to solve problems"
+      },
+      "Operations with Rational Numbers": {
+        "standards": ["7.NS.A.1", "7.NS.A.2", "7.NS.A.3"],
+        "domain": "The Number System",
+        "domain_code": "7.NS",
+        "description": "Apply and extend previous understandings of operations with fractions"
+      },
+      "Expressions & Equations": {
+        "standards": ["7.EE.A.1", "7.EE.A.2", "7.EE.B.3", "7.EE.B.4"],
+        "domain": "Expressions & Equations",
+        "domain_code": "7.EE",
+        "description": "Use properties of operations to generate equivalent expressions and solve problems"
+      },
+      "Geometry (Angles, Area, Volume)": {
+        "standards": ["7.G.A.1", "7.G.A.2", "7.G.A.3", "7.G.B.4", "7.G.B.5", "7.G.B.6"],
+        "domain": "Geometry",
+        "domain_code": "7.G",
+        "description": "Draw, construct, and describe geometrical figures and solve problems"
+      },
+      "Statistics & Probability": {
+        "standards": ["7.SP.A.1", "7.SP.A.2", "7.SP.B.3", "7.SP.B.4", "7.SP.C.5", "7.SP.C.6", "7.SP.C.7", "7.SP.C.8"],
+        "domain": "Statistics & Probability",
+        "domain_code": "7.SP",
+        "description": "Use random sampling, draw inferences, and investigate chance processes"
+      },
+      "Scale Drawings": {
+        "standards": ["7.G.A.1", "7.RP.A.2"],
+        "domain": "Geometry / Ratios",
+        "domain_code": "7.G",
+        "description": "Solve problems involving scale drawings of geometric figures"
+      }
+    },
+    "8": {
+      "Linear Equations & Inequalities": {
+        "standards": ["8.EE.B.5", "8.EE.B.6", "8.EE.C.7", "8.EE.C.8"],
+        "domain": "Expressions & Equations",
+        "domain_code": "8.EE",
+        "description": "Analyze and solve linear equations and pairs of simultaneous linear equations"
+      },
+      "Functions & Graphing": {
+        "standards": ["8.F.A.1", "8.F.A.2", "8.F.A.3", "8.F.B.4", "8.F.B.5"],
+        "domain": "Functions",
+        "domain_code": "8.F",
+        "description": "Define, evaluate, and compare functions; use functions to model relationships"
+      },
+      "Geometry & Transformations": {
+        "standards": ["8.G.A.1", "8.G.A.2", "8.G.A.3", "8.G.A.4", "8.G.A.5"],
+        "domain": "Geometry",
+        "domain_code": "8.G",
+        "description": "Understand congruence and similarity using physical models, transparencies, or geometry software"
+      },
+      "Statistics & Probability": {
+        "standards": ["8.SP.A.1", "8.SP.A.2", "8.SP.A.3", "8.SP.A.4"],
+        "domain": "Statistics & Probability",
+        "domain_code": "8.SP",
+        "description": "Investigate patterns of association in bivariate data"
+      },
+      "Exponents & Scientific Notation": {
+        "standards": ["8.EE.A.1", "8.EE.A.2", "8.EE.A.3", "8.EE.A.4"],
+        "domain": "Expressions & Equations",
+        "domain_code": "8.EE",
+        "description": "Work with radicals and integer exponents; use scientific notation"
+      },
+      "Pythagorean Theorem & Distance": {
+        "standards": ["8.G.B.6", "8.G.B.7", "8.G.B.8", "8.G.C.9"],
+        "domain": "Geometry",
+        "domain_code": "8.G",
+        "description": "Understand and apply the Pythagorean Theorem; solve problems involving volume"
+      }
+    },
+    "9": {
+      "Linear & Quadratic Functions": {
+        "standards": ["HSF-IF.A.1", "HSF-IF.B.4", "HSF-IF.C.7", "HSF-BF.A.1", "HSA-REI.B.4"],
+        "domain": "Functions / Algebra",
+        "domain_code": "HSF-IF",
+        "description": "Interpret and build functions; analyze linear and quadratic models"
+      },
+      "Systems of Equations": {
+        "standards": ["HSA-REI.C.5", "HSA-REI.C.6", "HSA-REI.C.7", "HSA-REI.D.11", "HSA-REI.D.12"],
+        "domain": "Algebra",
+        "domain_code": "HSA-REI",
+        "description": "Solve systems of equations; represent and solve graphically"
+      },
+      "Polynomials & Factoring": {
+        "standards": ["HSA-APR.A.1", "HSA-APR.B.2", "HSA-APR.B.3", "HSA-SSE.A.2"],
+        "domain": "Algebra",
+        "domain_code": "HSA-APR",
+        "description": "Perform arithmetic operations on polynomials; understand the relationship between zeros and factors"
+      },
+      "Radical & Rational Expressions": {
+        "standards": ["HSA-APR.D.6", "HSA-APR.D.7", "HSN-RN.A.1", "HSN-RN.A.2"],
+        "domain": "Algebra / Number",
+        "domain_code": "HSA-APR",
+        "description": "Rewrite rational expressions; extend properties of exponents to rational exponents"
+      },
+      "Exponential Functions": {
+        "standards": ["HSF-IF.C.7", "HSF-IF.C.8", "HSF-LE.A.1", "HSF-LE.A.2", "HSF-LE.A.3"],
+        "domain": "Functions",
+        "domain_code": "HSF-LE",
+        "description": "Construct and compare linear, quadratic, and exponential models"
+      },
+      "Intro to Statistics": {
+        "standards": ["HSS-ID.A.1", "HSS-ID.A.2", "HSS-ID.A.3", "HSS-ID.B.5", "HSS-ID.B.6"],
+        "domain": "Statistics & Probability",
+        "domain_code": "HSS-ID",
+        "description": "Summarize, represent, and interpret data on a single count or measurement variable"
+      }
+    },
+    "10": {
+      "Geometric Proofs & Reasoning": {
+        "standards": ["HSG-CO.C.9", "HSG-CO.C.10", "HSG-CO.C.11"],
+        "domain": "Geometry",
+        "domain_code": "HSG-CO",
+        "description": "Prove geometric theorems about lines, angles, triangles, and parallelograms"
+      },
+      "Similarity & Congruence": {
+        "standards": ["HSG-CO.A.1", "HSG-CO.B.6", "HSG-CO.B.7", "HSG-CO.B.8", "HSG-SRT.A.1", "HSG-SRT.A.2", "HSG-SRT.A.3"],
+        "domain": "Geometry",
+        "domain_code": "HSG-SRT",
+        "description": "Understand similarity and congruence in terms of transformations"
+      },
+      "Right Triangle Trigonometry": {
+        "standards": ["HSG-SRT.C.6", "HSG-SRT.C.7", "HSG-SRT.C.8"],
+        "domain": "Geometry",
+        "domain_code": "HSG-SRT",
+        "description": "Define trigonometric ratios and solve problems involving right triangles"
+      },
+      "Circles & Arc Measures": {
+        "standards": ["HSG-C.A.1", "HSG-C.A.2", "HSG-C.A.3", "HSG-C.B.5"],
+        "domain": "Geometry",
+        "domain_code": "HSG-C",
+        "description": "Understand and apply theorems about circles; find arc lengths and areas"
+      },
+      "Coordinate Geometry": {
+        "standards": ["HSG-GPE.A.1", "HSG-GPE.B.4", "HSG-GPE.B.5", "HSG-GPE.B.6", "HSG-GPE.B.7"],
+        "domain": "Geometry",
+        "domain_code": "HSG-GPE",
+        "description": "Use coordinates to prove simple geometric theorems algebraically"
+      },
+      "Surface Area & Volume (3D)": {
+        "standards": ["HSG-GMD.A.1", "HSG-GMD.A.3", "HSG-GMD.B.4", "HSG-MG.A.1", "HSG-MG.A.3"],
+        "domain": "Geometry",
+        "domain_code": "HSG-GMD",
+        "description": "Explain volume formulas and use them to solve problems; visualize 3D objects"
+      }
+    },
+    "11": {
+      "Trigonometric Functions": {
+        "standards": ["HSF-TF.A.1", "HSF-TF.A.2", "HSF-TF.B.5", "HSF-TF.C.8"],
+        "domain": "Functions",
+        "domain_code": "HSF-TF",
+        "description": "Extend the domain of trigonometric functions using the unit circle"
+      },
+      "Polynomial & Rational Functions": {
+        "standards": ["HSA-APR.B.2", "HSA-APR.B.3", "HSA-APR.C.4", "HSA-APR.D.6", "HSF-IF.C.7"],
+        "domain": "Algebra / Functions",
+        "domain_code": "HSA-APR",
+        "description": "Understand the relationship between zeros and factors of polynomials"
+      },
+      "Exponential & Logarithmic Functions": {
+        "standards": ["HSF-BF.B.5", "HSF-LE.A.4", "HSF-IF.C.7", "HSF-IF.C.8"],
+        "domain": "Functions",
+        "domain_code": "HSF-LE",
+        "description": "Build and interpret exponential and logarithmic functions"
+      },
+      "Sequences & Series": {
+        "standards": ["HSF-BF.A.1", "HSF-BF.A.2", "HSF-LE.A.2"],
+        "domain": "Functions",
+        "domain_code": "HSF-BF",
+        "description": "Build functions that model arithmetic and geometric sequences"
+      },
+      "Conic Sections": {
+        "standards": ["HSG-GPE.A.1", "HSG-GPE.A.2", "HSG-GPE.A.3"],
+        "domain": "Geometry",
+        "domain_code": "HSG-GPE",
+        "description": "Translate between geometric descriptions and equations for conics"
+      },
+      "Limits & Intro to Calculus": {
+        "standards": ["HSF-IF.A.2", "HSF-IF.B.4", "HSF-BF.A.1"],
+        "domain": "Functions (Pre-Calculus)",
+        "domain_code": "HSF-IF",
+        "description": "Extend function analysis toward limits and rates of change (beyond CC scope — college prep)"
+      }
+    },
+    "12": {
+      "Limits & Continuity": {
+        "standards": ["HSF-IF.A.1", "HSF-IF.A.2", "HSF-IF.B.4"],
+        "domain": "Functions (AP Calculus)",
+        "domain_code": "HSF-IF",
+        "description": "Formal analysis of limits, continuity, and function behavior (beyond CC — AP level)"
+      },
+      "Derivatives & Applications": {
+        "standards": ["HSF-IF.B.6", "HSF-BF.A.1"],
+        "domain": "Functions (AP Calculus)",
+        "domain_code": "HSF-IF",
+        "description": "Rate of change and derivative applications (beyond CC — AP level)"
+      },
+      "Integrals & Applications": {
+        "standards": ["HSF-IF.B.4", "HSF-BF.A.1"],
+        "domain": "Functions (AP Calculus)",
+        "domain_code": "HSF-BF",
+        "description": "Accumulation functions and area under curves (beyond CC — AP level)"
+      },
+      "Differential Equations (Intro)": {
+        "standards": ["HSF-BF.A.1", "HSF-LE.A.1"],
+        "domain": "Functions (AP Calculus)",
+        "domain_code": "HSF-BF",
+        "description": "Modeling with differential equations (beyond CC — AP level)"
+      },
+      "Probability & Combinatorics": {
+        "standards": ["HSS-CP.A.1", "HSS-CP.A.2", "HSS-CP.A.3", "HSS-CP.A.4", "HSS-CP.A.5", "HSS-CP.B.6", "HSS-CP.B.7"],
+        "domain": "Statistics & Probability",
+        "domain_code": "HSS-CP",
+        "description": "Understand independence and conditional probability; use rules of probability"
+      },
+      "Vectors & Matrices": {
+        "standards": ["HSN-VM.A.1", "HSN-VM.A.2", "HSN-VM.A.3", "HSN-VM.C.6", "HSN-VM.C.7", "HSN-VM.C.8"],
+        "domain": "Number & Quantity",
+        "domain_code": "HSN-VM",
+        "description": "Represent and model with vector quantities; perform operations on matrices"
+      }
+    }
+  },
+  "ela": {
+    "6": {
+      "Reading Comprehension Strategies": {
+        "standards": ["RL.6.1", "RL.6.2", "RL.6.3", "RI.6.1", "RI.6.2", "RI.6.3"],
+        "domain": "Reading",
+        "domain_code": "RL.6 / RI.6",
+        "description": "Cite textual evidence; determine themes and central ideas; analyze development"
+      },
+      "Narrative Writing": {
+        "standards": ["W.6.3", "W.6.3.A", "W.6.3.B", "W.6.3.C", "W.6.3.D", "W.6.3.E"],
+        "domain": "Writing",
+        "domain_code": "W.6",
+        "description": "Write narratives with real or imagined experiences using effective technique"
+      },
+      "Grammar Basics (Parts of Speech)": {
+        "standards": ["L.6.1", "L.6.1.A", "L.6.1.B", "L.6.1.C", "L.6.1.D", "L.6.1.E", "L.6.2"],
+        "domain": "Language",
+        "domain_code": "L.6",
+        "description": "Demonstrate command of conventions of standard English grammar and usage"
+      },
+      "Vocabulary Building": {
+        "standards": ["L.6.4", "L.6.4.A", "L.6.4.B", "L.6.4.C", "L.6.4.D", "L.6.5", "L.6.6"],
+        "domain": "Language",
+        "domain_code": "L.6",
+        "description": "Determine or clarify meaning of unknown and multiple-meaning words and phrases"
+      },
+      "Informational Text Analysis": {
+        "standards": ["RI.6.4", "RI.6.5", "RI.6.6", "RI.6.7", "RI.6.8"],
+        "domain": "Reading: Informational Text",
+        "domain_code": "RI.6",
+        "description": "Analyze structure, point of view, and argument in informational texts"
+      },
+      "Speaking & Listening": {
+        "standards": ["SL.6.1", "SL.6.2", "SL.6.3", "SL.6.4", "SL.6.5", "SL.6.6"],
+        "domain": "Speaking & Listening",
+        "domain_code": "SL.6",
+        "description": "Engage in collaborative discussions; present claims and findings"
+      }
+    },
+    "7": {
+      "Literary Analysis (Theme & Character)": {
+        "standards": ["RL.7.1", "RL.7.2", "RL.7.3", "RL.7.6"],
+        "domain": "Reading: Literature",
+        "domain_code": "RL.7",
+        "description": "Cite evidence, determine theme, analyze character and point of view interactions"
+      },
+      "Argumentative Writing (Intro)": {
+        "standards": ["W.7.1", "W.7.1.A", "W.7.1.B", "W.7.1.C", "W.7.1.D", "W.7.1.E"],
+        "domain": "Writing",
+        "domain_code": "W.7",
+        "description": "Write arguments to support claims with clear reasons and relevant evidence"
+      },
+      "Grammar (Clauses & Phrases)": {
+        "standards": ["L.7.1", "L.7.1.A", "L.7.1.B", "L.7.1.C", "L.7.2", "L.7.3"],
+        "domain": "Language",
+        "domain_code": "L.7",
+        "description": "Demonstrate command of conventions; use phrases and clauses correctly"
+      },
+      "Vocabulary & Word Roots": {
+        "standards": ["L.7.4", "L.7.4.A", "L.7.4.B", "L.7.4.C", "L.7.4.D", "L.7.5", "L.7.6"],
+        "domain": "Language",
+        "domain_code": "L.7",
+        "description": "Use Greek and Latin affixes and roots as clues to meaning"
+      },
+      "Poetry Analysis": {
+        "standards": ["RL.7.4", "RL.7.5", "RL.7.7"],
+        "domain": "Reading: Literature",
+        "domain_code": "RL.7",
+        "description": "Analyze the impact of rhyme, structure, and form on meaning in poetry"
+      },
+      "Research Skills (Intro)": {
+        "standards": ["W.7.7", "W.7.8", "W.7.9"],
+        "domain": "Writing",
+        "domain_code": "W.7",
+        "description": "Conduct short research projects; gather relevant information from multiple sources"
+      }
+    },
+    "8": {
+      "Reading Comprehension & Analysis": {
+        "standards": ["RL.8.1", "RL.8.2", "RL.8.3", "RI.8.1", "RI.8.2", "RI.8.3"],
+        "domain": "Reading",
+        "domain_code": "RL.8 / RI.8",
+        "description": "Cite strongest textual evidence; determine themes; analyze connections"
+      },
+      "Essay Structure & Argumentation": {
+        "standards": ["W.8.1", "W.8.1.A", "W.8.1.B", "W.8.1.C", "W.8.1.D", "W.8.1.E", "W.8.4"],
+        "domain": "Writing",
+        "domain_code": "W.8",
+        "description": "Write arguments to support claims with logical reasoning and relevant evidence"
+      },
+      "Grammar & Sentence Structure": {
+        "standards": ["L.8.1", "L.8.1.A", "L.8.1.B", "L.8.1.C", "L.8.1.D", "L.8.2", "L.8.3"],
+        "domain": "Language",
+        "domain_code": "L.8",
+        "description": "Use verbs in active/passive voice, conditional/subjunctive mood; form and use punctuation"
+      },
+      "Vocabulary & Context Clues": {
+        "standards": ["L.8.4", "L.8.4.A", "L.8.4.B", "L.8.4.C", "L.8.4.D", "L.8.5", "L.8.6"],
+        "domain": "Language",
+        "domain_code": "L.8",
+        "description": "Use context, affixes, roots, and reference materials to determine word meanings"
+      },
+      "Literary Devices & Figurative Language": {
+        "standards": ["RL.8.4", "RL.8.5", "RL.8.6", "L.8.5.A", "L.8.5.B", "L.8.5.C"],
+        "domain": "Reading / Language",
+        "domain_code": "RL.8",
+        "description": "Analyze how differences in points of view create effects; interpret figurative language"
+      },
+      "Research & Citation Skills": {
+        "standards": ["W.8.7", "W.8.8", "W.8.9", "W.8.6"],
+        "domain": "Writing",
+        "domain_code": "W.8",
+        "description": "Conduct research projects; gather and assess credibility of sources; cite sources"
+      }
+    },
+    "9": {
+      "Short Story & Novel Analysis": {
+        "standards": ["RL.9-10.1", "RL.9-10.2", "RL.9-10.3", "RL.9-10.5"],
+        "domain": "Reading: Literature",
+        "domain_code": "RL.9-10",
+        "description": "Cite strong evidence; determine themes; analyze complex characters and structure"
+      },
+      "Rhetorical Analysis": {
+        "standards": ["RI.9-10.4", "RI.9-10.5", "RI.9-10.6", "RI.9-10.8"],
+        "domain": "Reading: Informational Text",
+        "domain_code": "RI.9-10",
+        "description": "Analyze how authors use rhetoric, structure, and point of view"
+      },
+      "MLA Research Writing": {
+        "standards": ["W.9-10.1", "W.9-10.2", "W.9-10.7", "W.9-10.8", "W.9-10.9"],
+        "domain": "Writing",
+        "domain_code": "W.9-10",
+        "description": "Write arguments and informative texts; conduct research with MLA format"
+      },
+      "Advanced Grammar & Style": {
+        "standards": ["L.9-10.1", "L.9-10.2", "L.9-10.3"],
+        "domain": "Language",
+        "domain_code": "L.9-10",
+        "description": "Use parallel structure, various phrase types; apply conventions with sophistication"
+      },
+      "Shakespeare (Intro)": {
+        "standards": ["RL.9-10.4", "RL.9-10.6", "RL.9-10.7", "RL.9-10.9"],
+        "domain": "Reading: Literature",
+        "domain_code": "RL.9-10",
+        "description": "Analyze how an author's choices concerning structure and language create meaning"
+      },
+      "Persuasive Speaking": {
+        "standards": ["SL.9-10.1", "SL.9-10.3", "SL.9-10.4", "SL.9-10.6"],
+        "domain": "Speaking & Listening",
+        "domain_code": "SL.9-10",
+        "description": "Initiate and participate in discussions; present information clearly and persuasively"
+      }
+    },
+    "10": {
+      "World Literature & Cultural Context": {
+        "standards": ["RL.9-10.1", "RL.9-10.2", "RL.9-10.6", "RL.9-10.9"],
+        "domain": "Reading: Literature",
+        "domain_code": "RL.9-10",
+        "description": "Analyze how cultural context shapes themes and perspectives in world literature"
+      },
+      "Comparative Literary Analysis": {
+        "standards": ["RL.9-10.7", "RL.9-10.9", "W.9-10.9"],
+        "domain": "Reading / Writing",
+        "domain_code": "RL.9-10",
+        "description": "Analyze representations of a subject in two different mediums or texts"
+      },
+      "Synthesis Essay Writing": {
+        "standards": ["W.9-10.1", "W.9-10.2", "W.9-10.4", "W.9-10.5"],
+        "domain": "Writing",
+        "domain_code": "W.9-10",
+        "description": "Write arguments and informative texts synthesizing multiple sources"
+      },
+      "Vocabulary in Context (SAT Prep)": {
+        "standards": ["L.9-10.4", "L.9-10.5", "L.9-10.6"],
+        "domain": "Language",
+        "domain_code": "L.9-10",
+        "description": "Interpret words in context; analyze nuances of word meaning; acquire vocabulary"
+      },
+      "Drama & Poetry Analysis": {
+        "standards": ["RL.9-10.4", "RL.9-10.5", "RL.9-10.10"],
+        "domain": "Reading: Literature",
+        "domain_code": "RL.9-10",
+        "description": "Analyze cumulative impact of word choices; analyze structure of drama and poetry"
+      },
+      "Media Literacy & Rhetoric": {
+        "standards": ["RI.9-10.6", "RI.9-10.7", "RI.9-10.8", "SL.9-10.2", "SL.9-10.3"],
+        "domain": "Reading / Speaking & Listening",
+        "domain_code": "RI.9-10",
+        "description": "Evaluate argument and rhetoric in various media; assess credibility of sources"
+      }
+    },
+    "11": {
+      "American Literature (Survey)": {
+        "standards": ["RL.11-12.1", "RL.11-12.2", "RL.11-12.3", "RL.11-12.6", "RL.11-12.9"],
+        "domain": "Reading: Literature",
+        "domain_code": "RL.11-12",
+        "description": "Analyze foundational U.S. documents and seminal American literary works"
+      },
+      "AP-Style Rhetorical Analysis": {
+        "standards": ["RI.11-12.4", "RI.11-12.5", "RI.11-12.6", "RI.11-12.8"],
+        "domain": "Reading: Informational Text",
+        "domain_code": "RI.11-12",
+        "description": "Analyze effectiveness of structure and rhetoric in seminal texts"
+      },
+      "Argumentative & Research Essays": {
+        "standards": ["W.11-12.1", "W.11-12.2", "W.11-12.5", "W.11-12.7", "W.11-12.8", "W.11-12.9"],
+        "domain": "Writing",
+        "domain_code": "W.11-12",
+        "description": "Write arguments and research papers with sustained complexity"
+      },
+      "Advanced Vocabulary & Diction": {
+        "standards": ["L.11-12.4", "L.11-12.5", "L.11-12.6"],
+        "domain": "Language",
+        "domain_code": "L.11-12",
+        "description": "Determine or clarify meaning of unknown words; demonstrate understanding of figurative language"
+      },
+      "Satire & Social Commentary": {
+        "standards": ["RL.11-12.4", "RL.11-12.5", "RL.11-12.6"],
+        "domain": "Reading: Literature",
+        "domain_code": "RL.11-12",
+        "description": "Analyze impact of author's choices regarding satire, irony, and tone"
+      },
+      "College Application Writing": {
+        "standards": ["W.11-12.3", "W.11-12.4", "W.11-12.5", "W.11-12.10"],
+        "domain": "Writing",
+        "domain_code": "W.11-12",
+        "description": "Write narratives; produce clear, coherent writing appropriate to task and audience"
+      }
+    },
+    "12": {
+      "British & World Literature": {
+        "standards": ["RL.11-12.1", "RL.11-12.2", "RL.11-12.3", "RL.11-12.7", "RL.11-12.9"],
+        "domain": "Reading: Literature",
+        "domain_code": "RL.11-12",
+        "description": "Analyze multiple interpretations; demonstrate knowledge of foundational works"
+      },
+      "Literary Criticism & Theory": {
+        "standards": ["RL.11-12.1", "RL.11-12.6", "RI.11-12.6", "W.11-12.9"],
+        "domain": "Reading / Writing",
+        "domain_code": "RL.11-12",
+        "description": "Apply critical lenses; analyze author's purpose and perspective"
+      },
+      "Senior Research Capstone": {
+        "standards": ["W.11-12.2", "W.11-12.7", "W.11-12.8", "W.11-12.9"],
+        "domain": "Writing",
+        "domain_code": "W.11-12",
+        "description": "Conduct sustained research projects; synthesize multiple sources"
+      },
+      "Advanced Rhetoric & Style": {
+        "standards": ["L.11-12.1", "L.11-12.2", "L.11-12.3", "L.11-12.5"],
+        "domain": "Language",
+        "domain_code": "L.11-12",
+        "description": "Apply understanding of syntax and rhetoric for effective communication"
+      },
+      "Contemporary Issues in Literature": {
+        "standards": ["RL.11-12.7", "RI.11-12.7", "RI.11-12.9", "SL.11-12.1"],
+        "domain": "Reading / Speaking & Listening",
+        "domain_code": "RL.11-12",
+        "description": "Analyze multiple sources; integrate and evaluate information from diverse formats"
+      },
+      "Professional & Technical Writing": {
+        "standards": ["W.11-12.2", "W.11-12.4", "W.11-12.6", "W.11-12.10"],
+        "domain": "Writing",
+        "domain_code": "W.11-12",
+        "description": "Produce clear, coherent technical and professional writing"
+      }
+    }
+  }
+}

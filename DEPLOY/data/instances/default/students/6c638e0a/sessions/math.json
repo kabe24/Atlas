@@ -1,0 +1,12 @@
+[
+  {
+    "role": "user",
+    "content": "how do I use the quadratic formula?",
+    "timestamp": "2026-03-06T09:00:54.802411"
+  },
+  {
+    "role": "assistant",
+    "content": "Great question, Test Kid! The quadratic formula is a super useful tool for solving quadratic equations. Let me walk you through it step by step.\n\nFirst, let's make sure we know what we're working with. The **quadratic formula** is used to solve equations that look like this:\n\n$$ax^2 + bx + c = 0$$\n\nwhere $a$, $b$, and $c$ are numbers, and $a \\neq 0$.\n\nThe quadratic formula itself is:\n\n$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$\n\nHere's how to use it:\n\n1. **Identify your values**: Look at your equation and figure out what $a$, $b$, and $c$ are\n2. **Substitute**: Plug those values into the formula\n3. **Simplify**: Work through the arithmetic step by step\n4. **Solve**: The $\\pm$ means you'll get two answers (usually)\n\nLet's try a simple example together. Suppose we have:\n$$x^2 + 5x + 6 = 0$$\n\nCan you tell me what $a$, $b$, and $c$ would be in this equation? Take a look at the standard form $ax^2 + bx + c = 0$ and compare it to our example.",
+    "timestamp": "2026-03-06T09:01:01.050284"
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "feedback_id": "e595b1692bc3",
+  "instance_id": "8ab50e9aed36",
+  "student_id": null,
+  "submitted_by": "parent",
+  "type": "feature_request",
+  "subject": "general",
+  "title": "Parent Feature Request",
+  "content": "I would like this feature",
+  "submitted_at": "2026-03-04T12:49:43.513626",
+  "status": "approved",
+  "reviewed_at": null,
+  "scope": "instance"
+}

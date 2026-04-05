@@ -1,0 +1,8 @@
+{"ts": "2026-03-25T12:44:01.509834", "type": "APIConnectionError", "message": "Connection error.", "context": "call_claude"}
+{"ts": "2026-03-25T12:44:41.014459", "type": "APIConnectionError", "message": "Connection error.", "context": "call_claude"}
+{"ts": "2026-03-25T12:50:46.031507", "type": "OverloadedError", "message": "Error code: 529 - {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CZQ9GZMuj9QFTHMeXQHYW'}", "context": "call_claude"}
+{"ts": "2026-03-26T12:27:31.937950", "type": "APIConnectionError", "message": "Connection error.", "context": "call_claude"}
+{"ts": "2026-03-26T12:27:40.540928", "type": "APIConnectionError", "message": "Connection error.", "context": "call_claude"}
+{"ts": "2026-03-27T10:24:14.946894", "type": "APIConnectionError", "message": "Connection error.", "context": "call_claude"}
+{"ts": "2026-03-27T10:24:40.090483", "type": "APIConnectionError", "message": "Connection error.", "context": "call_claude"}
+{"ts": "2026-03-27T10:24:46.541335", "type": "APIConnectionError", "message": "Connection error.", "context": "call_claude"}

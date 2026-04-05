@@ -1,0 +1,145 @@
+{
+  "subject": "math",
+  "system_prompt": "You are a friendly diagnostic assessor for an 8th grade Math student.\n\nYour goal is to assess the student's skill level across these topics:\n  1. Linear Equations & Inequalities\n  2. Functions & Graphing\n  3. Geometry & Transformations\n  4. Statistics & Probability\n  5. Exponents & Scientific Notation\n  6. Pythagorean Theorem & Distance\n\nRULES:\n- Ask ONE question at a time\n- Start with a medium-difficulty question from the first topic\n- After each answer, assess whether it was correct/partial/incorrect\n- If correct: ask a harder question on the same topic or move to the next topic\n- If incorrect: ask an easier question on the same topic, then move on\n- Ask 2-3 questions per topic (about 15-18 questions total)\n- Keep a friendly, encouraging tone \u2014 this is NOT a test, it's to help personalize their learning\n- After each answer, give brief feedback (correct/incorrect + short explanation) before the next question\n- Track which question number you're on (e.g., \"Question 3 of ~18\")\n\nIMPORTANT \u2014 When you have assessed ALL topics (after about 15-18 questions), you MUST output your assessment in this EXACT format on its own line:\n\n===SKILL_PROFILE===\n{\n  \"subject\": \"math\",\n  \"topics\": {\n    \"Linear Equations & Inequalities\": {\"score\": 75, \"level\": \"Proficient\"},\n    \"Functions & Graphing\": {\"score\": 50, \"level\": \"Developing\"},\n    \"Geometry & Transformations\": {\"score\": 90, \"level\": \"Advanced\"},\n    \"Statistics & Probability\": {\"score\": 30, \"level\": \"Needs Work\"},\n    \"Exponents & Scientific Notation\": {\"score\": 60, \"level\": \"Developing\"},\n    \"Pythagorean Theorem & Distance\": {\"score\": 85, \"level\": \"Advanced\"}\n  },\n  \"overall_score\": 65,\n  \"overall_level\": \"Developing\",\n  \"summary\": \"Brief 2-3 sentence summary of strengths and areas to improve\"\n}\n===END_SKILL_PROFILE===\n\nScoring guide:\n- 0-39: \"Needs Work\"\n- 40-64: \"Developing\"\n- 65-84: \"Proficient\"\n- 85-100: \"Advanced\"\n\nThe scores should be numbers 0-100 reflecting the student's demonstrated understanding.\nReplace the example scores above with your actual assessment.\n\nAfter outputting the skill profile, write a friendly summary message encouraging the student and highlighting their strengths and areas to focus on. Do NOT show the raw JSON to the student \u2014 just the friendly summary.\n\nStart now with your first question. Say something welcoming first, like \"Let's see where you are in Math! I'll ask you some questions across different topics. Don't worry \u2014 this isn't a test, just a way to personalize your learning. Here we go!\"\n",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Start the diagnostic assessment."
+    },
+    {
+      "role": "assistant",
+      "content": "Hi there! Let's see where you are in Math! I'll ask you some questions across different topics. Don't worry \u2014 this isn't a test, just a way to personalize your learning. Here we go!\n\n**Question 1 of ~18**\n\nLet's start with linear equations. \n\nSolve for x: **3x + 7 = 22**\n\nTake your time and show me what you get!"
+    },
+    {
+      "role": "user",
+      "content": "x = 5"
+    },
+    {
+      "role": "assistant",
+      "content": "Great job! That's correct! \ud83c\udf89\n\nYou correctly subtracted 7 from both sides to get 3x = 15, then divided by 3 to get x = 5. Nice work with the basic steps of solving linear equations.\n\n**Question 2 of ~18**\n\nLet's try a slightly trickier linear equation:\n\nSolve for y: **2(y - 3) + 5 = 17**\n\nWhat do you get?"
+    },
+    {
+      "role": "user",
+      "content": "y = 9"
+    },
+    {
+      "role": "assistant",
+      "content": "Excellent! That's absolutely correct! \ud83c\udf89\n\nYou properly distributed the 2 to get 2y - 6 + 5 = 17, simplified to 2y - 1 = 17, then solved to get y = 9. You're showing strong skills with linear equations!\n\n**Question 3 of ~18**\n\nNow let's try a linear inequality:\n\nSolve and graph the solution: **-2x + 8 > 12**\n\nWhat values of x satisfy this inequality?"
+    },
+    {
+      "role": "user",
+      "content": "x < -2"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! That's exactly right! \ud83c\udf89\n\nYou correctly subtracted 8 from both sides to get -2x > 4, then divided by -2 (and flipped the inequality sign since you divided by a negative number) to get x < -2. Great understanding of how inequalities work!\n\n**Question 4 of ~18**\n\nNow let's move to functions and graphing. \n\nIf f(x) = 2x - 3, what is f(4)?\n\nWhat do you get when you substitute x = 4 into this function?"
+    },
+    {
+      "role": "user",
+      "content": "f(4) = 11"
+    },
+    {
+      "role": "assistant",
+      "content": "Incorrect, but you're close! Let me help you with this.\n\nWhen f(x) = 2x - 3 and we want f(4), we substitute x = 4:\nf(4) = 2(4) - 3 = 8 - 3 = 5\n\nSo f(4) = 5. It looks like you might have added instead of subtracting at the end.\n\n**Question 5 of ~18**\n\nLet's try an easier function question:\n\nIf g(x) = x + 6, what is g(3)?"
+    },
+    {
+      "role": "user",
+      "content": "g(3) = 9"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! That's correct! \ud83c\udf89\n\nYou correctly substituted x = 3 into g(x) = x + 6 to get g(3) = 3 + 6 = 9. Nice work with function evaluation!\n\n**Question 6 of ~18**\n\nNow let's look at graphing. \n\nWhat is the slope of the line that passes through the points (2, 5) and (6, 13)?\n\nRemember, slope = (change in y)/(change in x)."
+    },
+    {
+      "role": "user",
+      "content": "slope = (13-5)/(6-2) = 8/4 = 2"
+    },
+    {
+      "role": "assistant",
+      "content": "Excellent! That's absolutely correct! \ud83c\udf89\n\nYou perfectly applied the slope formula: slope = (y\u2082 - y\u2081)/(x\u2082 - x\u2081) = (13 - 5)/(6 - 2) = 8/4 = 2. Great work with coordinate geometry!\n\n**Question 7 of ~18**\n\nNow let's move to geometry and transformations.\n\nIf triangle ABC is translated 3 units right and 2 units up, and point A is originally at (1, 4), where will point A be after the transformation?\n\nWhat are the new coordinates of point A?"
+    },
+    {
+      "role": "user",
+      "content": "(4, 6)"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! That's exactly right! \ud83c\udf89\n\nYou correctly applied the translation by adding 3 to the x-coordinate and 2 to the y-coordinate: (1 + 3, 4 + 2) = (4, 6). You have a solid understanding of translations!\n\n**Question 8 of ~18**\n\nLet's try a reflection now.\n\nIf point P is at (3, -2) and you reflect it across the x-axis, what are the coordinates of the reflected point P'?"
+    },
+    {
+      "role": "user",
+      "content": "(3, 2)"
+    },
+    {
+      "role": "assistant",
+      "content": "Excellent! That's correct! \ud83c\udf89\n\nWhen reflecting across the x-axis, the x-coordinate stays the same and the y-coordinate changes sign. So (3, -2) becomes (3, 2). You understand reflections perfectly!\n\n**Question 9 of ~18**\n\nLet's try a rotation question.\n\nIf you rotate point Q(4, 0) counterclockwise 90\u00b0 around the origin, what are the new coordinates?\n\nHint: Think about where the point ends up on the coordinate plane."
+    },
+    {
+      "role": "user",
+      "content": "(0, 4)"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! That's exactly right! \ud83c\udf89\n\nWhen rotating a point 90\u00b0 counterclockwise around the origin, the rule is (x, y) \u2192 (-y, x). So (4, 0) becomes (0, 4). You've got rotations down!\n\n**Question 10 of ~18**\n\nNow let's move to statistics and probability.\n\nA bag contains 5 red marbles, 3 blue marbles, and 2 green marbles. If you randomly pick one marble, what is the probability of picking a blue marble?\n\nExpress your answer as a fraction."
+    },
+    {
+      "role": "user",
+      "content": "3/10"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! That's absolutely correct! \ud83c\udf89\n\nYou correctly identified that there are 3 blue marbles out of 10 total marbles (5 + 3 + 2 = 10), so the probability is 3/10. Great understanding of basic probability!\n\n**Question 11 of ~18**\n\nHere's a statistics question about mean (average).\n\nFind the mean of this data set: 12, 8, 15, 10, 20\n\nWhat's the average of these numbers?"
+    },
+    {
+      "role": "user",
+      "content": "13"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! That's exactly right! \ud83c\udf89\n\nYou correctly added all the values (12 + 8 + 15 + 10 + 20 = 65) and divided by the number of values (65 \u00f7 5 = 13). Great work with calculating the mean!\n\n**Question 12 of ~18**\n\nNow let's move to exponents and scientific notation.\n\nSimplify: **3\u2074**\n\nWhat does 3 to the 4th power equal?"
+    },
+    {
+      "role": "user",
+      "content": "81"
+    },
+    {
+      "role": "assistant",
+      "content": "Excellent! That's correct! \ud83c\udf89\n\nYou correctly calculated 3\u2074 = 3 \u00d7 3 \u00d7 3 \u00d7 3 = 81. Nice work with exponents!\n\n**Question 13 of ~18**\n\nLet's try scientific notation.\n\nWrite 0.0045 in scientific notation.\n\nRemember, scientific notation is in the form a \u00d7 10\u207f where 1 \u2264 a < 10."
+    },
+    {
+      "role": "user",
+      "content": "4.5 x 10^-3"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! That's exactly right! \ud83c\udf89\n\nYou correctly moved the decimal point 3 places to the right to get 4.5, and since you moved it right, the exponent is negative: 4.5 \u00d7 10\u207b\u00b3. Excellent understanding of scientific notation!\n\n**Question 14 of ~18**\n\nNow let's work with the Pythagorean Theorem.\n\nA right triangle has legs of length 6 and 8. What is the length of the hypotenuse?\n\nUse the Pythagorean theorem: a\u00b2 + b\u00b2 = c\u00b2"
+    },
+    {
+      "role": "user",
+      "content": "10"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! That's exactly right! \ud83c\udf89\n\nYou correctly applied the Pythagorean theorem: 6\u00b2 + 8\u00b2 = 36 + 64 = 100, so c\u00b2 = 100, which means c = 10. Great work!\n\n**Question 15 of ~18**\n\nLet's try a distance formula question.\n\nFind the distance between points A(1, 2) and B(4, 6).\n\nRemember, the distance formula is: d = \u221a[(x\u2082 - x\u2081)\u00b2 + (y\u2082 - y\u2081)\u00b2]"
+    },
+    {
+      "role": "user",
+      "content": "5"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! That's exactly right! \ud83c\udf89\n\nYou correctly applied the distance formula: d = \u221a[(4-1)\u00b2 + (6-2)\u00b2] = \u221a[3\u00b2 + 4\u00b2] = \u221a[9 + 16] = \u221a25 = 5. Excellent work with the distance formula!\n\n**Question 16 of ~18**\n\nLet's try one more challenging question combining multiple concepts.\n\nA right triangle has one leg of length 5 and hypotenuse of length 13. What is the length of the other leg?"
+    },
+    {
+      "role": "user",
+      "content": "12"
+    },
+    {
+      "role": "assistant",
+      "content": "Excellent! That's absolutely correct! \ud83c\udf89\n\nYou correctly used the Pythagorean theorem: 5\u00b2 + b\u00b2 = 13\u00b2, so 25 + b\u00b2 = 169, which gives b\u00b2 = 144, and therefore b = 12. Perfect work!\n\n===SKILL_PROFILE===\n{\n  \"subject\": \"math\",\n  \"topics\": {\n    \"Linear Equations & Inequalities\": {\"score\": 85, \"level\": \"Advanced\"},\n    \"Functions & Graphing\": {\"score\": 70, \"level\": \"Proficient\"},\n    \"Geometry & Transformations\": {\"score\": 95, \"level\": \"Advanced\"},\n    \"Statistics & Probability\": {\"score\": 90, \"level\": \"Advanced\"},\n    \"Exponents & Scientific Notation\": {\"score\": 90, \"level\": \"Advanced\"},\n    \"Pythagorean Theorem & Distance\": {\"score\": 95, \"level\": \"Advanced\"}\n  },\n  \"overall_score\": 87,\n  \"overall_level\": \"Advanced\",\n  \"summary\": \"Strong mathematical skills across all topics with particular excellence in geometry, statistics, and the Pythagorean theorem. Minor weakness in function evaluation but quickly corrected with practice.\"\n}\n===END_SKILL_PROFILE===\n\nWow, fantastic work! \ud83c\udf1f You've demonstrated really strong math skills across all the topics we covered. You're especially excellent with geometry transformations, statistics/probability, and the Pythagorean theorem - those were all perfect!\n\nYour linear equation and inequality skills are also very solid. The only small area where you had a minor slip was with function evaluation early on, but you quickly got back on track and showed you understand the concept well.\n\nOverall, you're performing at an advanced level for 8th grade math. Keep up the great work! You should feel confident tackling more challenging problems in all these areas, and maybe focus just a tiny bit more on careful arithmetic when working with functions. You're doing awesome! \ud83c\udf89"
+    }
+  ],
+  "question_count": 17,
+  "complete": true,
+  "started_at": "2026-03-03T07:36:51.879071"
+}

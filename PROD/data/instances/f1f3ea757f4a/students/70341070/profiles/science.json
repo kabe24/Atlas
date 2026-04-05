@@ -1,0 +1,32 @@
+{
+  "subject": "science",
+  "topics": {
+    "Cell Structure & Function": {
+      "score": 60,
+      "level": "Developing"
+    },
+    "Human Body Systems": {
+      "score": 65,
+      "level": "Proficient"
+    },
+    "Genetics & Heredity": {
+      "score": 45,
+      "level": "Developing"
+    },
+    "Chemical Reactions (Intro)": {
+      "score": 70,
+      "level": "Proficient"
+    },
+    "Waves & Electromagnetic Spectrum": {
+      "score": 75,
+      "level": "Proficient"
+    },
+    "Ecology & Biodiversity": {
+      "score": 80,
+      "level": "Proficient"
+    }
+  },
+  "overall_score": 66,
+  "overall_level": "Proficient",
+  "summary": "Shows strong understanding of body systems, waves, and ecology concepts with excellent logical thinking skills. Would benefit from more practice with cell parts and genetics vocabulary, but demonstrates good reasoning abilities throughout."
+}

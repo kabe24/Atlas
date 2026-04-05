@@ -1,0 +1,354 @@
+/*
+ * ═══════════════════════════════════════════════════════
+ *  ATLAS THEME — A KmUnity Learning Tool
+ *  Brand Identity & Design Tokens
+ *  Version 1.0 • March 2026
+ * ═══════════════════════════════════════════════════════
+ *
+ *  This file defines the Atlas visual identity as CSS
+ *  custom properties. Import it AFTER the base styles
+ *  in index.html to override the default theme.
+ *
+ *  Usage:
+ *    <link rel="stylesheet" href="atlas-theme.css">
+ *    (place after the inline <style> block)
+ *
+ *  Font loading:
+ *    The @import below loads Outfit, Crimson Pro, and
+ *    DM Mono from Google Fonts. For self-hosted fonts
+ *    (recommended for COPPA), replace with local @font-face.
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ── Font Loading ──────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap");
+
+/* ── Atlas Design Tokens ───────────────────────────── */
+:root {
+    /* ─── Primary Anchors ─── */
+    --atlas-midnight:       #0B1D3A;
+    --atlas-deep-ocean:     #14305A;
+    --atlas-explorer-blue:  #1E4D8C;
+
+    /* ─── Discovery Accents ─── */
+    --atlas-compass-gold:   #D4A843;
+    --atlas-warm-amber:     #E8B84B;
+    --atlas-lantern-glow:   #F4CE6A;
+
+    /* ─── Backgrounds ─── */
+    --atlas-parchment:      #F5EFE0;
+    --atlas-warm-cream:     #FAF7F0;
+    --atlas-soft-linen:     #EDE7D9;
+
+    /* ─── Status & Pin Colors ─── */
+    --atlas-teal-pin:       #2A9D8F;
+    --atlas-coral-pin:      #E76F51;
+    --atlas-forest-green:   #4A7C59;
+    --atlas-mountain-slate: #6B7B8D;
+
+    /* ─── Typography Stacks ─── */
+    --atlas-font-display:    "Outfit", Arial, sans-serif;
+    --atlas-font-editorial:  "Crimson Pro", Georgia, serif;
+    --atlas-font-data:       "DM Mono", "Courier New", monospace;
+
+    /* ─── Map to existing CSS variable names ─── */
+    /* These override the default theme variables in index.html */
+    --primary:        var(--atlas-deep-ocean);
+    --accent:         var(--atlas-explorer-blue);
+    --light-bg:       var(--atlas-parchment);
+    --sidebar-bg:     var(--atlas-midnight);
+    --sidebar-hover:  var(--atlas-deep-ocean);
+    --text:           var(--atlas-midnight);
+    --text-light:     var(--atlas-mountain-slate);
+    --white:          #FFFFFF;
+    --border:         var(--atlas-soft-linen);
+    --success:        var(--atlas-teal-pin);
+    --warning:        var(--atlas-warm-amber);
+    --danger:         var(--atlas-coral-pin);
+    --user-bubble:    var(--atlas-explorer-blue);
+    --tutor-bubble:   var(--atlas-warm-cream);
+}
+
+/* ── Base Typography ───────────────────────────────── */
+body {
+    font-family: var(--atlas-font-display);
+    background: var(--atlas-parchment);
+    color: var(--atlas-midnight);
+}
+
+/* ── Display Type — Headlines, Nav, Interface ──────── */
+h1, h2, h3,
+.sidebar-header h1,
+.nav-btn,
+.mode-title,
+.section-title {
+    font-family: var(--atlas-font-display);
+    letter-spacing: 0.02em;
+}
+
+/* ── Editorial Type — Encouragement, Descriptions ──── */
+.tutor-message p,
+.tutor-message li,
+.encouragement,
+.tagline,
+.description-text {
+    font-family: var(--atlas-font-editorial);
+}
+
+/* ── Data Type — Stats, Progress, Scores ───────────── */
+.stat-value,
+.progress-number,
+.score-display,
+.data-label,
+.coordinate-text {
+    font-family: var(--atlas-font-data);
+    letter-spacing: 0.05em;
+}
+
+/* ── Sidebar — Midnight with Gold Accents ──────────── */
+.sidebar {
+    background: var(--atlas-midnight);
+}
+
+.sidebar-header {
+    border-bottom: 1px solid rgba(212, 168, 67, 0.2);
+}
+
+.sidebar-header h1 {
+    font-family: var(--atlas-font-display);
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--atlas-parchment);
+}
+
+.sidebar-header p {
+    font-family: var(--atlas-font-editorial);
+    font-style: italic;
+    color: var(--atlas-compass-gold);
+    opacity: 0.8;
+}
+
+.nav-btn {
+    color: rgba(245, 239, 224, 0.7);
+    font-family: var(--atlas-font-display);
+    font-weight: 500;
+}
+
+.nav-btn:hover {
+    background: var(--atlas-deep-ocean);
+    color: var(--atlas-parchment);
+}
+
+.nav-btn.active {
+    background: var(--atlas-deep-ocean);
+    color: var(--atlas-compass-gold);
+    border-left: 3px solid var(--atlas-compass-gold);
+}
+
+/* ── Chat Bubbles ──────────────────────────────────── */
+.user-bubble,
+[class*="user-message"] {
+    background: var(--atlas-explorer-blue);
+    color: var(--atlas-parchment);
+    border-radius: 16px 16px 4px 16px;
+}
+
+.tutor-bubble,
+[class*="tutor-message"],
+[class*="ai-message"] {
+    background: var(--atlas-warm-cream);
+    color: var(--atlas-midnight);
+    border-radius: 16px 16px 16px 4px;
+    border: 1px solid var(--atlas-soft-linen);
+}
+
+/* ── Buttons — Gold CTAs ───────────────────────────── */
+.btn-primary,
+.cta-button,
+button[type="submit"] {
+    background: var(--atlas-warm-amber);
+    color: var(--atlas-midnight);
+    font-family: var(--atlas-font-display);
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover,
+.cta-button:hover,
+button[type="submit"]:hover {
+    background: var(--atlas-compass-gold);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(212, 168, 67, 0.3);
+}
+
+/* ── Status Indicators ─────────────────────────────── */
+.status-success,
+.completed,
+.mastery-high {
+    color: var(--atlas-teal-pin);
+}
+
+.status-warning,
+.needs-review,
+.mastery-medium {
+    color: var(--atlas-warm-amber);
+}
+
+.status-danger,
+.attention,
+.mastery-low {
+    color: var(--atlas-coral-pin);
+}
+
+/* ── Progress & Discovery Moments ──────────────────── */
+.progress-bar-fill {
+    background: linear-gradient(90deg, var(--atlas-explorer-blue), var(--atlas-compass-gold));
+    border-radius: 4px;
+}
+
+.milestone-badge,
+.landmark-icon {
+    color: var(--atlas-compass-gold);
+    filter: drop-shadow(0 2px 4px rgba(212, 168, 67, 0.3));
+}
+
+.streak-indicator {
+    background: var(--atlas-deep-ocean);
+    color: var(--atlas-compass-gold);
+    font-family: var(--atlas-font-data);
+}
+
+/* ── Cards & Surfaces ──────────────────────────────── */
+.card,
+.panel,
+.content-card {
+    background: var(--white);
+    border: 1px solid var(--atlas-soft-linen);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(11, 29, 58, 0.06);
+}
+
+/* ── Mode Selector ─────────────────────────────────── */
+.mode-card {
+    border: 2px solid var(--atlas-soft-linen);
+    background: var(--white);
+    transition: all 0.2s ease;
+}
+
+.mode-card:hover {
+    border-color: var(--atlas-compass-gold);
+    box-shadow: 0 4px 16px rgba(212, 168, 67, 0.15);
+}
+
+.mode-card.active,
+.mode-card.selected {
+    border-color: var(--atlas-compass-gold);
+    background: var(--atlas-warm-cream);
+}
+
+/* ── Input Fields ──────────────────────────────────── */
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    border: 1px solid var(--atlas-soft-linen);
+    border-radius: 8px;
+    font-family: var(--atlas-font-display);
+    background: var(--white);
+    color: var(--atlas-midnight);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--atlas-explorer-blue);
+    box-shadow: 0 0 0 3px rgba(30, 77, 140, 0.12);
+    outline: none;
+}
+
+/* ── Scrollbar Styling ─────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--atlas-soft-linen);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--atlas-mountain-slate);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--atlas-deep-ocean);
+}
+
+/* ── Utility Classes ───────────────────────────────── */
+.atlas-gold { color: var(--atlas-compass-gold); }
+.atlas-blue { color: var(--atlas-explorer-blue); }
+.atlas-teal { color: var(--atlas-teal-pin); }
+.atlas-coral { color: var(--atlas-coral-pin); }
+.atlas-slate { color: var(--atlas-mountain-slate); }
+
+.atlas-bg-midnight { background: var(--atlas-midnight); }
+.atlas-bg-parchment { background: var(--atlas-parchment); }
+.atlas-bg-cream { background: var(--atlas-warm-cream); }
+
+.font-display { font-family: var(--atlas-font-display); }
+.font-editorial { font-family: var(--atlas-font-editorial); }
+.font-data { font-family: var(--atlas-font-data); }
+
+/* ── ATLAS Wordmark ────────────────────────────────── */
+.atlas-wordmark {
+    font-family: var(--atlas-font-display);
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  WATERMARK BACKGROUNDS — Subtle Atlas Imagery
+ *  Globe on login, compass rose on main, topo on sidebar
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── Login Screen — Globe watermark is baked into index.html ── */
+
+/* ── Main Content Area — Compass Rose + Grid ─────────── */
+.main {
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%230B1D3A' stroke-width='2' opacity='0.07'%3E%3Ccircle cx='200' cy='200' r='180'/%3E%3Ccircle cx='200' cy='200' r='170'/%3E%3Ccircle cx='200' cy='200' r='120'/%3E%3Ccircle cx='200' cy='200' r='45'/%3E%3Cpolygon points='200,20 215,160 200,120 185,160' fill='%23D4A843' stroke='%23D4A843'/%3E%3Cpolygon points='200,380 215,240 200,280 185,240' fill='%230B1D3A' stroke='%230B1D3A'/%3E%3Cpolygon points='380,200 240,185 280,200 240,215' fill='%230B1D3A' stroke='%230B1D3A'/%3E%3Cpolygon points='20,200 160,185 120,200 160,215' fill='%230B1D3A' stroke='%230B1D3A'/%3E%3Cpolygon points='327,73 230,170 250,160 240,180' stroke='%230B1D3A'/%3E%3Cpolygon points='73,73 170,170 160,150 150,170' stroke='%230B1D3A'/%3E%3Cpolygon points='327,327 230,230 250,240 240,220' stroke='%230B1D3A'/%3E%3Cpolygon points='73,327 170,230 150,230 160,250' stroke='%230B1D3A'/%3E%3Ctext x='200' y='16' text-anchor='middle' font-family='Outfit,sans-serif' font-size='16' font-weight='700' fill='%230B1D3A'%3EN%3C/text%3E%3Ctext x='200' y='396' text-anchor='middle' font-family='Outfit,sans-serif' font-size='16' font-weight='700' fill='%230B1D3A'%3ES%3C/text%3E%3Ctext x='396' y='205' text-anchor='middle' font-family='Outfit,sans-serif' font-size='16' font-weight='700' fill='%230B1D3A'%3EE%3C/text%3E%3Ctext x='8' y='205' text-anchor='middle' font-family='Outfit,sans-serif' font-size='16' font-weight='700' fill='%230B1D3A'%3EW%3C/text%3E%3C/g%3E%3C/svg%3E")
+        no-repeat right -80px bottom -80px / 420px 420px,
+        repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(11,29,58,0.025) 80px, rgba(11,29,58,0.025) 81px),
+        repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(11,29,58,0.025) 80px, rgba(11,29,58,0.025) 81px),
+        var(--atlas-parchment) !important;
+}
+
+/* ── Sidebar — Topographic Contour Lines ───────────── */
+.sidebar {
+    position: relative;
+}
+
+.sidebar::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    pointer-events: none;
+    opacity: 0.12;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400'%3E%3Cg fill='none' stroke='%23D4A843' stroke-width='1.2'%3E%3Cpath d='M20,350 Q80,300 150,320 T280,280'/%3E%3Cpath d='M10,310 Q90,260 160,280 T290,240'/%3E%3Cpath d='M30,270 Q100,220 170,240 T270,200'/%3E%3Cpath d='M50,230 Q110,180 180,200 T260,165'/%3E%3Cpath d='M70,195 Q120,145 180,165 T250,130'/%3E%3Cpath d='M90,160 Q130,115 185,132 T240,100'/%3E%3Cpath d='M110,130 Q145,90 185,105 T230,75'/%3E%3Cpath d='M130,100 Q155,70 185,82 T220,55'/%3E%3Cpath d='M150,75 Q165,55 185,62 T210,40'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: 100% auto;
+    z-index: 0;
+}
+
+.sidebar > * {
+    position: relative;
+    z-index: 1;
+}

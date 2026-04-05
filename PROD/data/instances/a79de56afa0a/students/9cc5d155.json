@@ -1,0 +1,296 @@
+{
+  "student_id": "9cc5d155",
+  "name": "Theo",
+  "pin": "1111",
+  "avatar": "\ud83c\udf93",
+  "grade": 8,
+  "created_at": "2026-03-21T20:11:49.848233",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-21T20:34:38.906159"
+    },
+    "first_practice": {
+      "earned_at": "2026-03-22T15:51:00.544680"
+    },
+    "first_lesson": {
+      "earned_at": "2026-03-22T16:09:28.938771"
+    },
+    "week_streak": {
+      "earned_at": "2026-03-30T15:47:31.865618"
+    },
+    "streak_5": {
+      "earned_at": "2026-03-30T15:53:00.658652"
+    },
+    "perfect_practice": {
+      "earned_at": "2026-03-30T15:53:00.658652"
+    },
+    "five_lessons": {
+      "earned_at": "2026-04-03T19:46:01.058865"
+    }
+  },
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-21",
+    "2026-03-22",
+    "2026-03-24",
+    "2026-03-25",
+    "2026-03-26",
+    "2026-03-27",
+    "2026-03-28",
+    "2026-03-29",
+    "2026-03-30",
+    "2026-03-31",
+    "2026-04-02",
+    "2026-04-03",
+    "2026-04-04"
+  ],
+  "xp": 940,
+  "xp_log": [
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-21T20:34:38.907943"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-21T20:34:38.908650"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-21T20:45:39.512168"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-22T13:11:43.345252"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-22T14:38:29.408465"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-22T15:38:15.984523"
+    },
+    {
+      "amount": 5,
+      "reason": "practice_correct",
+      "timestamp": "2026-03-22T15:48:24.034190"
+    },
+    {
+      "amount": 30,
+      "reason": "practice_complete",
+      "timestamp": "2026-03-22T15:51:00.547279"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-22T15:51:00.548343"
+    },
+    {
+      "amount": 40,
+      "reason": "lesson_complete",
+      "timestamp": "2026-03-22T16:09:28.941432"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-22T16:09:28.942211"
+    },
+    {
+      "amount": 40,
+      "reason": "lesson_complete",
+      "timestamp": "2026-03-22T16:33:24.616081"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-24T17:11:01.589627"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-25T07:28:56.952700"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-26T10:08:07.265040"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-27T17:39:13.516512"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-28T13:18:33.515615"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-29T21:40:44.786656"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-29T22:10:49.233611"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-30T15:27:51.669799"
+    },
+    {
+      "amount": 40,
+      "reason": "lesson_complete",
+      "timestamp": "2026-03-30T15:47:31.869381"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-30T15:47:31.870021"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-30T15:48:18.511976"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-30T15:48:55.503958"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-30T15:49:57.185103"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-30T15:50:21.732877"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-30T15:50:57.847825"
+    },
+    {
+      "amount": 15,
+      "reason": "streak_5_bonus",
+      "timestamp": "2026-03-30T15:50:57.850934"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-30T15:51:18.901353"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-30T15:51:57.901398"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-30T15:52:39.890562"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-30T15:53:00.662514"
+    },
+    {
+      "amount": 30,
+      "reason": "practice_complete",
+      "timestamp": "2026-03-30T15:53:00.663397"
+    },
+    {
+      "amount": 50,
+      "reason": "perfect_practice_bonus",
+      "timestamp": "2026-03-30T15:53:00.664673"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-30T15:53:00.665657"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-30T15:53:00.666439"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-31T09:15:34.163281"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-04-02T12:49:43.199060"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-04-03T19:28:58.376687"
+    },
+    {
+      "amount": 40,
+      "reason": "lesson_complete",
+      "timestamp": "2026-04-03T19:35:09.103748"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-04-03T19:36:24.940383"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-04-03T19:37:12.586047"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-04-03T19:37:45.596709"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-04-03T19:39:09.290141"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-04-03T19:42:22.124367"
+    },
+    {
+      "amount": 30,
+      "reason": "practice_complete",
+      "timestamp": "2026-04-03T19:42:22.125489"
+    },
+    {
+      "amount": 40,
+      "reason": "lesson_complete",
+      "timestamp": "2026-04-03T19:46:01.064355"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-04-03T19:46:01.065439"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-04-04T12:24:06.718486"
+    }
+  ],
+  "session_count": 3
+}

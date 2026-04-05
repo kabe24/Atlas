@@ -1,0 +1,27 @@
+{
+  "instance_id": "76de6a671b10",
+  "family_name": "Test Family",
+  "display_name": "Test Family Tutor",
+  "created_at": "2026-03-27T00:18:09.494459",
+  "owner_email": "test@test.com",
+  "customization": {
+    "enabled_subjects": [
+      "math",
+      "science",
+      "ela",
+      "social_studies",
+      "latin"
+    ],
+    "custom_subjects": {},
+    "default_grade": 8,
+    "branding": {
+      "name": "Test School",
+      "color": "#FF5733"
+    },
+    "feature_flags": {
+      "diagnostics_enabled": true,
+      "lessons_enabled": true,
+      "practice_enabled": true
+    }
+  }
+}

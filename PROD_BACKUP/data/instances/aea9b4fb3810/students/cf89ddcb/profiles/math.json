@@ -1,0 +1,33 @@
+{
+  "subject": "math",
+  "topics": {
+    "Linear Equations & Inequalities": {
+      "score": 88,
+      "level": "Advanced"
+    },
+    "Functions & Graphing": {
+      "score": 85,
+      "level": "Advanced"
+    },
+    "Geometry & Transformations": {
+      "score": 82,
+      "level": "Proficient"
+    },
+    "Statistics & Probability": {
+      "score": 85,
+      "level": "Advanced"
+    },
+    "Exponents & Scientific Notation": {
+      "score": 85,
+      "level": "Advanced"
+    },
+    "Pythagorean Theorem & Distance": {
+      "score": 88,
+      "level": "Advanced"
+    }
+  },
+  "overall_score": 86,
+  "overall_level": "Advanced",
+  "summary": "Alex shows solid understanding across most math topics, with particular strength in Pythagorean theorem and distance calculations. Areas to focus on include exponent rules and some advanced inequality concepts.",
+  "last_checkpoint": "2026-03-19T14:23:50.259603"
+}

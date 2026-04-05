@@ -1,0 +1,232 @@
+/*
+ * ═══════════════════════════════════════════════════════
+ *  ATLAS PARENT THEME — KmUnity Learning Tool
+ *  Applies Atlas brand identity to the Parent Dashboard
+ *  Version 1.0 • March 2026
+ * ═══════════════════════════════════════════════════════
+ *
+ *  Place after the inline <style> block in parent.html:
+ *    <link rel="stylesheet" href="/static/atlas-parent-theme.css">
+ *
+ *  This file overrides the default parent dashboard
+ *  variables with Atlas design tokens and adjusts
+ *  component-level styles to match the Atlas brand.
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ── Font Loading ──────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap");
+
+/* ── Atlas Design Tokens ───────────────────────────── */
+:root {
+    /* ─── Primary Anchors ─── */
+    --atlas-midnight:       #0B1D3A;
+    --atlas-deep-ocean:     #14305A;
+    --atlas-explorer-blue:  #1E4D8C;
+
+    /* ─── Discovery Accents ─── */
+    --atlas-compass-gold:   #D4A843;
+    --atlas-warm-amber:     #E8B84B;
+    --atlas-lantern-glow:   #F4CE6A;
+
+    /* ─── Backgrounds ─── */
+    --atlas-parchment:      #F5EFE0;
+    --atlas-warm-cream:     #FAF7F0;
+    --atlas-soft-linen:     #EDE7D9;
+
+    /* ─── Status & Pin Colors ─── */
+    --atlas-teal-pin:       #2A9D8F;
+    --atlas-coral-pin:      #E76F51;
+    --atlas-forest-green:   #4A7C59;
+    --atlas-mountain-slate: #6B7B8D;
+
+    /* ─── Typography Stacks ─── */
+    --atlas-font-display:    "Outfit", Arial, sans-serif;
+    --atlas-font-editorial:  "Crimson Pro", Georgia, serif;
+    --atlas-font-data:       "DM Mono", "Courier New", monospace;
+
+    /* ─── Map to parent.html CSS variable names ─── */
+    --primary:        var(--atlas-deep-ocean);
+    --primary-light:  var(--atlas-explorer-blue);
+    --accent:         var(--atlas-explorer-blue);
+    --success:        var(--atlas-teal-pin);
+    --warning:        var(--atlas-warm-amber);
+    --danger:         var(--atlas-coral-pin);
+    --bg:             var(--atlas-parchment);
+    --card:           #ffffff;
+    --text:           var(--atlas-midnight);
+    --text-muted:     var(--atlas-mountain-slate);
+    --border:         var(--atlas-soft-linen);
+
+    /* ─── Proficiency tier colors ─── */
+    --advanced:       var(--atlas-explorer-blue);
+    --proficient:     var(--atlas-teal-pin);
+    --developing:     var(--atlas-warm-amber);
+    --needs-work:     var(--atlas-coral-pin);
+}
+
+/* ── Base Typography ───────────────────────────────── */
+body {
+    font-family: var(--atlas-font-display);
+    background: var(--atlas-parchment);
+    color: var(--atlas-midnight);
+}
+
+/* ── Headlines & Interface Text ────────────────────── */
+h1, h2, h3, h4, h5, h6,
+.dash-header h1,
+.dash-section h2,
+.metric-value,
+.login-card h1 {
+    font-family: var(--atlas-font-display);
+    color: var(--atlas-midnight);
+}
+
+/* ── Data & Monospace ──────────────────────────────── */
+code, .standards-domain-code, .standards-std-code {
+    font-family: var(--atlas-font-data);
+}
+
+/* ── Login Screen — Atlas gradient ─────────────────── */
+#loginScreen {
+    background: linear-gradient(135deg, var(--atlas-midnight) 0%, var(--atlas-deep-ocean) 100%);
+}
+
+.login-card h1 {
+    color: var(--atlas-deep-ocean);
+}
+
+.pin-dot.filled {
+    background: var(--atlas-deep-ocean);
+    border-color: var(--atlas-deep-ocean);
+}
+
+.pin-btn:hover {
+    border-color: var(--atlas-explorer-blue);
+}
+
+.login-link a {
+    color: var(--atlas-explorer-blue);
+}
+
+/* ── Dashboard Header ──────────────────────────────── */
+.dash-header {
+    background: white;
+    border-bottom: 1px solid var(--atlas-soft-linen);
+}
+
+.dash-header h1 {
+    color: var(--atlas-deep-ocean);
+}
+
+/* ── Tab Buttons ───────────────────────────────────── */
+.tab-btn.active {
+    color: var(--atlas-deep-ocean);
+    border-color: var(--atlas-compass-gold);
+}
+
+.tab-btn:hover {
+    color: var(--atlas-deep-ocean);
+}
+
+/* ── Dashboard Cards ───────────────────────────────── */
+.dash-section {
+    border: 1px solid var(--atlas-soft-linen);
+}
+
+.dash-section h2 {
+    color: var(--atlas-deep-ocean);
+    border-bottom-color: var(--atlas-soft-linen);
+}
+
+/* ── Metric Cards ──────────────────────────────────── */
+.metric-card {
+    background: var(--atlas-warm-cream);
+    border-color: var(--atlas-soft-linen);
+}
+
+.metric-value {
+    color: var(--atlas-deep-ocean);
+}
+
+/* ── Activity Calendar ─────────────────────────────── */
+.cal-day.active {
+    background: var(--atlas-teal-pin);
+}
+
+.cal-day.today {
+    outline-color: var(--atlas-deep-ocean);
+}
+
+/* ── Subject Cards ─────────────────────────────────── */
+.subject-card {
+    background: var(--atlas-warm-cream);
+    border-color: var(--atlas-soft-linen);
+}
+
+.subject-card:hover {
+    border-color: var(--atlas-explorer-blue);
+}
+
+/* ── Proficiency Colors (updated to Atlas palette) ── */
+.score-advanced  { color: var(--atlas-explorer-blue); }
+.score-proficient { color: var(--atlas-teal-pin); }
+.score-developing { color: var(--atlas-warm-amber); }
+.score-needs-work { color: var(--atlas-coral-pin); }
+
+.level-advanced  { background: #dce6f5; color: var(--atlas-explorer-blue); }
+.level-proficient { background: #d1ede8; color: var(--atlas-teal-pin); }
+.level-developing { background: #fdf3d7; color: var(--atlas-warm-amber); }
+.level-needs-work { background: #fde3da; color: var(--atlas-coral-pin); }
+
+/* ── Tables ────────────────────────────────────────── */
+.gap-table th {
+    border-bottom-color: var(--atlas-soft-linen);
+}
+
+.gap-table td {
+    border-bottom-color: var(--atlas-soft-linen);
+}
+
+.gap-table tr:hover {
+    background: var(--atlas-warm-cream);
+}
+
+/* ── Buttons — Atlas accent ────────────────────────── */
+.diag-btn {
+    background: var(--atlas-explorer-blue);
+}
+
+.diag-btn:hover {
+    background: var(--atlas-deep-ocean);
+}
+
+/* ── Links ─────────────────────────────────────────── */
+a {
+    color: var(--atlas-explorer-blue);
+}
+
+/* ── Standards — Monospace data font ───────────────── */
+.standards-domain-code {
+    font-family: var(--atlas-font-data);
+    background: var(--atlas-warm-cream);
+    color: var(--atlas-mountain-slate);
+}
+
+/* ── Scrollbar (matching student theme) ────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--atlas-warm-cream); }
+::-webkit-scrollbar-thumb {
+    background: var(--atlas-mountain-slate);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--atlas-deep-ocean);
+}
+
+/* ── Watermark Background — Compass Rose on main ──── */
+.dash-main {
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%230B1D3A' stroke-width='2' opacity='0.05'%3E%3Ccircle cx='200' cy='200' r='180'/%3E%3Ccircle cx='200' cy='200' r='170'/%3E%3Ccircle cx='200' cy='200' r='120'/%3E%3Ccircle cx='200' cy='200' r='45'/%3E%3Cpolygon points='200,20 215,160 200,120 185,160' fill='%23D4A843' stroke='%23D4A843'/%3E%3Cpolygon points='200,380 215,240 200,280 185,240' fill='%230B1D3A' stroke='%230B1D3A'/%3E%3Cpolygon points='380,200 240,185 280,200 240,215' fill='%230B1D3A' stroke='%230B1D3A'/%3E%3Cpolygon points='20,200 160,185 120,200 160,215' fill='%230B1D3A' stroke='%230B1D3A'/%3E%3Ctext x='200' y='16' text-anchor='middle' font-family='Outfit,sans-serif' font-size='16' font-weight='700' fill='%230B1D3A'%3EN%3C/text%3E%3Ctext x='200' y='396' text-anchor='middle' font-family='Outfit,sans-serif' font-size='16' font-weight='700' fill='%230B1D3A'%3ES%3C/text%3E%3Ctext x='396' y='205' text-anchor='middle' font-family='Outfit,sans-serif' font-size='16' font-weight='700' fill='%230B1D3A'%3EE%3C/text%3E%3Ctext x='8' y='205' text-anchor='middle' font-family='Outfit,sans-serif' font-size='16' font-weight='700' fill='%230B1D3A'%3EW%3C/text%3E%3C/g%3E%3C/svg%3E")
+        no-repeat right -60px bottom -60px / 360px 360px;
+}

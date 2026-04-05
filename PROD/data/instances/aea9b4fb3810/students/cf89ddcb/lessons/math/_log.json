@@ -1,0 +1,23 @@
+[
+  {
+    "lesson_id": "math_20260314_113952",
+    "topic": "Exponents & Scientific Notation",
+    "started_at": "2026-03-14T11:40:00.745988",
+    "completed_at": "2026-03-14T11:47:45.422222",
+    "complete": true
+  },
+  {
+    "lesson_id": "math_20260314_114812",
+    "topic": "Linear Equations & Inequalities",
+    "started_at": "2026-03-14T11:48:19.495005",
+    "completed_at": null,
+    "complete": false
+  },
+  {
+    "lesson_id": "math_20260314_121913",
+    "topic": "Linear Equations & Inequalities",
+    "started_at": "2026-03-14T12:19:19.746100",
+    "completed_at": null,
+    "complete": false
+  }
+]

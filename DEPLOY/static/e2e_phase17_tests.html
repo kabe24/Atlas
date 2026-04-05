@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas v1.4.0 — Phase 17 E2E Test Plan</title>
+<style>
+  :root { --primary: #4F46E5; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --bg: #F1F5F9; --card: #fff; --text: #1E293B; --muted: #64748B; --border: #E2E8F0; --accent: #8B5CF6; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+  header { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 32px 24px; text-align: center; margin-bottom: 24px; border-radius: 14px; position: relative; overflow: hidden; }
+  header::after { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+  header h1 { font-size: 26px; margin-bottom: 6px; position: relative; z-index: 1; }
+  header p { opacity: 0.9; font-size: 14px; position: relative; z-index: 1; }
+  .header-meta { display: flex; justify-content: center; gap: 24px; margin-top: 12px; font-size: 13px; opacity: 0.85; position: relative; z-index: 1; }
+  .header-meta span { background: rgba(255,255,255,0.15); padding: 3px 12px; border-radius: 20px; }
+
+  .instance-info { background: var(--card); border: 2px solid var(--primary); border-radius: 10px; padding: 18px 24px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .instance-info h3 { grid-column: 1 / -1; color: var(--primary); margin-bottom: 4px; font-size: 16px; }
+  .info-item { font-size: 14px; }
+  .info-item strong { display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-item code { background: #F1F5F9; padding: 2px 8px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 13px; }
+
+  .progress-bar-container { background: var(--card); border-radius: 10px; padding: 16px 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); position: sticky; top: 8px; z-index: 100; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-header span { font-weight: 600; }
+  .progress-stats { display: flex; gap: 16px; font-size: 13px; margin-top: 6px; }
+  .stat-pass { color: var(--success); font-weight: 600; }
+  .stat-fail { color: var(--danger); font-weight: 600; }
+  .stat-skip { color: var(--warning); font-weight: 600; }
+  .stat-pending { color: var(--muted); font-weight: 600; }
+  .progress-track { background: var(--border); border-radius: 8px; height: 12px; overflow: hidden; display: flex; }
+  .progress-fill-pass { background: var(--success); height: 100%; transition: width 0.4s ease; }
+  .progress-fill-fail { background: var(--danger); height: 100%; transition: width 0.4s ease; }
+  .progress-fill-skip { background: var(--warning); height: 100%; transition: width 0.4s ease; }
+
+  .section { background: var(--card); border-radius: 10px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+  .section-header { padding: 16px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); user-select: none; }
+  .section-header:hover { background: #F8FAFC; }
+  .section-header h2 { font-size: 17px; display: flex; align-items: center; gap: 10px; }
+  .section-badge { font-size: 12px; padding: 2px 10px; border-radius: 12px; font-weight: 600; }
+  .badge-pending { background: #FEF3C7; color: #92400E; }
+  .badge-done { background: #D1FAE5; color: #065F46; }
+  .badge-has-fail { background: #FEE2E2; color: #991B1B; }
+  .section-arrow { font-size: 18px; transition: transform 0.2s; color: var(--muted); }
+  .section.collapsed .section-arrow { transform: rotate(-90deg); }
+  .section.collapsed .section-body { display: none; }
+  .section-body { padding: 0; }
+
+  .test-group { padding: 12px 24px; border-bottom: 1px solid var(--border); }
+  .test-group:last-child { border-bottom: none; }
+  .test-group h3 { font-size: 14px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .test-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+  .test-item:last-child { border-bottom: none; }
+  .test-content { flex: 1; font-size: 14px; }
+  .test-content .step { color: var(--primary); font-weight: 600; margin-right: 4px; }
+  .test-content .expect { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; font-style: italic; }
+
+  .verdict-group { display: flex; gap: 4px; flex-shrink: 0; margin-top: 2px; }
+  .verdict-btn { width: 32px; height: 28px; border: 2px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; background: white; transition: all 0.15s; }
+  .verdict-btn:hover { transform: scale(1.1); }
+  .verdict-btn.pass-btn.active { background: #D1FAE5; border-color: var(--success); }
+  .verdict-btn.fail-btn.active { background: #FEE2E2; border-color: var(--danger); }
+  .verdict-btn.skip-btn.active { background: #FEF3C7; border-color: var(--warning); }
+
+  .test-item.result-pass .test-content { color: var(--muted); }
+  .test-item.result-pass .test-content .step { color: var(--success); }
+  .test-item.result-fail .test-content .step { color: var(--danger); }
+
+  .section-notes { padding: 16px 24px; background: #FAFBFC; border-top: 1px solid var(--border); }
+  .section-notes label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .section-notes textarea { width: 100%; min-height: 72px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13px; line-height: 1.5; resize: vertical; transition: border-color 0.2s; background: white; }
+  .section-notes textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+  .section-notes textarea::placeholder { color: #CBD5E1; }
+
+  .prereq { background: #FFF7ED; border-left: 3px solid var(--warning); padding: 10px 16px; margin: 12px 24px; border-radius: 0 6px 6px 0; font-size: 13px; color: #92400E; }
+  .prereq strong { display: block; margin-bottom: 2px; }
+
+  .btn-row { display: flex; gap: 10px; justify-content: center; margin: 24px 0; flex-wrap: wrap; }
+  .btn { border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.15s; }
+  .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-success { background: var(--success); color: white; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
+  .btn-outline:hover { background: var(--primary); color: white; }
+
+  .feature-tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 4px; font-weight: 600; margin-left: 6px; vertical-align: middle; }
+  .tag-f61 { background: #DBEAFE; color: #1E40AF; }
+  .tag-f62 { background: #FCE7F3; color: #9D174D; }
+  .tag-f63 { background: #D1FAE5; color: #065F46; }
+  .tag-f64 { background: #FDE68A; color: #92400E; }
+  .tag-reg { background: #E5E7EB; color: #374151; }
+
+  @media (max-width: 600px) {
+    .instance-info { grid-template-columns: 1fr; }
+    .container { padding: 12px; }
+    .test-item { flex-wrap: wrap; }
+    .verdict-group { margin-left: auto; }
+    .header-meta { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>🧪 Atlas v1.4.0 — Phase 17 E2E Test Plan</h1>
+  <p>End-to-end verification of Features 61–64 + Regression</p>
+  <div class="header-meta">
+    <span>📦 Version 1.4.0</span>
+    <span>🔬 Environment: SB</span>
+    <span>📋 50 Test Cases</span>
+  </div>
+</header>
+
+<div class="instance-info">
+  <h3>🧪 Test Environment</h3>
+  <div class="info-item"><strong>Instance</strong> <code>default</code></div>
+  <div class="info-item"><strong>Server</strong> <code>localhost:5001</code> (SB)</div>
+  <div class="info-item"><strong>Student</strong> Alex Jr. — PIN <code>1234</code></div>
+  <div class="info-item"><strong>Parent PIN</strong> <code>0000</code></div>
+  <div class="info-item"><strong>Student URL</strong> <code>http://localhost:5001</code></div>
+  <div class="info-item"><strong>Parent URL</strong> <code>http://localhost:5001/static/parent.html</code></div>
+  <div class="info-item"><strong>Tester</strong> <input type="text" id="testerName" value="" placeholder="Your name" style="border:1px solid var(--border); border-radius:6px; padding:4px 10px; font-size:13px; width:100%;"></div>
+  <div class="info-item"><strong>Date</strong> <span id="testDate"></span></div>
+</div>
+
+<div class="progress-bar-container">
+  <div class="progress-header">
+    <span>Overall Progress</span>
+    <span id="progressText">0 / 50 tested</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill-pass" id="progressPass" style="width: 0%"></div>
+    <div class="progress-fill-fail" id="progressFail" style="width: 0%"></div>
+    <div class="progress-fill-skip" id="progressSkip" style="width: 0%"></div>
+  </div>
+  <div class="progress-stats">
+    <span class="stat-pass" id="statPass">✅ 0 passed</span>
+    <span class="stat-fail" id="statFail">❌ 0 failed</span>
+    <span class="stat-skip" id="statSkip">⏭️ 0 skipped</span>
+    <span class="stat-pending" id="statPending">⬜ 50 pending</span>
+  </div>
+</div>
+
+<!-- ═══════════ FEATURE 61: Topic Recommendation Engine ═══════════ -->
+<div class="section" id="sec-f61">
+  <div class="section-header" onclick="toggleSection('sec-f61')">
+    <h2>🧠 Feature 61: Topic Recommendation Engine <span class="feature-tag tag-f61">F61</span></h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-f61">0/15</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Prerequisites:</strong> Student has at least one completed diagnostic. Server running on SB (port 5001).</div>
+
+    <div class="test-group">
+      <h3>Recommendation API</h3>
+      <div class="test-item" data-id="61-01"><div class="test-content"><span class="step">61-01</span> Call <code>GET /api/instance/default/student/{id}/recommendations</code> for student with diagnostic. <span class="expect">→ Returns JSON array of topic recommendations with scores, tiers, modes.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-02"><div class="test-content"><span class="step">61-02</span> Call recommendations for student WITHOUT any diagnostic. <span class="expect">→ Returns empty array or default recommendations (no crash).</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-03"><div class="test-content"><span class="step">61-03</span> Verify each topic object has fields: <code>score</code>, <code>tier</code>, <code>mode</code>, <code>reasoning</code>, <code>badge</code>. <span class="expect">→ All required fields present in every topic recommendation.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-04"><div class="test-content"><span class="step">61-04</span> Verify <code>recommended_mode</code> values are only: Learn, Practice, Practice (Hard), Tutor. <span class="expect">→ No invalid mode values in any recommendation.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-05"><div class="test-content"><span class="step">61-05</span> Check that <code>alternative_mode</code> is populated and differs from primary mode. <span class="expect">→ Alternative mode present for each topic, different from recommended mode.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="test-group">
+      <h3>Action Plan API</h3>
+      <div class="test-item" data-id="61-06"><div class="test-content"><span class="step">61-06</span> Call <code>GET /api/instance/default/student/{id}/action-plan</code> for student with diagnostic. <span class="expect">→ Returns prioritized action list sorted by urgency (ascending = most urgent first).</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-07"><div class="test-content"><span class="step">61-07</span> Call action-plan for student WITHOUT diagnostic. <span class="expect">→ Returns diagnostic-needed actions for all subjects (urgency 6).</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-08"><div class="test-content"><span class="step">61-08</span> Verify urgency sort order: stuck(2) < weak+due(3) < due(4) < weak(5) < diagnostic(6) < maintenance(7). <span class="expect">→ Items are in ascending urgency order.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-09"><div class="test-content"><span class="step">61-09</span> Set a focus subject, then check action-plan. <span class="expect">→ Focus subject items get urgency boost (urgency reduced by up to 3, min 1).</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-10"><div class="test-content"><span class="step">61-10</span> Call recommendations for invalid/nonexistent student ID. <span class="expect">→ Returns 404 error, not a crash.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="test-group">
+      <h3>Data Quality</h3>
+      <div class="test-item" data-id="61-11"><div class="test-content"><span class="step">61-11</span> Call action-plan for invalid student. <span class="expect">→ Returns 404, not a crash or empty 200.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-12"><div class="test-content"><span class="step">61-12</span> Verify each action-plan item has: <code>subject</code>, <code>topic</code>, <code>mode</code>, <code>urgency</code>, <code>reason</code>, <code>label</code>. <span class="expect">→ All fields populated in every action item.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-13"><div class="test-content"><span class="step">61-13</span> Verify <code>lesson_count</code> and <code>practice_count</code> present in recommendation objects. <span class="expect">→ Numeric counts reflecting actual student activity.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-14"><div class="test-content"><span class="step">61-14</span> Verify <code>due_for_review</code> flag is boolean in recommendation topics. <span class="expect">→ Field exists and is true/false.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="61-15"><div class="test-content"><span class="step">61-15</span> Verify <code>stuck_detection</code> field present in recommendations. <span class="expect">→ Boolean or object indicating if student is stuck on this topic.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-f61" oninput="saveNotes(this)" placeholder="Record observations, issues, or notes for Feature 61..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ FEATURE 62: Smart Topic Routing UI ═══════════ -->
+<div class="section" id="sec-f62">
+  <div class="section-header" onclick="toggleSection('sec-f62')">
+    <h2>🗺️ Feature 62: Smart Topic Routing UI <span class="feature-tag tag-f62">F62</span></h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-f62">0/10</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Prerequisites:</strong> Logged in as student. At least one diagnostic completed.</div>
+
+    <div class="test-group">
+      <h3>Explore Panel Functions</h3>
+      <div class="test-item" data-id="62-01"><div class="test-content"><span class="step">62-01</span> Click the <strong>Explore</strong> button in the nav bar. <span class="expect">→ Explore panel appears. All other panels hide. navExplore button shows active state.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="62-02"><div class="test-content"><span class="step">62-02</span> Verify <code>loadExplorePanel(subject)</code> populates topic cards for the selected subject. <span class="expect">→ Topic grid fills with cards showing name, score badge, and recommended mode.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="62-03"><div class="test-content"><span class="step">62-03</span> Click a topic card that routes to Tutor mode. <span class="expect">→ <code>startTutorFromExplore(subject, topic, context)</code> fires. Tutor chat opens with topic context.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="62-04"><div class="test-content"><span class="step">62-04</span> Check the history section at bottom of Explore panel. <span class="expect">→ <code>loadExploreHistory(subject)</code> shows past sessions for that subject (or empty state if none).</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="test-group">
+      <h3>DOM Elements</h3>
+      <div class="test-item" data-id="62-05"><div class="test-content"><span class="step">62-05</span> Verify <code>#explorePanel</code> element exists in the DOM. <span class="expect">→ Element present, toggles visibility on nav click.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="62-06"><div class="test-content"><span class="step">62-06</span> Verify <code>#navExplore</code> button exists with correct icon/label. <span class="expect">→ Nav button present, clickable, toggles active class.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="62-07"><div class="test-content"><span class="step">62-07</span> Verify <code>#exploreSubjectTabs</code> container renders subject tabs. <span class="expect">→ Tab buttons for each subject the student has data for.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="62-08"><div class="test-content"><span class="step">62-08</span> Verify <code>#exploreTopicGrid</code> container is present. <span class="expect">→ Grid container for topic cards exists in DOM.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="62-09"><div class="test-content"><span class="step">62-09</span> Verify <code>#exploreHistoryList</code> container is present. <span class="expect">→ History list container exists in DOM.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="test-group">
+      <h3>Visual / CSS</h3>
+      <div class="test-item" data-id="62-10"><div class="test-content"><span class="step">62-10</span> Verify badge CSS classes render correctly: <code>.badge-learn</code> (blue), <code>.badge-practice</code> (green), <code>.badge-tutor</code> (purple), <code>.badge-strong</code> (gold). <span class="expect">→ Each badge type has distinct color and is readable.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-f62" oninput="saveNotes(this)" placeholder="Record observations, issues, or notes for Feature 62..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ FEATURE 63: My Map Action Plan Redesign ═══════════ -->
+<div class="section" id="sec-f63">
+  <div class="section-header" onclick="toggleSection('sec-f63')">
+    <h2>🗺️ Feature 63: My Map Action Plan Redesign <span class="feature-tag tag-f63">F63</span></h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-f63">0/10</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Prerequisites:</strong> Logged in as student. Welcome/My Map screen visible.</div>
+
+    <div class="test-group">
+      <h3>Action Plan Functions</h3>
+      <div class="test-item" data-id="63-01"><div class="test-content"><span class="step">63-01</span> Navigate to Welcome screen. Verify <code>renderActionPlan()</code> fires and populates the hero section. <span class="expect">→ Top 3 action cards appear in the hero section with urgency-based priority.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="63-02"><div class="test-content"><span class="step">63-02</span> Click a hero action card. <span class="expect">→ <code>routeActionPlanItem(action)</code> routes correctly: lessons→Learn, practice→Practice, tutor→Explore, diagnostic→Subject selector.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="63-03"><div class="test-content"><span class="step">63-03</span> Navigate away and back to Welcome. <span class="expect">→ <code>invalidateActionPlanCache()</code> triggers fresh data load. Action plan re-renders.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="test-group">
+      <h3>DOM Elements</h3>
+      <div class="test-item" data-id="63-04"><div class="test-content"><span class="step">63-04</span> Verify <code>#actionPlanHero</code> container exists and displays hero action cards. <span class="expect">→ Hero section visible with up to 3 priority action cards.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="63-05"><div class="test-content"><span class="step">63-05</span> Verify <code>#heroActionCards</code> container holds the clickable action cards. <span class="expect">→ Cards are clickable and show subject, topic, and recommended mode.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="63-06"><div class="test-content"><span class="step">63-06</span> Verify <code>#territoryCards</code> container shows per-subject territory sections. <span class="expect">→ Each subject has a territory card with its recommended actions listed.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="63-07"><div class="test-content"><span class="step">63-07</span> Verify <code>#toolsRow</code> shows always-available tools: Tutor, Schoolwork, Book Mastery, Study Timer. <span class="expect">→ 4 tool buttons visible and clickable. Each routes to correct panel.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="63-08"><div class="test-content"><span class="step">63-08</span> Verify <code>#actionPlanResume</code> container shows resume banner when applicable. <span class="expect">→ If student has an in-progress session, resume banner appears at top.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="test-group">
+      <h3>Visual / CSS</h3>
+      <div class="test-item" data-id="63-09"><div class="test-content"><span class="step">63-09</span> Verify <code>#legacyGrids</code> div wraps the old subject grid (fallback). <span class="expect">→ Legacy grids container exists; hidden when action plan renders, shown if API fails.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="63-10"><div class="test-content"><span class="step">63-10</span> Verify territory card CSS renders correctly: subject color headers, action items with mode icons, clean card layout. <span class="expect">→ Cards are visually distinct per subject with readable content.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-f63" oninput="saveNotes(this)" placeholder="Record observations, issues, or notes for Feature 63..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ FEATURE 64: Parent Focus Override ═══════════ -->
+<div class="section" id="sec-f64">
+  <div class="section-header" onclick="toggleSection('sec-f64')">
+    <h2>⭐ Feature 64: Parent Focus Override <span class="feature-tag tag-f64">F64</span></h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-f64">0/10</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Prerequisites:</strong> Parent dashboard logged in (PIN 0000). At least one student exists.</div>
+
+    <div class="test-group">
+      <h3>Focus API</h3>
+      <div class="test-item" data-id="64-01"><div class="test-content"><span class="step">64-01</span> <code>GET /api/instance/default/student/{id}/focus</code> for a student with no focus set. <span class="expect">→ Returns <code>{"focus_subject": null}</code>.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="64-02"><div class="test-content"><span class="step">64-02</span> <code>POST /api/instance/default/student/{id}/focus</code> with <code>{"focus_subject": "Math"}</code> + valid parent PIN. <span class="expect">→ Returns 200 OK. Focus is saved.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="64-03"><div class="test-content"><span class="step">64-03</span> <code>GET focus</code> again after setting Math. <span class="expect">→ Returns <code>{"focus_subject": "Math"}</code>.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="64-04"><div class="test-content"><span class="step">64-04</span> Call action-plan API after setting Math focus. <span class="expect">→ Math items have boosted urgency (reduced by up to 3). Math appears higher in the sort.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="64-05"><div class="test-content"><span class="step">64-05</span> POST focus with wrong parent PIN. <span class="expect">→ Returns 401/403 Unauthorized. Focus is NOT changed.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="test-group">
+      <h3>Validation & Edge Cases</h3>
+      <div class="test-item" data-id="64-06"><div class="test-content"><span class="step">64-06</span> POST focus with invalid subject (e.g. "Astrology"). <span class="expect">→ Returns 400/422 error. Only valid subjects accepted.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="64-07"><div class="test-content"><span class="step">64-07</span> POST focus for a nonexistent student ID. <span class="expect">→ Returns 404 error. No data corruption.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="64-08"><div class="test-content"><span class="step">64-08</span> POST focus with <code>{"focus_subject": null}</code> to clear focus. <span class="expect">→ Returns 200 OK. Focus is cleared.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="64-09"><div class="test-content"><span class="step">64-09</span> GET focus after clearing. <span class="expect">→ Returns <code>{"focus_subject": null}</code> confirming clear.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="test-group">
+      <h3>Parent Dashboard UI</h3>
+      <div class="test-item" data-id="64-10"><div class="test-content"><span class="step">64-10</span> On Parent Dashboard → Settings tab, verify "Focus This Week" section: student dropdown (all students), subject dropdown (None + 5 subjects), Save button, status feedback. <span class="expect">→ All UI elements present and functional. Selecting student loads current focus. Save updates and shows confirmation.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-f64" oninput="saveNotes(this)" placeholder="Record observations, issues, or notes for Feature 64..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ REGRESSION ═══════════ -->
+<div class="section" id="sec-reg">
+  <div class="section-header" onclick="toggleSection('sec-reg')">
+    <h2>🔄 Regression Tests <span class="feature-tag tag-reg">REG</span></h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-reg">0/5</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Purpose:</strong> Verify existing features still work after Phase 17 changes.</div>
+
+    <div class="test-group">
+      <div class="test-item" data-id="R-01"><div class="test-content"><span class="step">R-01</span> Navigate to main page (<code>http://localhost:5001</code>). <span class="expect">→ Student portal loads. Login screen visible. No errors in console.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="R-02"><div class="test-content"><span class="step">R-02</span> Call <code>GET /api/instance/default/student/{id}</code> for existing student. <span class="expect">→ Returns full student profile with all expected fields.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="R-03"><div class="test-content"><span class="step">R-03</span> Call <code>GET /api/instance/default/students</code>. <span class="expect">→ Returns list of all students in instance.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="R-04"><div class="test-content"><span class="step">R-04</span> Navigate to parent dashboard and log in. <span class="expect">→ Dashboard loads. Tabs (Overview, Diagnostics, Settings) all functional.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="R-05"><div class="test-content"><span class="step">R-05</span> Navigate to guide page (<code>/static/guide.html</code>). <span class="expect">→ Guide page loads with content. No broken links or missing styles.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-reg" oninput="saveNotes(this)" placeholder="Record observations, issues, or notes for regression tests..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ BUTTONS ═══════════ -->
+<div class="btn-row">
+  <button class="btn btn-primary" onclick="exportResults()">📋 Export to Clipboard</button>
+  <button class="btn btn-success" onclick="exportJSON()">💾 Download JSON</button>
+  <button class="btn btn-outline" onclick="markAllPass()">✅ Mark All Pass</button>
+  <button class="btn btn-danger" onclick="resetAll()">🔄 Reset All</button>
+</div>
+
+<div style="text-align:center; color: var(--muted); font-size: 12px; padding: 16px 0 32px;">
+  Atlas v1.4.0 — Phase 17 E2E Test Plan — Generated <span id="genDate"></span>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const STORAGE_KEY = 'atlas_phase17_e2e_v140';
+
+document.getElementById('testDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+document.getElementById('genDate').textContent = new Date().toLocaleDateString();
+
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function setVerdict(btn, type) {
+  const item = btn.closest('.test-item');
+  const group = item.querySelector('.verdict-group');
+
+  // Toggle off if clicking same active button
+  if (btn.classList.contains('active')) {
+    btn.classList.remove('active');
+    item.classList.remove('result-pass', 'result-fail', 'result-skip');
+    saveState();
+    updateProgress();
+    return;
+  }
+
+  // Clear others in this group
+  group.querySelectorAll('.verdict-btn').forEach(b => b.classList.remove('active'));
+  item.classList.remove('result-pass', 'result-fail', 'result-skip');
+
+  // Set new
+  btn.classList.add('active');
+  item.classList.add('result-' + type);
+
+  saveState();
+  updateProgress();
+}
+
+function saveState() {
+  const state = { verdicts: {}, notes: {}, tester: document.getElementById('testerName').value };
+
+  document.querySelectorAll('.test-item[data-id]').forEach(item => {
+    const active = item.querySelector('.verdict-btn.active');
+    if (active) {
+      if (active.classList.contains('pass-btn')) state.verdicts[item.dataset.id] = 'pass';
+      else if (active.classList.contains('fail-btn')) state.verdicts[item.dataset.id] = 'fail';
+      else if (active.classList.contains('skip-btn')) state.verdicts[item.dataset.id] = 'skip';
+    }
+  });
+
+  document.querySelectorAll('.section-notes textarea').forEach(ta => {
+    if (ta.value.trim()) state.notes[ta.dataset.section] = ta.value;
+  });
+
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function restoreState() {
+  try {
+    const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+    if (state.verdicts) {
+      Object.entries(state.verdicts).forEach(([id, verdict]) => {
+        const item = document.querySelector(`.test-item[data-id="${id}"]`);
+        if (!item) return;
+        const btn = verdict === 'pass' ? item.querySelector('.pass-btn')
+                  : verdict === 'fail' ? item.querySelector('.fail-btn')
+                  : item.querySelector('.skip-btn');
+        if (btn) {
+          btn.classList.add('active');
+          item.classList.add('result-' + verdict);
+        }
+      });
+    }
+
+    if (state.notes) {
+      Object.entries(state.notes).forEach(([section, text]) => {
+        const ta = document.querySelector(`.section-notes textarea[data-section="${section}"]`);
+        if (ta) ta.value = text;
+      });
+    }
+
+    if (state.tester) {
+      document.getElementById('testerName').value = state.tester;
+    }
+  } catch(e) {}
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.test-item[data-id]');
+  const total = all.length;
+  let passed = 0, failed = 0, skipped = 0;
+
+  all.forEach(item => {
+    const active = item.querySelector('.verdict-btn.active');
+    if (active) {
+      if (active.classList.contains('pass-btn')) passed++;
+      else if (active.classList.contains('fail-btn')) failed++;
+      else if (active.classList.contains('skip-btn')) skipped++;
+    }
+  });
+
+  const tested = passed + failed + skipped;
+  const pending = total - tested;
+
+  document.getElementById('progressText').textContent = `${tested} / ${total} tested`;
+  document.getElementById('progressPass').style.width = (total ? (passed / total * 100) : 0) + '%';
+  document.getElementById('progressFail').style.width = (total ? (failed / total * 100) : 0) + '%';
+  document.getElementById('progressSkip').style.width = (total ? (skipped / total * 100) : 0) + '%';
+  document.getElementById('statPass').textContent = `✅ ${passed} passed`;
+  document.getElementById('statFail').textContent = `❌ ${failed} failed`;
+  document.getElementById('statSkip').textContent = `⏭️ ${skipped} skipped`;
+  document.getElementById('statPending').textContent = `⬜ ${pending} pending`;
+
+  // Update section badges
+  document.querySelectorAll('.section').forEach(sec => {
+    const items = sec.querySelectorAll('.test-item[data-id]');
+    if (!items.length) return;
+    let sp = 0, sf = 0, ss = 0;
+    items.forEach(item => {
+      const active = item.querySelector('.verdict-btn.active');
+      if (active) {
+        if (active.classList.contains('pass-btn')) sp++;
+        else if (active.classList.contains('fail-btn')) sf++;
+        else if (active.classList.contains('skip-btn')) ss++;
+      }
+    });
+    const badge = document.getElementById('badge-' + sec.id);
+    if (badge) {
+      const done = sp + sf + ss;
+      badge.textContent = `${sp}✅ ${sf}❌ ${ss}⏭️ / ${items.length}`;
+      if (sf > 0) badge.className = 'section-badge badge-has-fail';
+      else if (done === items.length) badge.className = 'section-badge badge-done';
+      else badge.className = 'section-badge badge-pending';
+    }
+  });
+
+  // Save on every update
+  saveState();
+}
+
+function markAllPass() {
+  if (!confirm('Mark all 50 tests as PASS?')) return;
+  document.querySelectorAll('.test-item[data-id]').forEach(item => {
+    const group = item.querySelector('.verdict-group');
+    group.querySelectorAll('.verdict-btn').forEach(b => b.classList.remove('active'));
+    item.classList.remove('result-pass', 'result-fail', 'result-skip');
+    const passBtn = group.querySelector('.pass-btn');
+    passBtn.classList.add('active');
+    item.classList.add('result-pass');
+  });
+  saveState();
+  updateProgress();
+}
+
+function resetAll() {
+  if (!confirm('Reset ALL test results and notes? This cannot be undone.')) return;
+  document.querySelectorAll('.verdict-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.test-item').forEach(i => i.classList.remove('result-pass', 'result-fail', 'result-skip'));
+  document.querySelectorAll('.section-notes textarea').forEach(ta => ta.value = '');
+  document.getElementById('testerName').value = '';
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  updateProgress();
+}
+
+function exportResults() {
+  const tester = document.getElementById('testerName').value || 'Unknown';
+  let out = '═══════════════════════════════════════════════\n';
+  out += '  ATLAS v1.4.0 — PHASE 17 E2E TEST RESULTS\n';
+  out += '═══════════════════════════════════════════════\n';
+  out += `Date:   ${new Date().toLocaleString()}\n`;
+  out += `Tester: ${tester}\n`;
+  out += `Env:    SB (localhost:5001)\n\n`;
+
+  let totalP = 0, totalF = 0, totalS = 0, totalT = 0;
+
+  document.querySelectorAll('.section').forEach(sec => {
+    const title = sec.querySelector('.section-header h2').textContent.trim();
+    out += '─── ' + title + ' ───\n';
+
+    sec.querySelectorAll('.test-item[data-id]').forEach(item => {
+      totalT++;
+      const id = item.dataset.id;
+      const active = item.querySelector('.verdict-btn.active');
+      let verdict = '⬜ PENDING';
+      if (active) {
+        if (active.classList.contains('pass-btn')) { verdict = '✅ PASS  '; totalP++; }
+        else if (active.classList.contains('fail-btn')) { verdict = '❌ FAIL  '; totalF++; }
+        else { verdict = '⏭️ SKIP  '; totalS++; }
+      }
+      const step = item.querySelector('.step')?.textContent || id;
+      const expectEl = item.querySelector('.expect');
+      const desc = item.querySelector('.test-content')?.childNodes[1]?.textContent?.trim() || '';
+      out += `  ${verdict}  ${step} ${desc.substring(0, 100)}\n`;
+    });
+
+    const ta = sec.querySelector('.section-notes textarea');
+    if (ta && ta.value.trim()) {
+      out += '\n  📝 NOTES: ' + ta.value.trim().replace(/\n/g, '\n           ') + '\n';
+    }
+    out += '\n';
+  });
+
+  const pend = totalT - totalP - totalF - totalS;
+  out += '═══════════════════════════════════════════════\n';
+  out += '  SUMMARY\n';
+  out += '═══════════════════════════════════════════════\n';
+  out += `  Total:   ${totalT}\n`;
+  out += `  Passed:  ${totalP}\n`;
+  out += `  Failed:  ${totalF}\n`;
+  out += `  Skipped: ${totalS}\n`;
+  out += `  Pending: ${pend}\n`;
+  out += `  Pass Rate: ${totalT ? Math.round(totalP / totalT * 100) : 0}%\n`;
+  out += '═══════════════════════════════════════════════\n';
+
+  navigator.clipboard.writeText(out).then(() => {
+    alert('Results copied to clipboard!');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = out;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('Results copied to clipboard!');
+  });
+}
+
+function exportJSON() {
+  const tester = document.getElementById('testerName').value || 'Unknown';
+  const data = {
+    title: 'Atlas v1.4.0 — Phase 17 E2E Test Results',
+    version: '1.4.0',
+    environment: 'SB',
+    date: new Date().toISOString(),
+    tester: tester,
+    sections: [],
+    summary: {}
+  };
+
+  let totalP = 0, totalF = 0, totalS = 0, totalT = 0;
+
+  document.querySelectorAll('.section').forEach(sec => {
+    const section = {
+      title: sec.querySelector('.section-header h2').textContent.trim(),
+      tests: [],
+      notes: ''
+    };
+
+    sec.querySelectorAll('.test-item[data-id]').forEach(item => {
+      totalT++;
+      const active = item.querySelector('.verdict-btn.active');
+      let verdict = 'pending';
+      if (active) {
+        if (active.classList.contains('pass-btn')) { verdict = 'pass'; totalP++; }
+        else if (active.classList.contains('fail-btn')) { verdict = 'fail'; totalF++; }
+        else { verdict = 'skip'; totalS++; }
+      }
+      section.tests.push({
+        id: item.dataset.id,
+        step: item.querySelector('.step')?.textContent || '',
+        verdict: verdict
+      });
+    });
+
+    const ta = sec.querySelector('.section-notes textarea');
+    if (ta && ta.value.trim()) section.notes = ta.value.trim();
+
+    data.sections.push(section);
+  });
+
+  data.summary = {
+    total: totalT,
+    passed: totalP,
+    failed: totalF,
+    skipped: totalS,
+    pending: totalT - totalP - totalF - totalS,
+    passRate: totalT ? Math.round(totalP / totalT * 100) : 0
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `atlas_v140_phase17_e2e_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Save tester name on change
+document.getElementById('testerName').addEventListener('input', saveState);
+
+// Init
+restoreState();
+updateProgress();
+</script>
+</body>
+</html>

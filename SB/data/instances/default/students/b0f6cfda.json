@@ -1,0 +1,32 @@
+{
+  "student_id": "b0f6cfda",
+  "name": "Alex Jr.",
+  "pin": "1234",
+  "avatar": "\ud83e\udd81",
+  "grade": 8,
+  "created_at": "2026-03-03T22:12:23.344221",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-03T22:13:04.168096"
+    }
+  },
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-03",
+    "2026-03-31"
+  ],
+  "focus_subject": "math",
+  "xp": 60,
+  "xp_log": [
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-31T13:21:04.270239"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-31T15:31:35.710177"
+    }
+  ]
+}

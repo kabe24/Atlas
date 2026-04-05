@@ -1,0 +1,18 @@
+{
+  "student_id": "5b5ff978",
+  "name": "T-Max",
+  "pin": "2222",
+  "avatar": "\ud83c\udf93",
+  "grade": 8,
+  "created_at": "2026-03-06T19:35:50.491139",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-06T19:54:46.003338"
+    }
+  },
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-06",
+    "2026-03-07"
+  ]
+}

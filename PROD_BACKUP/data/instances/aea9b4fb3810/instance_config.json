@@ -1,0 +1,43 @@
+{
+  "instance_id": "aea9b4fb3810",
+  "family_name": "E2E Test Family",
+  "display_name": "E2E Test Tutor",
+  "created_at": "2026-03-09T10:50:31.744745",
+  "owner_email": "",
+  "customization": {
+    "enabled_subjects": [
+      "math",
+      "science",
+      "ela",
+      "social_studies",
+      "learn_the_spanish_language"
+    ],
+    "custom_subjects": {
+      "learn_the_spanish_language": {
+        "name": "Spanish",
+        "icon": "\ud83d\udcd6",
+        "color": "#e23232",
+        "topics": [
+          "pronunciation",
+          "common phrases",
+          "verb conjugation"
+        ],
+        "system_prompt": "You are a friendly, encouraging Spanish tutor for a middle school student. You help with Spanish topics including: pronunciation, common phrases, verb conjugation. Explain concepts clearly, use examples, and encourage the student to think through problems."
+      }
+    },
+    "default_grade": 8,
+    "grade_range": {"min": 6, "max": 12},
+    "standards_framework": "common_core",
+    "state": "GA",
+    "branding": {
+      "app_title": "E2E Test Tutor",
+      "primary_color": "#4f46e5"
+    },
+    "feature_flags": {
+      "diagnostics_enabled": true,
+      "lessons_enabled": true,
+      "practice_enabled": true,
+      "standards_tracking_enabled": true
+    }
+  }
+}

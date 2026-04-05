@@ -1,0 +1,12 @@
+[
+  {
+    "role": "user",
+    "content": "Explain Newton's laws of motion",
+    "timestamp": "2026-03-27T18:29:24.215255"
+  },
+  {
+    "role": "assistant",
+    "content": "Hey Test Kid! Newton's laws are like the fundamental rules that govern how everything moves in our universe. Instead of me just telling you about them, let's explore what you might already know.\n\nThink about when you're riding in a car and it suddenly stops - what happens to your body? Or when you're trying to push a heavy box across the floor versus a light one?\n\nWhat do you notice happens in situations like these? What patterns have you observed when things start moving, stop moving, or change direction?\n\n===FOLLOWUPS===\n[\"Give me a car example\", \"What about pushing objects?\", \"I'm not sure where to start\"]\n===END_FOLLOWUPS===",
+    "timestamp": "2026-03-27T18:29:29.101738"
+  }
+]

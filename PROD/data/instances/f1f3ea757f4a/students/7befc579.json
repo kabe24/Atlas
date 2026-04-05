@@ -1,0 +1,106 @@
+{
+  "student_id": "7befc579",
+  "name": "Kyon'tai Hill",
+  "pin": "1118",
+  "avatar": "\ud83e\udd8a",
+  "grade": 7,
+  "created_at": "2026-03-25T17:50:54.178216",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-30T17:29:05.817681"
+    },
+    "first_practice": {
+      "earned_at": "2026-03-31T17:41:12.420700"
+    }
+  },
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-25",
+    "2026-03-30",
+    "2026-03-31",
+    "2026-04-01"
+  ],
+  "xp": 306,
+  "xp_log": [
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-30T16:47:21.840413"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-30T17:29:05.819743"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-30T17:29:05.820430"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-31T14:26:07.441993"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-31T14:40:40.165708"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:04:57.462229"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:05:32.306636"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:07:36.192048"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:08:41.196027"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:24:04.478981"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:32:54.912426"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:41:12.422736"
+    },
+    {
+      "amount": 30,
+      "reason": "practice_complete",
+      "timestamp": "2026-03-31T17:41:12.423449"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-31T17:41:12.424092"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-04-01T14:41:23.817380"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-04-01T14:58:40.956178"
+    }
+  ]
+}

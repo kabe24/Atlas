@@ -1,0 +1,39 @@
+{
+  "instances": [
+    {
+      "instance_id": "default",
+      "family_name": "Default Family",
+      "owner_email": "",
+      "created_at": "2026-03-04T07:33:49.505069",
+      "status": "active"
+    },
+    {
+      "instance_id": "a6aacf5bff81",
+      "family_name": "Garcia Family",
+      "owner_email": "",
+      "created_at": "2026-03-06T13:27:08.828876",
+      "status": "active"
+    },
+    {
+      "instance_id": "f0ac228ff667",
+      "family_name": "SBTestFamily",
+      "owner_email": "",
+      "created_at": "2026-03-26T12:26:21.815883",
+      "status": "active"
+    },
+    {
+      "instance_id": "38bbc1d1d9c9",
+      "family_name": "HighProfFamily",
+      "owner_email": "",
+      "created_at": "2026-03-26T12:27:00.682262",
+      "status": "active"
+    },
+    {
+      "instance_id": "334d8d0a17a0",
+      "family_name": "SBTestFamily",
+      "owner_email": "",
+      "created_at": "2026-03-26T12:32:56.014603",
+      "status": "active"
+    }
+  ]
+}

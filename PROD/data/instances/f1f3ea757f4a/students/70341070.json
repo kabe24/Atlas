@@ -1,0 +1,73 @@
+{
+  "student_id": "70341070",
+  "name": "Kyrin Hill",
+  "pin": "1105",
+  "avatar": "\ud83e\uddd1\u200d\ud83c\udf93",
+  "grade": 7,
+  "created_at": "2026-03-25T17:52:53.774174",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-30T18:06:18.948734"
+    }
+  },
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-25",
+    "2026-03-30",
+    "2026-03-31",
+    "2026-04-01"
+  ],
+  "xp": 224,
+  "xp_log": [
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-30T17:14:03.672475"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-30T18:06:18.951537"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-30T18:06:18.952673"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-31T14:48:06.995218"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-31T15:04:19.647037"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:06:13.512613"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:06:48.887243"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-31T17:34:38.057272"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-04-01T14:37:53.887117"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-04-01T16:32:27.739175"
+    }
+  ]
+}

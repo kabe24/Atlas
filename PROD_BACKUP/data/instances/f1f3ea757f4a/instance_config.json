@@ -1,0 +1,36 @@
+{
+  "instance_id": "f1f3ea757f4a",
+  "family_name": "Hill Fam",
+  "display_name": "Hill Fam Tutor",
+  "created_at": "2026-03-25T17:50:54.173977",
+  "owner_email": "breehill1013@gmail.com",
+  "customization": {
+    "enabled_subjects": [
+      "math",
+      "science",
+      "ela",
+      "social_studies"
+    ],
+    "custom_subjects": {},
+    "default_grade": 8,
+    "branding": {
+      "app_title": "Hill Fam Tutor",
+      "primary_color": "#4F46E5"
+    },
+    "feature_flags": {
+      "diagnostics_enabled": true,
+      "lessons_enabled": true,
+      "practice_enabled": true
+    },
+    "state": "AZ",
+    "learning_goals": {
+      "categories": [
+        "struggling",
+        "reinforcing",
+        "enrichment",
+        "test_prep"
+      ],
+      "notes": ""
+    }
+  }
+}

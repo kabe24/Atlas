@@ -1,0 +1,68 @@
+{
+  "interval_weeks": 1,
+  "enabled": true,
+  "snoozed_until": null,
+  "history": [
+    {
+      "id": "b708d4420682",
+      "date": "2026-03-19T14:23:50.253223",
+      "subjects": {
+        "math": {
+          "old_score": 69.4,
+          "new_score": 86,
+          "delta": 16.6,
+          "topic_deltas": {
+            "Linear Equations & Inequalities": {
+              "old_score": 56.2,
+              "new_score": 88,
+              "delta": 31.8,
+              "old_tier": "developing",
+              "new_tier": "advanced",
+              "level_up": true
+            },
+            "Functions & Graphing": {
+              "old_score": 65.0,
+              "new_score": 85,
+              "delta": 20.0,
+              "old_tier": "proficient",
+              "new_tier": "advanced",
+              "level_up": true
+            },
+            "Geometry & Transformations": {
+              "old_score": 70.0,
+              "new_score": 82,
+              "delta": 12.0,
+              "old_tier": "proficient",
+              "new_tier": "proficient",
+              "level_up": false
+            },
+            "Statistics & Probability": {
+              "old_score": 80.0,
+              "new_score": 85,
+              "delta": 5.0,
+              "old_tier": "proficient",
+              "new_tier": "advanced",
+              "level_up": true
+            },
+            "Exponents & Scientific Notation": {
+              "old_score": 60.8,
+              "new_score": 85,
+              "delta": 24.2,
+              "old_tier": "developing",
+              "new_tier": "advanced",
+              "level_up": true
+            },
+            "Pythagorean Theorem & Distance": {
+              "old_score": 84.4,
+              "new_score": 88,
+              "delta": 3.6,
+              "old_tier": "proficient",
+              "new_tier": "advanced",
+              "level_up": true
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "instances": [
+    {
+      "instance_id": "default",
+      "family_name": "Default Family",
+      "owner_email": "",
+      "created_at": "2026-03-26T18:54:54.276469",
+      "status": "active"
+    },
+    {
+      "instance_id": "70cd387923a2",
+      "family_name": "Test Family",
+      "owner_email": "test@test.com",
+      "created_at": "2026-03-26T22:40:51.900410",
+      "status": "active"
+    },
+    {
+      "instance_id": "1ea588c85161",
+      "family_name": "Test Family",
+      "owner_email": "test@test.com",
+      "created_at": "2026-03-26T22:48:03.598718",
+      "status": "active"
+    },
+    {
+      "instance_id": "728cdc18d302",
+      "family_name": "Test Family",
+      "owner_email": "test@test.com",
+      "created_at": "2026-03-26T22:48:28.489907",
+      "status": "active"
+    },
+    {
+      "instance_id": "6d033612f32e",
+      "family_name": "Test Family",
+      "owner_email": "test@test.com",
+      "created_at": "2026-03-26T23:58:27.297144",
+      "status": "active"
+    },
+    {
+      "instance_id": "76de6a671b10",
+      "family_name": "Test Family",
+      "owner_email": "test@test.com",
+      "created_at": "2026-03-27T00:18:09.494459",
+      "status": "active"
+    },
+    {
+      "instance_id": "cbf0bb4d2087",
+      "family_name": "Test Family",
+      "owner_email": "test@test.com",
+      "created_at": "2026-03-27T00:19:19.360955",
+      "status": "active"
+    }
+  ]
+}

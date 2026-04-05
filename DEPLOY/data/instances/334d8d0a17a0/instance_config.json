@@ -1,0 +1,28 @@
+{
+  "instance_id": "334d8d0a17a0",
+  "family_name": "SBTestFamily",
+  "display_name": "SBTestFamily Tutor",
+  "created_at": "2026-03-26T12:32:56.014603",
+  "owner_email": "",
+  "customization": {
+    "enabled_subjects": [
+      "math",
+      "science",
+      "ela",
+      "social_studies"
+    ],
+    "custom_subjects": {},
+    "default_grade": 8,
+    "branding": {
+      "app_title": "SBTestFamily Tutor",
+      "primary_color": "#4F46E5"
+    },
+    "feature_flags": {
+      "diagnostics_enabled": true,
+      "lessons_enabled": true,
+      "practice_enabled": true
+    },
+    "state": "GA",
+    "ai_proficiency": "low"
+  }
+}

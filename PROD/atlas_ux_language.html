@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas — UX Language Mapping</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Outfit:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Outfit", Arial, sans-serif;
+    background: #F5EFE0;
+    color: #0B1D3A;
+    padding: 40px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-family: "Crimson Pro", Georgia, serif;
+    font-style: italic;
+    color: #6B7B8D;
+    font-size: 16px;
+    margin-bottom: 32px;
+  }
+  .section-label {
+    font-family: "DM Mono", monospace;
+    font-size: 12px;
+    color: #D4A843;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin: 32px 0 12px;
+  }
+  h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+  th {
+    background: #0B1D3A;
+    color: #F5EFE0;
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #EDE7D9;
+  }
+  tr:hover td { background: #FAF7F0; }
+  .old { color: #6B7B8D; text-decoration: line-through; font-family: "DM Mono", monospace; font-size: 13px; }
+  .new { color: #0B1D3A; font-weight: 600; }
+  .where { font-family: "DM Mono", monospace; font-size: 12px; color: #1E4D8C; }
+  .keep { color: #2A9D8F; font-weight: 500; font-size: 12px; }
+  .note {
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 14px;
+    color: #6B7B8D;
+    line-height: 1.6;
+    margin: 12px 0;
+    padding: 12px 16px;
+    background: #FAF7F0;
+    border-left: 3px solid #D4A843;
+    border-radius: 0 8px 8px 0;
+  }
+  .example-box {
+    background: #14305A;
+    color: #F5EFE0;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .example-box .label {
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    color: #D4A843;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .example-box .before { opacity: 0.5; text-decoration: line-through; margin-bottom: 8px; }
+  .example-box .after { color: #F4CE6A; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .badge-student { background: #1E4D8C; color: #F5EFE0; }
+  .badge-parent { background: #2A9D8F; color: white; }
+  .badge-both { background: #D4A843; color: #0B1D3A; }
+</style>
+</head>
+<body>
+
+<h1>Atlas</h1>
+<p class="subtitle">UX Language Mapping — Hybrid Approach</p>
+
+<div class="note">
+  <strong>Hybrid rule:</strong> Student-facing surfaces use Atlas exploration language.
+  Parent and teacher dashboards keep traditional academic metrics.
+  When in doubt, clarity wins over brand consistency.
+</div>
+
+<!-- Core Term Translations -->
+<p class="section-label">01 — Core Term Translations</p>
+<h2>What Students See</h2>
+
+<table>
+  <tr>
+    <th>Traditional Term</th>
+    <th>Atlas Term</th>
+    <th>Where It Applies</th>
+    <th>Audience</th>
+  </tr>
+  <tr>
+    <td class="old">Progress percentage</td>
+    <td class="new">Distance traveled / miles explored</td>
+    <td class="where">Student dashboard, sidebar</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Subject / Course</td>
+    <td class="new">Territory</td>
+    <td class="where">Mode selector, sidebar nav, AI conversation</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Lesson / Module</td>
+    <td class="new">Expedition</td>
+    <td class="where">Lesson mode label, session history</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Milestone / Achievement</td>
+    <td class="new">Landmark discovered</td>
+    <td class="where">Gamification badges, progress markers</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Quiz / Test score</td>
+    <td class="new">Terrain mastery</td>
+    <td class="where">Quiz results, practice completion</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Wrong answer</td>
+    <td class="new">Detour</td>
+    <td class="where">AI conversation, practice feedback</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Grade / Rating</td>
+    <td class="new">Exploration level</td>
+    <td class="where">Student profile, session summary</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Homework</td>
+    <td class="new">Field work</td>
+    <td class="where">Homework help mode label, AI conversation</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Dashboard</td>
+    <td class="new">My Map</td>
+    <td class="where">Student home screen / sidebar</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Profile</td>
+    <td class="new">Explorer Profile</td>
+    <td class="where">Student settings / avatar</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Streak</td>
+    <td class="new">Expedition streak</td>
+    <td class="where">Gamification display</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Badge / Award</td>
+    <td class="new">Landmark flag</td>
+    <td class="where">Achievements panel</td>
+    <td><span class="badge badge-student">Student</span></td>
+  </tr>
+  <tr>
+    <td class="old">Study Mode</td>
+    <td class="new">Study Mode <span class="keep">(keep as-is)</span></td>
+    <td class="where">Mode selector</td>
+    <td><span class="badge badge-both">Both</span></td>
+  </tr>
+  <tr>
+    <td class="old">Practice Mode</td>
+    <td class="new">Practice Mode <span class="keep">(keep as-is)</span></td>
+    <td class="where">Mode selector</td>
+    <td><span class="badge badge-both">Both</span></td>
+  </tr>
+  <tr>
+    <td class="old">Diagnostics</td>
+    <td class="new">Diagnostics <span class="keep">(keep as-is)</span></td>
+    <td class="where">Mode selector, parent dashboard</td>
+    <td><span class="badge badge-both">Both</span></td>
+  </tr>
+</table>
+
+<h2>What Parents & Teachers See</h2>
+
+<div class="note">
+  Parent and teacher dashboards keep traditional academic language:
+  grade levels, percentages, scores, completion rates.
+  These audiences need precision, not brand flavor.
+  The only Atlas touches on parent/teacher surfaces are visual (colors, fonts, logo).
+</div>
+
+<table>
+  <tr><th>Surface</th><th>Language</th><th>Rationale</th></tr>
+  <tr>
+    <td>Parent Overview tab</td>
+    <td>Traditional (grade level, % complete, scores)</td>
+    <td>Parents need clear academic metrics</td>
+  </tr>
+  <tr>
+    <td>Parent Diagnostics tab</td>
+    <td>Traditional (grade-level benchmarks, skill gaps)</td>
+    <td>Clinical accuracy matters for assessment</td>
+  </tr>
+  <tr>
+    <td>Parent Analytics tab</td>
+    <td>Traditional (sessions, time spent, scores over time)</td>
+    <td>Data-driven parents want real numbers</td>
+  </tr>
+  <tr>
+    <td>Teacher Dashboard</td>
+    <td>Traditional (same as parent)</td>
+    <td>Teachers expect standard educational reporting</td>
+  </tr>
+  <tr>
+    <td>Parent Help & FAQ</td>
+    <td>Traditional with brief Atlas context</td>
+    <td>"Your child's 'expedition' is what they see as a lesson"</td>
+  </tr>
+</table>
+
+<!-- Examples -->
+<p class="section-label">02 — Before & After Examples</p>
+<h2>Student-Facing Surfaces</h2>
+
+<div class="example-box">
+  <div class="label">Sidebar Header</div>
+  <div class="before">AI Tutor — Welcome back, Theo!</div>
+  <div class="after">ATLAS — Welcome back, Theo. Where to today?</div>
+</div>
+
+<div class="example-box">
+  <div class="label">Progress Display</div>
+  <div class="before">Math: 72% complete</div>
+  <div class="after">Math Territory — 18.3 mi explored · 4 landmarks discovered</div>
+</div>
+
+<div class="example-box">
+  <div class="label">After Wrong Answer (Middle School)</div>
+  <div class="before">That's not correct. The answer is 42. Try again.</div>
+  <div class="after">Interesting detour — that's not quite the route, but you're in the right territory. What happens if you try dividing both sides first?</div>
+</div>
+
+<div class="example-box">
+  <div class="label">After Wrong Answer (High School)</div>
+  <div class="before">That's not correct. The answer is 42. Try again.</div>
+  <div class="after">Close, but that approach breaks down at step 3. Look at what happens when x is negative — see the issue?</div>
+</div>
+
+<div class="example-box">
+  <div class="label">Session Complete</div>
+  <div class="before">Lesson complete! You scored 85%.</div>
+  <div class="after">Expedition complete — 85% terrain mastery. You've added a new landmark to your map.</div>
+</div>
+
+<div class="example-box">
+  <div class="label">Mode Selector — Lesson</div>
+  <div class="before">Start a New Lesson</div>
+  <div class="after">Start an Expedition</div>
+</div>
+
+<div class="example-box">
+  <div class="label">Achievement Earned</div>
+  <div class="before">🏆 Badge earned: Algebra Master</div>
+  <div class="after">🚩 Landmark flag: Algebra Territory Explored</div>
+</div>
+
+<!-- Implementation Notes -->
+<p class="section-label">03 — Implementation Notes</p>
+<h2>Where to Make Changes</h2>
+
+<table>
+  <tr><th>File</th><th>What Changes</th></tr>
+  <tr>
+    <td class="where">static/index.html</td>
+    <td>Sidebar header text, nav labels, mode selector labels, progress displays, achievement labels. Link atlas-theme.css.</td>
+  </tr>
+  <tr>
+    <td class="where">atlas_voice.py</td>
+    <td>Already done — AI conversation voice. Import wrap_atlas_voice() in app.py's prompt builders.</td>
+  </tr>
+  <tr>
+    <td class="where">app.py — SUBJECTS dict</td>
+    <td>Subject system_prompts will be wrapped by atlas_voice.py. No direct edits needed to SUBJECTS.</td>
+  </tr>
+  <tr>
+    <td class="where">app.py — gamification</td>
+    <td>Badge/streak naming: "landmark flag" and "expedition streak" in the gamification responses.</td>
+  </tr>
+  <tr>
+    <td class="where">static/parent.html</td>
+    <td>Visual theme only (colors, fonts). No language changes.</td>
+  </tr>
+  <tr>
+    <td class="where">static/guide.html</td>
+    <td>Update help content to reference Atlas terminology. Add a "glossary" explaining the exploration language for new families.</td>
+  </tr>
+</table>
+
+</body>
+</html>

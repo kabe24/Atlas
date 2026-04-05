@@ -1,0 +1,32 @@
+{
+  "subject": "ela",
+  "topics": {
+    "Reading Comprehension & Analysis": {
+      "score": 72,
+      "level": "Proficient"
+    },
+    "Essay Structure & Argumentation": {
+      "score": 68,
+      "level": "Proficient"
+    },
+    "Grammar & Sentence Structure": {
+      "score": 58,
+      "level": "Developing"
+    },
+    "Vocabulary & Context Clues": {
+      "score": 65,
+      "level": "Proficient"
+    },
+    "Literary Devices & Figurative Language": {
+      "score": 62,
+      "level": "Developing"
+    },
+    "Research & Citation Skills": {
+      "score": 35,
+      "level": "Needs Work"
+    }
+  },
+  "overall_score": 60,
+  "overall_level": "Developing",
+  "summary": "Theo shows strong critical thinking skills in reading comprehension and understands essay argumentation well. Areas to focus on include grammar rules, literary device terminology, and research citation skills."
+}

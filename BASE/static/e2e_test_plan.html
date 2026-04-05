@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas — E2E Test Plan</title>
+<style>
+  :root { --primary: #4F46E5; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --bg: #F1F5F9; --card: #fff; --text: #1E293B; --muted: #64748B; --border: #E2E8F0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+  header { background: var(--primary); color: white; padding: 30px 20px; text-align: center; margin-bottom: 24px; border-radius: 12px; }
+  header h1 { font-size: 28px; margin-bottom: 8px; }
+  header p { opacity: 0.9; font-size: 15px; }
+  .instance-info { background: var(--card); border: 2px solid var(--primary); border-radius: 10px; padding: 18px 24px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .instance-info h3 { grid-column: 1 / -1; color: var(--primary); margin-bottom: 4px; font-size: 16px; }
+  .info-item { font-size: 14px; }
+  .info-item strong { display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-item code { background: #F1F5F9; padding: 2px 8px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 13px; }
+
+  .progress-bar-container { background: var(--card); border-radius: 10px; padding: 16px 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); position: sticky; top: 8px; z-index: 100; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-header span { font-weight: 600; }
+  .progress-stats { display: flex; gap: 16px; font-size: 13px; margin-top: 6px; }
+  .stat-pass { color: var(--success); font-weight: 600; }
+  .stat-fail { color: var(--danger); font-weight: 600; }
+  .stat-pending { color: var(--muted); font-weight: 600; }
+  .progress-track { background: var(--border); border-radius: 8px; height: 12px; overflow: hidden; display: flex; }
+  .progress-fill-pass { background: var(--success); height: 100%; transition: width 0.4s ease; }
+  .progress-fill-fail { background: var(--danger); height: 100%; transition: width 0.4s ease; }
+
+  .section { background: var(--card); border-radius: 10px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+  .section-header { padding: 16px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); user-select: none; }
+  .section-header:hover { background: #F8FAFC; }
+  .section-header h2 { font-size: 17px; display: flex; align-items: center; gap: 10px; }
+  .section-badge { font-size: 12px; padding: 2px 10px; border-radius: 12px; font-weight: 600; }
+  .badge-pending { background: #FEF3C7; color: #92400E; }
+  .badge-done { background: #D1FAE5; color: #065F46; }
+  .badge-has-fail { background: #FEE2E2; color: #991B1B; }
+  .section-arrow { font-size: 18px; transition: transform 0.2s; color: var(--muted); }
+  .section.collapsed .section-arrow { transform: rotate(-90deg); }
+  .section.collapsed .section-body { display: none; }
+  .section-body { padding: 0; }
+
+  .test-group { padding: 12px 24px; border-bottom: 1px solid var(--border); }
+  .test-group:last-child { border-bottom: none; }
+  .test-group h3 { font-size: 14px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .test-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+  .test-item:last-child { border-bottom: none; }
+  .test-content { flex: 1; font-size: 14px; }
+  .test-content .step { color: var(--primary); font-weight: 600; margin-right: 4px; }
+  .test-content .expect { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; font-style: italic; }
+
+  /* Pass/Fail selector */
+  .verdict-group { display: flex; gap: 4px; flex-shrink: 0; margin-top: 2px; }
+  .verdict-btn { width: 32px; height: 28px; border: 2px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; background: white; transition: all 0.15s; }
+  .verdict-btn:hover { transform: scale(1.1); }
+  .verdict-btn.pass-btn.active { background: #D1FAE5; border-color: var(--success); }
+  .verdict-btn.fail-btn.active { background: #FEE2E2; border-color: var(--danger); }
+  .verdict-btn.skip-btn.active { background: #FEF3C7; border-color: var(--warning); }
+
+  .test-item.result-pass .test-content { color: var(--muted); }
+  .test-item.result-pass .test-content .step { color: var(--success); }
+  .test-item.result-fail .test-content .step { color: var(--danger); }
+
+  /* Section notes */
+  .section-notes { padding: 16px 24px; background: #FAFBFC; border-top: 1px solid var(--border); }
+  .section-notes label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .section-notes textarea { width: 100%; min-height: 72px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13px; line-height: 1.5; resize: vertical; transition: border-color 0.2s; background: white; }
+  .section-notes textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+  .section-notes textarea::placeholder { color: #CBD5E1; }
+
+  .prereq { background: #FFF7ED; border-left: 3px solid var(--warning); padding: 10px 16px; margin: 12px 24px; border-radius: 0 6px 6px 0; font-size: 13px; color: #92400E; }
+  .prereq strong { display: block; margin-bottom: 2px; }
+
+  .btn-row { display: flex; gap: 10px; justify-content: center; margin: 24px 0; flex-wrap: wrap; }
+  .reset-btn { background: var(--danger); color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .reset-btn:hover { opacity: 0.9; }
+  .export-btn { background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .export-btn:hover { opacity: 0.9; }
+
+  @media (max-width: 600px) {
+    .instance-info { grid-template-columns: 1fr; }
+    .container { padding: 12px; }
+    .test-item { flex-wrap: wrap; }
+    .verdict-group { margin-left: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>🧪 Atlas — E2E Test Plan</h1>
+  <p>Comprehensive end-to-end verification of all features (Phases 1–12.5 + Feature 20)</p>
+</header>
+
+<div class="instance-info">
+  <h3>🆕 Clean Test Instance</h3>
+  <div class="info-item"><strong>Instance ID</strong> <code>aea9b4fb3810</code></div>
+  <div class="info-item"><strong>Parent PIN</strong> <code>9999</code></div>
+  <div class="info-item"><strong>Student A</strong> 🦊 Alex — PIN <code>1234</code> (Grade 8)</div>
+  <div class="info-item"><strong>Student B</strong> 🚀 Jordan — PIN <code>5678</code> (Grade 7)</div>
+  <div class="info-item"><strong>Student URL</strong> <code>/f/aea9b4fb3810</code></div>
+  <div class="info-item"><strong>Parent URL</strong> <code>/f/aea9b4fb3810/parent</code></div>
+</div>
+
+<div class="progress-bar-container">
+  <div class="progress-header">
+    <span>Overall Progress</span>
+    <span id="progressText">0 / 0 tested</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill-pass" id="progressPass" style="width: 0%"></div>
+    <div class="progress-fill-fail" id="progressFail" style="width: 0%"></div>
+  </div>
+  <div class="progress-stats">
+    <span class="stat-pass" id="statPass">✅ 0 passed</span>
+    <span class="stat-fail" id="statFail">❌ 0 failed</span>
+    <span class="stat-pending" id="statPending">⬜ 0 pending</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-access">
+  <div class="section-header" onclick="toggleSection('sec-access')">
+    <h2>🌐 Section 1: Instance Access & Routing</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-access">0/5</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Prerequisites:</strong> Server running on localhost:8000. Cloudflare tunnel active.</div>
+    <div class="test-group">
+      <div class="test-item" data-id="1.1"><div class="test-content"><span class="step">1.1</span> Navigate to <code>/f/aea9b4fb3810</code>. <span class="expect">→ Student login screen loads with PIN pad. Instance loads (title may use branding name or default "Atlas").</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="1.2"><div class="test-content"><span class="step">1.2</span> Navigate to <code>/f/aea9b4fb3810/parent</code>. <span class="expect">→ Parent dashboard login screen with PIN pad.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="1.3"><div class="test-content"><span class="step">1.3</span> Navigate to <code>/f/INVALID_ID</code>. <span class="expect">→ Error message or default instance (not a crash).</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="1.4"><div class="test-content"><span class="step">1.4</span> Test the same URLs through the Cloudflare tunnel. <span class="expect">→ All pages load identically over HTTPS.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="1.5"><div class="test-content"><span class="step">1.5</span> Navigate to <code>/admin</code>. <span class="expect">→ Admin dashboard loads with instance count and platform feedback.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-access" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-auth">
+  <div class="section-header" onclick="toggleSection('sec-auth')">
+    <h2>🔐 Section 2: Authentication & Student Accounts</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-auth">0/8</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="test-group">
+      <h3>Student Login</h3>
+      <div class="test-item" data-id="2.1"><div class="test-content"><span class="step">2.1</span> On student view, enter wrong PIN <code>0000</code>. <span class="expect">→ Error message "Incorrect PIN". Does NOT log in.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="2.2"><div class="test-content"><span class="step">2.2</span> Enter Alex's PIN <code>1234</code>. <span class="expect">→ Logs in. Welcome screen shows "Hey Alex! 🦊" and subject grid.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="2.3"><div class="test-content"><span class="step">2.3</span> Click Logout (sidebar). Log in as Jordan with PIN <code>5678</code>. <span class="expect">→ Welcome shows "Hey Jordan! 🚀". Separate student experience.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="test-group">
+      <h3>Parent Login</h3>
+      <div class="test-item" data-id="2.4"><div class="test-content"><span class="step">2.4</span> On parent dashboard, enter wrong PIN <code>0000</code>. <span class="expect">→ Error. Does NOT log in.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="2.5"><div class="test-content"><span class="step">2.5</span> Enter parent PIN <code>9999</code>. <span class="expect">→ Dashboard loads. Student selector shows Alex and Jordan.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="test-group">
+      <h3>Data Isolation</h3>
+      <div class="test-item" data-id="2.6"><div class="test-content"><span class="step">2.6</span> As Alex, do something (start a diagnostic). Log out. Log in as Jordan. <span class="expect">→ Jordan has zero progress. Alex's data doesn't bleed.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="2.7"><div class="test-content"><span class="step">2.7</span> Log into the default instance (<code>/</code>) with PIN <code>0000</code>. <span class="expect">→ Loads separately. No E2E Test data visible.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="2.8"><div class="test-content"><span class="step">2.8</span> On parent dashboard, switch between Alex and Jordan via the dropdown. <span class="expect">→ Student header, Overview, and Diagnostics all update to the selected student.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-auth" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-diag">
+  <div class="section-header" onclick="toggleSection('sec-diag')">
+    <h2>🔬 Section 3: Diagnostic Assessment</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-diag">0/8</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Test as:</strong> Alex (PIN 1234)</div>
+    <div class="test-group">
+      <h3>Start & Complete a Diagnostic</h3>
+      <div class="test-item" data-id="3.1"><div class="test-content"><span class="step">3.1</span> Click a subject (e.g. Math). The diagnostic grid should appear. Click to start Math diagnostic. <span class="expect">→ Chat opens. First question appears from the tutor. Progress bar shows "Q1 of ~18".</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="3.2"><div class="test-content"><span class="step">3.2</span> Answer 3–4 questions. Then navigate away (click sidebar or another subject). <span class="expect">→ The session is interrupted. No crash.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="3.3"><div class="test-content"><span class="step">3.3</span> Go back to the diagnostic grid. <span class="expect">→ Math shows "⏯️ Resume (Q#/~18)" badge with orange background.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="3.4"><div class="test-content"><span class="step">3.4</span> Click to resume the Math diagnostic. <span class="expect">→ Previous conversation history restores. You can continue where you left off.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="3.5"><div class="test-content"><span class="step">3.5</span> Complete the full Math diagnostic (~15–20 questions). <span class="expect">→ Summary appears with score and skill levels. Badge notification ("First Diagnostic" badge). Returns to subject grid with Math showing completed.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="test-group">
+      <h3>Second Diagnostic — Science (Math Rendering)</h3>
+      <div class="test-item" data-id="3.6"><div class="test-content"><span class="step">3.6</span> Start and complete a Science diagnostic. <span class="expect">→ Questions that involve formulas should render with proper math notation (fractions, exponents, etc. displayed visually, not as plain text).</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="3.7"><div class="test-content"><span class="step">3.7</span> Start and complete a 3rd diagnostic (e.g. ELA). <span class="expect">→ Completes normally. No math rendering for ELA questions (expected — it's not STEM).</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="test-group">
+      <h3>Safety</h3>
+      <div class="test-item" data-id="3.8"><div class="test-content"><span class="step">3.8</span> During any diagnostic, type something off-topic or inappropriate. <span class="expect">→ Safety filter catches it. Gentle redirect message appears. Assessment continues.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-diag" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-lessons">
+  <div class="section-header" onclick="toggleSection('sec-lessons')">
+    <h2>📚 Section 4: Lessons</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-lessons">0/6</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Prerequisite:</strong> Alex has completed at least 1 diagnostic (Math).</div>
+    <div class="test-group">
+      <div class="test-item" data-id="4.1"><div class="test-content"><span class="step">4.1</span> Switch to "Learn" mode via the sidebar. Select Math. <span class="expect">→ Topic picker appears showing topics from the diagnostic, ordered by weakness.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="4.2"><div class="test-content"><span class="step">4.2</span> Pick a topic. Start a lesson. <span class="expect">→ 5-step structured lesson begins (Hook → Concept → Guided → Practice → Wrap Up). Step indicator shows "Step 1 of 5".</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="4.3"><div class="test-content"><span class="step">4.3</span> Advance through 2–3 steps. Then navigate away mid-lesson. <span class="expect">→ No crash. Lesson state saved.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="4.4"><div class="test-content"><span class="step">4.4</span> Go back to Learn → Math. <span class="expect">→ Topic list shows a "Resume" option for the in-progress lesson.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="4.5"><div class="test-content"><span class="step">4.5</span> Resume and complete the lesson through all 5 steps. <span class="expect">→ Lesson completes. Summary shown. Possible badge award.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="4.6"><div class="test-content"><span class="step">4.6</span> Start a new lesson in Math on a different topic. Verify step counter resets. <span class="expect">→ New lesson starts at Step 1. Previous completed lesson unaffected.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-lessons" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-practice">
+  <div class="section-header" onclick="toggleSection('sec-practice')">
+    <h2>🏋️ Section 5: Practice / Drills</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-practice">0/5</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Prerequisite:</strong> Alex has completed at least 1 diagnostic.</div>
+    <div class="test-group">
+      <div class="test-item" data-id="5.1"><div class="test-content"><span class="step">5.1</span> Switch to "Practice" mode. Select Math. <span class="expect">→ Practice session starts. Questions appear at appropriate difficulty level.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="5.2"><div class="test-content"><span class="step">5.2</span> Answer 3+ questions correctly in a row. <span class="expect">→ Streak counter increments. Difficulty may increase. Encouraging messages.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="5.3"><div class="test-content"><span class="step">5.3</span> Answer a question wrong. <span class="expect">→ Hint offered. Streak resets. Difficulty may decrease. Explanation provided.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="5.4"><div class="test-content"><span class="step">5.4</span> Complete a full practice session (answer enough to end). <span class="expect">→ Summary with score, accuracy, and streak info.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="5.5"><div class="test-content"><span class="step">5.5</span> Test practice via the Cloudflare tunnel URL. <span class="expect">→ Works without "Couldn't connect" errors. If error occurs, message includes detail (not generic).</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-practice" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-math">
+  <div class="section-header" onclick="toggleSection('sec-math')">
+    <h2>📐 Section 6: Math Rendering (Feature 20)</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-math">0/4</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="test-group">
+      <div class="test-item" data-id="6.1"><div class="test-content"><span class="step">6.1</span> In any Math lesson or practice, look for fraction expressions (e.g. ½, ¾). <span class="expect">→ Fractions render as proper stacked notation (numerator over denominator), not plain text like "1/2".</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="6.2"><div class="test-content"><span class="step">6.2</span> Look for exponents and square roots in Math/Science responses. <span class="expect">→ x² renders as superscript. √x renders as a proper radical symbol. Quadratic formula renders beautifully.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="6.3"><div class="test-content"><span class="step">6.3</span> Check that bold, italic, and numbered lists render in tutor responses. <span class="expect">→ Markdown formatting works. Numbered steps appear as a proper list.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="6.4"><div class="test-content"><span class="step">6.4</span> Switch to ELA or Social Studies and chat. <span class="expect">→ Normal text formatting (bold, lists). No unnecessary math symbols or LaTeX artifacts.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-math" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-parent">
+  <div class="section-header" onclick="toggleSection('sec-parent')">
+    <h2>📊 Section 7: Parent Dashboard</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-parent">0/12</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Prerequisite:</strong> Alex has completed diagnostics, lessons, and/or practice. Jordan is fresh (no activity).</div>
+    <div class="test-group">
+      <h3>Overview Tab</h3>
+      <div class="test-item" data-id="7.1"><div class="test-content"><span class="step">7.1</span> Log into parent dashboard (PIN 9999). Select Alex. <span class="expect">→ Overview shows: Total Sessions > 0, Lessons Completed count, Overall Mastery %, Days Active > 0.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="7.2"><div class="test-content"><span class="step">7.2</span> Check the Activity Calendar (last 30 days). <span class="expect">→ Today's date is highlighted as active.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="7.3"><div class="test-content"><span class="step">7.3</span> Check Subject Breakdown. <span class="expect">→ Completed subjects show mastery scores. Unassessed subjects show "Not yet assessed". Radar chart renders.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="7.4"><div class="test-content"><span class="step">7.4</span> Check Session History. <span class="expect">→ Lists diagnostic, lesson, and practice sessions with dates. Filter dropdowns work (by subject, by type including "Diagnostics").</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="7.5"><div class="test-content"><span class="step">7.5</span> Switch to Jordan. <span class="expect">→ All metrics show zero. No activity. Clean slate. Student header updates to Jordan 🚀.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="test-group">
+      <h3>Diagnostics Tab</h3>
+      <div class="test-item" data-id="7.6"><div class="test-content"><span class="step">7.6</span> Click Diagnostics tab with Alex selected. <span class="expect">→ Shows all 5 subjects. Completed ones show score % and level. Others show "Start Diagnostic".</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="7.7"><div class="test-content"><span class="step">7.7</span> Click "Start Diagnostic" for a subject Alex hasn't done. <span class="expect">→ Schedules a pending diagnostic. Badge changes to "⏳ Scheduled".</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="7.8"><div class="test-content"><span class="step">7.8</span> Switch to Jordan on the Diagnostics tab. <span class="expect">→ All subjects show "Not yet taken" — Jordan's data, not Alex's.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="test-group">
+      <h3>Other Tabs</h3>
+      <div class="test-item" data-id="7.9"><div class="test-content"><span class="step">7.9</span> Click Customization tab. <span class="expect">→ Shows enabled subjects, branding options, feature flags.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="7.10"><div class="test-content"><span class="step">7.10</span> Click Feedback tab. <span class="expect">→ Shows feedback list (likely empty for new instance). No errors.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="7.11"><div class="test-content"><span class="step">7.11</span> Click Settings tab. <span class="expect">→ Shows PIN management, student list with Add Student option.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="7.12"><div class="test-content"><span class="step">7.12</span> Add a new student from Settings. <span class="expect">→ New student appears in the student selector dropdown. Can switch to them.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-parent" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-feedback">
+  <div class="section-header" onclick="toggleSection('sec-feedback')">
+    <h2>💬 Section 8: Feedback System</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-feedback">0/4</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="test-group">
+      <div class="test-item" data-id="8.1"><div class="test-content"><span class="step">8.1</span> As Alex (student view), find and use the feedback button to submit feedback. <span class="expect">→ Feedback modal opens. Can type and submit. Confirmation shown.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="8.2"><div class="test-content"><span class="step">8.2</span> On the parent dashboard Feedback tab, check for Alex's feedback. <span class="expect">→ Feedback appears with timestamp and content.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="8.3"><div class="test-content"><span class="step">8.3</span> Check if feedback promotion exists. <span class="expect">→ Promotion is admin-only (via <code>/admin</code>). Parent dashboard shows feedback but no promote button — this is correct behavior.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="8.4"><div class="test-content"><span class="step">8.4</span> Check the admin dashboard at <code>/admin</code>. <span class="expect">→ Platform feedback list includes the promoted feedback.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-feedback" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-custom">
+  <div class="section-header" onclick="toggleSection('sec-custom')">
+    <h2>⚙️ Section 9: Customization & Settings</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-custom">0/5</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="test-group">
+      <div class="test-item" data-id="9.1"><div class="test-content"><span class="step">9.1</span> On parent dashboard Settings tab, change the parent PIN to <code>8888</code>. Log out. <span class="expect">→ Old PIN 9999 no longer works. New PIN 8888 works.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="9.2"><div class="test-content"><span class="step">9.2</span> On Customization tab, try disabling a subject (e.g. Latin). Save. <span class="expect">→ Student view no longer shows Latin in the subject grid.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="9.3"><div class="test-content"><span class="step">9.3</span> Re-enable the subject. Verify it reappears for students. <span class="expect">→ Latin returns in the student subject grid.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="9.4"><div class="test-content"><span class="step">9.4</span> Try adding a custom subject (if supported). <span class="expect">→ Custom subject appears for students. Can start diagnostic for it.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="9.5"><div class="test-content"><span class="step">9.5</span> Change PIN back to <code>9999</code> for subsequent tests. <span class="expect">→ PIN reset successful.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-custom" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-badges">
+  <div class="section-header" onclick="toggleSection('sec-badges')">
+    <h2>🏆 Section 10: Badges & Gamification</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-badges">0/3</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="test-group">
+      <div class="test-item" data-id="10.1"><div class="test-content"><span class="step">10.1</span> After completing Alex's first diagnostic, verify badge notification appeared. <span class="expect">→ "First Diagnostic" badge awarded. Notification shown in chat.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="10.2"><div class="test-content"><span class="step">10.2</span> On the parent dashboard, check the Progress section for badge timeline. <span class="expect">→ Earned badges shown with icons and dates.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="10.3"><div class="test-content"><span class="step">10.3</span> Complete diagnostics in all 5 subjects (if not done). <span class="expect">→ "All Subjects" badge awarded after the 5th diagnostic completes.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-badges" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-edge">
+  <div class="section-header" onclick="toggleSection('sec-edge')">
+    <h2>🛡️ Section 11: Edge Cases & Safety</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-edge">0/5</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="test-group">
+      <div class="test-item" data-id="11.1"><div class="test-content"><span class="step">11.1</span> During a lesson, type something completely off-topic (e.g., "Tell me a joke about dogs"). <span class="expect">→ Safety filter redirects back to the subject. Polite refusal.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="11.2"><div class="test-content"><span class="step">11.2</span> Try rapid-fire submitting the same message multiple times. <span class="expect">→ No duplicate responses or crashes. Rate limiting or graceful handling.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="11.3"><div class="test-content"><span class="step">11.3</span> Open the student view in two browser tabs simultaneously as Alex. Do a diagnostic in one, a lesson in another. <span class="expect">→ Both work independently without corrupting each other's data.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="11.4"><div class="test-content"><span class="step">11.4</span> Submit very long input (500+ characters) in a chat message. <span class="expect">→ Handled gracefully. No UI breakage.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="11.5"><div class="test-content"><span class="step">11.5</span> Refresh the page mid-conversation (F5). <span class="expect">→ Returns to login. No data corruption. Can resume diagnostics/lessons after re-login.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-edge" oninput="saveNotes(this)" placeholder="Record any observations, issues, or experience notes for this section..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-regression">
+  <div class="section-header" onclick="toggleSection('sec-regression')">
+    <h2>🔄 Section 12: Round 2 — Regression Retests</h2>
+    <div><span class="section-badge badge-pending" id="badge-sec-regression">0/9</span> <span class="section-arrow">▼</span></div>
+  </div>
+  <div class="section-body">
+    <div class="prereq"><strong>Context:</strong> These tests verify bugs found in Round 1 that have been fixed. Retest each one to confirm the fix works.</div>
+    <div class="test-group">
+      <h3>Diagnostic Input Bar Fix (was 3.6/3.7)</h3>
+      <div class="test-item" data-id="12.1"><div class="test-content"><span class="step">12.1</span> Complete a Math diagnostic (or have one completed). Then start a Science diagnostic. <span class="expect">→ Input bar is active and accepts cursor. Can type answers immediately.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="12.2"><div class="test-content"><span class="step">12.2</span> Complete Science diagnostic. Start an ELA diagnostic. <span class="expect">→ Input bar is active. Can type and submit answers normally.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="test-group">
+      <h3>Math Rendering Fix (was LaTeX showing HTML entities)</h3>
+      <div class="test-item" data-id="12.3"><div class="test-content"><span class="step">12.3</span> In a Math diagnostic or lesson, look for inequality expressions (e.g. <code>a &lt; 10</code>). <span class="expect">→ Renders as proper math notation, NOT as <code>&amp;lt;</code> or HTML entities.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="test-group">
+      <h3>Student Dropdown Fix (was 7.12)</h3>
+      <div class="test-item" data-id="12.4"><div class="test-content"><span class="step">12.4</span> On parent dashboard Settings, add a new student. <span class="expect">→ New student immediately appears in the top-left student selector dropdown without page refresh.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="12.5"><div class="test-content"><span class="step">12.5</span> Switch to the newly added student via the dropdown. <span class="expect">→ Dashboard loads with zero activity for the new student.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="test-group">
+      <h3>Subject Toggle Fix (was 9.2/9.3/9.4)</h3>
+      <div class="test-item" data-id="12.6"><div class="test-content"><span class="step">12.6</span> On parent Customization tab, disable Latin (uncheck). Save. Log in as student. <span class="expect">→ Latin does NOT appear in the student subject grid.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="12.7"><div class="test-content"><span class="step">12.7</span> Re-enable Latin on parent Customization. Log in as student again. <span class="expect">→ Latin reappears in the student subject grid.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="12.8"><div class="test-content"><span class="step">12.8</span> Create a custom subject from parent Customization (e.g. "Spanish" with 3+ topics). Log in as student. <span class="expect">→ Custom subject appears in the student subject grid with correct icon.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+      <div class="test-item" data-id="12.9"><div class="test-content"><span class="step">12.9</span> As student, click the custom subject and start a diagnostic. <span class="expect">→ Diagnostic starts. Questions are relevant to the custom subject.</span></div><div class="verdict-group"><button class="verdict-btn pass-btn" onclick="setVerdict(this,'pass')" title="Pass">✅</button><button class="verdict-btn fail-btn" onclick="setVerdict(this,'fail')" title="Fail">❌</button><button class="verdict-btn skip-btn" onclick="setVerdict(this,'skip')" title="Skip">⏭️</button></div></div>
+    </div>
+    <div class="section-notes">
+      <label>📝 Section Notes</label>
+      <textarea data-section="sec-regression" oninput="saveNotes(this)" placeholder="Record any observations from retesting the fixed bugs..."></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="export-btn" onclick="exportResults()">📋 Export Results as Text</button>
+  <button class="reset-btn" onclick="if(confirm('Reset all test results and notes? This cannot be undone.')){resetAll();}">🔄 Reset Everything</button>
+</div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'e2e_test_state_v2';
+
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function setVerdict(btn, verdict) {
+  const item = btn.closest('.test-item');
+  const group = item.querySelector('.verdict-group');
+  const testId = item.dataset.id;
+
+  // Toggle off if already active
+  if (btn.classList.contains('active')) {
+    btn.classList.remove('active');
+    item.classList.remove('result-pass', 'result-fail', 'result-skip');
+    saveState();
+    updateProgress();
+    return;
+  }
+
+  // Clear all in this group
+  group.querySelectorAll('.verdict-btn').forEach(b => b.classList.remove('active'));
+  item.classList.remove('result-pass', 'result-fail', 'result-skip');
+
+  // Set new
+  btn.classList.add('active');
+  item.classList.add('result-' + verdict);
+
+  saveState();
+  updateProgress();
+}
+
+function saveNotes(textarea) {
+  saveState();
+}
+
+function saveState() {
+  const state = { verdicts: {}, notes: {} };
+
+  // Save verdicts
+  document.querySelectorAll('.test-item[data-id]').forEach(item => {
+    const active = item.querySelector('.verdict-btn.active');
+    if (active) {
+      if (active.classList.contains('pass-btn')) state.verdicts[item.dataset.id] = 'pass';
+      else if (active.classList.contains('fail-btn')) state.verdicts[item.dataset.id] = 'fail';
+      else if (active.classList.contains('skip-btn')) state.verdicts[item.dataset.id] = 'skip';
+    }
+  });
+
+  // Save notes
+  document.querySelectorAll('.section-notes textarea').forEach(ta => {
+    if (ta.value.trim()) state.notes[ta.dataset.section] = ta.value;
+  });
+
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function restoreState() {
+  try {
+    const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+    // Restore verdicts
+    if (state.verdicts) {
+      Object.entries(state.verdicts).forEach(([id, verdict]) => {
+        const item = document.querySelector(`.test-item[data-id="${id}"]`);
+        if (!item) return;
+        const btn = verdict === 'pass' ? item.querySelector('.pass-btn')
+                  : verdict === 'fail' ? item.querySelector('.fail-btn')
+                  : item.querySelector('.skip-btn');
+        if (btn) {
+          btn.classList.add('active');
+          item.classList.add('result-' + verdict);
+        }
+      });
+    }
+
+    // Restore notes
+    if (state.notes) {
+      Object.entries(state.notes).forEach(([section, text]) => {
+        const ta = document.querySelector(`.section-notes textarea[data-section="${section}"]`);
+        if (ta) ta.value = text;
+      });
+    }
+  } catch(e) {}
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.test-item[data-id]');
+  const total = all.length;
+  let passed = 0, failed = 0, skipped = 0;
+
+  all.forEach(item => {
+    const active = item.querySelector('.verdict-btn.active');
+    if (active) {
+      if (active.classList.contains('pass-btn')) passed++;
+      else if (active.classList.contains('fail-btn')) failed++;
+      else if (active.classList.contains('skip-btn')) skipped++;
+    }
+  });
+
+  const tested = passed + failed + skipped;
+  const pending = total - tested;
+
+  document.getElementById('progressText').textContent = `${tested} / ${total} tested`;
+  document.getElementById('progressPass').style.width = (total ? (passed / total * 100) : 0) + '%';
+  document.getElementById('progressFail').style.width = (total ? (failed / total * 100) : 0) + '%';
+  document.getElementById('statPass').textContent = `✅ ${passed} passed`;
+  document.getElementById('statFail').textContent = `❌ ${failed} failed`;
+  document.getElementById('statPending').textContent = `⬜ ${pending} pending`;
+
+  // Update section badges
+  document.querySelectorAll('.section').forEach(sec => {
+    const items = sec.querySelectorAll('.test-item[data-id]');
+    if (!items.length) return;
+    let sp = 0, sf = 0, ss = 0;
+    items.forEach(item => {
+      const active = item.querySelector('.verdict-btn.active');
+      if (active) {
+        if (active.classList.contains('pass-btn')) sp++;
+        else if (active.classList.contains('fail-btn')) sf++;
+        else if (active.classList.contains('skip-btn')) ss++;
+      }
+    });
+    const badge = document.getElementById('badge-' + sec.id);
+    if (badge) {
+      const done = sp + sf + ss;
+      badge.textContent = `${sp}✅ ${sf}❌ / ${items.length}`;
+      if (sf > 0) badge.className = 'section-badge badge-has-fail';
+      else if (done === items.length) badge.className = 'section-badge badge-done';
+      else badge.className = 'section-badge badge-pending';
+    }
+  });
+}
+
+function resetAll() {
+  document.querySelectorAll('.verdict-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.test-item').forEach(i => i.classList.remove('result-pass', 'result-fail', 'result-skip'));
+  document.querySelectorAll('.section-notes textarea').forEach(ta => ta.value = '');
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  updateProgress();
+}
+
+function exportResults() {
+  let out = '═══ AI TUTOR E2E TEST RESULTS ═══\n';
+  out += 'Date: ' + new Date().toLocaleString() + '\n';
+  out += 'Instance: aea9b4fb3810\n\n';
+
+  let totalP = 0, totalF = 0, totalS = 0, totalT = 0;
+
+  document.querySelectorAll('.section').forEach(sec => {
+    const title = sec.querySelector('.section-header h2').textContent.trim();
+    out += '─── ' + title + ' ───\n';
+
+    sec.querySelectorAll('.test-item[data-id]').forEach(item => {
+      totalT++;
+      const id = item.dataset.id;
+      const active = item.querySelector('.verdict-btn.active');
+      let verdict = '⬜ PENDING';
+      if (active) {
+        if (active.classList.contains('pass-btn')) { verdict = '✅ PASS'; totalP++; }
+        else if (active.classList.contains('fail-btn')) { verdict = '❌ FAIL'; totalF++; }
+        else { verdict = '⏭️ SKIP'; totalS++; }
+      }
+      const step = item.querySelector('.step')?.textContent || id;
+      const label = item.querySelector('.test-content')?.textContent?.replace(/\s+/g, ' ').trim().substring(0, 120) || '';
+      out += `  ${verdict}  ${step} — ${label}\n`;
+    });
+
+    const ta = sec.querySelector('.section-notes textarea');
+    if (ta && ta.value.trim()) {
+      out += '\n  📝 NOTES: ' + ta.value.trim().replace(/\n/g, '\n           ') + '\n';
+    }
+    out += '\n';
+  });
+
+  out += '═══ SUMMARY ═══\n';
+  out += `Total: ${totalT} | Passed: ${totalP} | Failed: ${totalF} | Skipped: ${totalS} | Pending: ${totalT - totalP - totalF - totalS}\n`;
+  out += `Pass Rate: ${totalT ? Math.round(totalP / totalT * 100) : 0}%\n`;
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(out).then(() => {
+    alert('Results copied to clipboard!');
+  }).catch(() => {
+    // Fallback: show in a prompt
+    const ta = document.createElement('textarea');
+    ta.value = out;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('Results copied to clipboard!');
+  });
+}
+
+// Init
+restoreState();
+updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[
+  {
+    "lesson_id": "social_studies_20260322_160943",
+    "topic": "Civil War & Reconstruction",
+    "started_at": "2026-03-22T16:09:49.471736",
+    "completed_at": "2026-03-22T16:33:24.609001",
+    "complete": true
+  },
+  {
+    "lesson_id": "social_studies_20260330_153133",
+    "topic": "World War I & II",
+    "started_at": "2026-03-30T15:31:39.928600",
+    "completed_at": null,
+    "complete": false
+  },
+  {
+    "lesson_id": "social_studies_20260330_153139",
+    "topic": "World War I & II",
+    "started_at": "2026-03-30T15:31:46.038294",
+    "completed_at": "2026-03-30T15:47:31.862864",
+    "complete": true
+  }
+]

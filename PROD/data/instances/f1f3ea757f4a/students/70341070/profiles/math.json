@@ -1,0 +1,32 @@
+{
+  "subject": "math",
+  "topics": {
+    "Proportional Relationships": {
+      "score": 75,
+      "level": "Proficient"
+    },
+    "Operations with Rational Numbers": {
+      "score": 65,
+      "level": "Proficient"
+    },
+    "Expressions & Equations": {
+      "score": 60,
+      "level": "Developing"
+    },
+    "Geometry (Angles, Area, Volume)": {
+      "score": 70,
+      "level": "Proficient"
+    },
+    "Statistics & Probability": {
+      "score": 80,
+      "level": "Proficient"
+    },
+    "Scale Drawings": {
+      "score": 85,
+      "level": "Advanced"
+    }
+  },
+  "overall_score": 72,
+  "overall_level": "Proficient",
+  "summary": "Strong in proportional reasoning, statistics, and scale drawings. Good understanding of basic geometry concepts. Could benefit from more practice with fraction operations and multi-step equation solving."
+}

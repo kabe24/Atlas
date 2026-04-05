@@ -1,0 +1,8 @@
+.env
+*.pyc
+__pycache__/
+.DS_Store
+server.log
+data/api_calls.jsonl
+data/error_log.jsonl
+data/students/*/conversation_log.jsonl

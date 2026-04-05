@@ -1,0 +1,41 @@
+{
+  "instance_id": "0650b2bc1a95",
+  "family_name": "API Test",
+  "display_name": "API Test Tutor",
+  "created_at": "2026-03-04T12:35:03.616250",
+  "owner_email": "test@test.com",
+  "customization": {
+    "enabled_subjects": [
+      "math",
+      "science",
+      "ela",
+      "social_studies",
+      "latin",
+      "music_theory"
+    ],
+    "custom_subjects": {
+      "music_theory": {
+        "name": "Music Theory",
+        "icon": "\ud83c\udfb5",
+        "color": "#E91E63",
+        "topics": [
+          "Rhythm",
+          "Melody",
+          "Harmony",
+          "Scales"
+        ],
+        "system_prompt": "You are a friendly, encouraging Music Theory tutor for a middle school student. You help with Music Theory topics including: Rhythm, Melody, Harmony, Scales. Explain concepts clearly, use examples, and encourage the student to think through problems."
+      }
+    },
+    "default_grade": 8,
+    "branding": {
+      "app_title": "API Test Tutor",
+      "primary_color": "#4F46E5"
+    },
+    "feature_flags": {
+      "diagnostics_enabled": true,
+      "lessons_enabled": true,
+      "practice_enabled": true
+    }
+  }
+}

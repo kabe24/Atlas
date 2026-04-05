@@ -1,0 +1,32 @@
+{
+  "student_id": "6012591f",
+  "name": "Sophia",
+  "pin": "5678",
+  "avatar": "\ud83d\udc36",
+  "grade": 7,
+  "created_at": "2026-03-03T17:52:49.771471",
+  "badges": {},
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-03",
+    "2026-03-15"
+  ],
+  "xp": 85,
+  "xp_log": [
+    {
+      "amount": 20,
+      "reason": "flashcard_complete",
+      "timestamp": "2026-03-15T13:54:30.393873"
+    },
+    {
+      "amount": 25,
+      "reason": "quiz_complete",
+      "timestamp": "2026-03-15T13:54:35.356976"
+    },
+    {
+      "amount": 40,
+      "reason": "quiz_perfect",
+      "timestamp": "2026-03-15T13:54:35.359690"
+    }
+  ]
+}

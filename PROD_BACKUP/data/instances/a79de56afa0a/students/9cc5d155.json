@@ -1,0 +1,105 @@
+{
+  "student_id": "9cc5d155",
+  "name": "Theo",
+  "pin": "1111",
+  "avatar": "\ud83c\udf93",
+  "grade": 8,
+  "created_at": "2026-03-21T20:11:49.848233",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-21T20:34:38.906159"
+    },
+    "first_practice": {
+      "earned_at": "2026-03-22T15:51:00.544680"
+    },
+    "first_lesson": {
+      "earned_at": "2026-03-22T16:09:28.938771"
+    }
+  },
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-21",
+    "2026-03-22",
+    "2026-03-24",
+    "2026-03-25",
+    "2026-03-26"
+  ],
+  "xp": 373,
+  "xp_log": [
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-21T20:34:38.907943"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-21T20:34:38.908650"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-21T20:45:39.512168"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-22T13:11:43.345252"
+    },
+    {
+      "amount": 50,
+      "reason": "diagnostic_complete",
+      "timestamp": "2026-03-22T14:38:29.408465"
+    },
+    {
+      "amount": 8,
+      "reason": "practice_correct_no_hint",
+      "timestamp": "2026-03-22T15:38:15.984523"
+    },
+    {
+      "amount": 5,
+      "reason": "practice_correct",
+      "timestamp": "2026-03-22T15:48:24.034190"
+    },
+    {
+      "amount": 30,
+      "reason": "practice_complete",
+      "timestamp": "2026-03-22T15:51:00.547279"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-22T15:51:00.548343"
+    },
+    {
+      "amount": 40,
+      "reason": "lesson_complete",
+      "timestamp": "2026-03-22T16:09:28.941432"
+    },
+    {
+      "amount": 20,
+      "reason": "badge_earned",
+      "timestamp": "2026-03-22T16:09:28.942211"
+    },
+    {
+      "amount": 40,
+      "reason": "lesson_complete",
+      "timestamp": "2026-03-22T16:33:24.616081"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-24T17:11:01.589627"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-25T07:28:56.952700"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-26T10:08:07.265040"
+    }
+  ]
+}

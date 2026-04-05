@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas — Competitive Comparison</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; padding: 32px; }
+  h1 { text-align: center; font-size: 28px; margin-bottom: 6px; color: #1a1a2e; }
+  .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 32px; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 32px; }
+  .card-header { padding: 16px 24px; font-size: 18px; font-weight: 700; color: #fff; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 10px 16px; text-align: left; border-bottom: 1px solid #eee; }
+  th { background: #f8f9fb; font-weight: 600; color: #555; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 600; color: #333; width: 200px; }
+
+  .yes { color: #16a34a; font-weight: 600; }
+  .no { color: #dc2626; }
+  .partial { color: #d97706; font-weight: 500; }
+  .highlight { background: #f0fdf4; }
+
+  .price-row td { font-size: 18px; font-weight: 700; }
+  .price-row .ours { color: #2563eb; }
+
+  .verdict { padding: 24px; background: linear-gradient(135deg, #1e3a5f, #2b5797); color: #fff; border-radius: 12px; margin-top: 24px; }
+  .verdict h2 { margin-bottom: 12px; font-size: 20px; }
+  .verdict p { font-size: 14px; line-height: 1.7; opacity: 0.95; margin-bottom: 10px; }
+
+  .legend { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; font-size: 13px; color: #666; }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+
+  @media (max-width: 900px) {
+    body { padding: 12px; }
+    th, td { padding: 8px 10px; font-size: 12px; }
+    td:first-child { width: 140px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Competitive Feature Comparison</h1>
+<p class="subtitle">Atlas Platform vs. Khanmigo, IXL, and Synthesis — March 2026</p>
+
+<div class="legend">
+  <span><strong class="yes">&#x2713;</strong> = Included</span>
+  <span><strong class="no">&#x2717;</strong> = Not available</span>
+  <span><strong class="partial">~</strong> = Partial / Limited</span>
+</div>
+
+<!-- Pricing Card -->
+<div class="card">
+  <div class="card-header" style="background: linear-gradient(135deg, #2b5797, #1e3a5f);">Pricing Overview</div>
+  <table>
+    <tr><th>Plan</th><th>Atlas (Ours)</th><th>Khanmigo</th><th>IXL</th><th>Synthesis</th></tr>
+    <tr class="price-row">
+      <td>Entry Price</td>
+      <td class="ours">Free</td>
+      <td>$4/mo</td>
+      <td>$9.95/mo</td>
+      <td>$29/mo</td>
+    </tr>
+    <tr class="price-row">
+      <td>Mid Tier</td>
+      <td class="ours">$19/mo (Family)</td>
+      <td>—</td>
+      <td>$15.95/mo (2 subj)</td>
+      <td>—</td>
+    </tr>
+    <tr class="price-row">
+      <td>Full Access</td>
+      <td class="ours">$29/mo (Academy)</td>
+      <td>$44/yr ($3.67/mo)</td>
+      <td>$19.95/mo (4 subj)</td>
+      <td>$119/yr ($9.92/mo)</td>
+    </tr>
+    <tr>
+      <td>Max Children</td>
+      <td><strong>1 / 4 / 8</strong> (by tier)</td>
+      <td>10</td>
+      <td>+$4/mo each</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>Annual Discount</td>
+      <td><strong>$15/mo / $24/mo</strong></td>
+      <td>$44/yr</td>
+      <td>~33% off</td>
+      <td>$119/yr</td>
+    </tr>
+    <tr>
+      <td>Free Trial</td>
+      <td class="yes">Free tier (permanent)</td>
+      <td class="no">No (paid only)</td>
+      <td class="partial">30-day guarantee</td>
+      <td class="partial">7-day trial</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Core AI Features -->
+<div class="card">
+  <div class="card-header" style="background: linear-gradient(135deg, #16a34a, #15803d);">Core AI & Tutoring Features</div>
+  <table>
+    <tr><th>Feature</th><th>Atlas (Ours)</th><th>Khanmigo</th><th>IXL</th><th>Synthesis</th></tr>
+    <tr class="highlight">
+      <td>Conversational Atlas</td>
+      <td class="yes">&#x2713; Socratic dialogue</td>
+      <td class="yes">&#x2713; Guided hints</td>
+      <td class="no">&#x2717;</td>
+      <td class="partial">~ Basic feedback</td>
+    </tr>
+    <tr>
+      <td>AI Model</td>
+      <td><strong>Claude Haiku / Sonnet</strong></td>
+      <td>GPT-4 variant</td>
+      <td>No AI model</td>
+      <td>Proprietary</td>
+    </tr>
+    <tr class="highlight">
+      <td>Adaptive Lesson Generation</td>
+      <td class="yes">&#x2713; AI-generated per student</td>
+      <td class="no">&#x2717; Uses Khan library</td>
+      <td class="no">&#x2717; Pre-built skills</td>
+      <td class="partial">~ Math only</td>
+    </tr>
+    <tr>
+      <td>Practice Mode</td>
+      <td class="yes">&#x2713; AI-generated sets</td>
+      <td class="partial">~ Khan exercises</td>
+      <td class="yes">&#x2713; 17,000+ skills</td>
+      <td class="yes">&#x2713; Math only</td>
+    </tr>
+    <tr class="highlight">
+      <td>Diagnostics / Assessment</td>
+      <td class="yes">&#x2713; Grade-level benchmarks</td>
+      <td class="no">&#x2717;</td>
+      <td class="yes">&#x2713; Strong diagnostic</td>
+      <td class="partial">~ Progress tracking</td>
+    </tr>
+    <tr>
+      <td>Book Review / Reading</td>
+      <td class="yes">&#x2713; AI quizzing by chapter</td>
+      <td class="no">&#x2717;</td>
+      <td class="no">&#x2717;</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr class="highlight">
+      <td>Flashcards & Quizzes</td>
+      <td class="yes">&#x2713; AI-generated</td>
+      <td class="no">&#x2717;</td>
+      <td class="partial">~ Built into drills</td>
+      <td class="partial">~ Times tables only</td>
+    </tr>
+    <tr>
+      <td>Image Upload / OCR</td>
+      <td class="no">&#x2717; (future)</td>
+      <td class="yes">&#x2713;</td>
+      <td class="no">&#x2717;</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Subject & Grade Coverage -->
+<div class="card">
+  <div class="card-header" style="background: linear-gradient(135deg, #7c3aed, #6d28d9);">Subject & Grade Coverage</div>
+  <table>
+    <tr><th>Dimension</th><th>Atlas (Ours)</th><th>Khanmigo</th><th>IXL</th><th>Synthesis</th></tr>
+    <tr class="highlight">
+      <td>Grade Range</td>
+      <td><strong>6–12</strong></td>
+      <td>K–College</td>
+      <td>Pre-K–12</td>
+      <td><strong>Ages 5–11 only</strong></td>
+    </tr>
+    <tr>
+      <td>Math</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+    </tr>
+    <tr class="highlight">
+      <td>Language Arts / ELA</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr>
+      <td>Science</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr class="highlight">
+      <td>Social Studies / History</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr>
+      <td>Custom Subjects</td>
+      <td class="yes">&#x2713; (paid tiers)</td>
+      <td class="no">&#x2717;</td>
+      <td class="no">&#x2717;</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr class="highlight">
+      <td>Multi-Language</td>
+      <td class="no">&#x2717; (English only)</td>
+      <td class="yes">&#x2713; 10+ languages</td>
+      <td class="partial">~ Spanish</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Parent & Teacher Features -->
+<div class="card">
+  <div class="card-header" style="background: linear-gradient(135deg, #ea580c, #c2410c);">Parent & Teacher Features</div>
+  <table>
+    <tr><th>Feature</th><th>Atlas (Ours)</th><th>Khanmigo</th><th>IXL</th><th>Synthesis</th></tr>
+    <tr class="highlight">
+      <td>Parent Dashboard</td>
+      <td class="yes">&#x2713; Full analytics</td>
+      <td class="partial">~ Basic overview</td>
+      <td class="yes">&#x2713; Reports</td>
+      <td class="yes">&#x2713; Weekly summaries</td>
+    </tr>
+    <tr>
+      <td>Teacher Dashboard</td>
+      <td class="yes">&#x2713; Cross-family read-only</td>
+      <td class="yes">&#x2713; Classroom view</td>
+      <td class="yes">&#x2713; Classroom</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr class="highlight">
+      <td>Teacher Price</td>
+      <td class="yes"><strong>Free</strong></td>
+      <td class="yes">Free</td>
+      <td>$299/yr (25 students)</td>
+      <td class="no">N/A</td>
+    </tr>
+    <tr>
+      <td>Cross-Family Visibility</td>
+      <td class="yes">&#x2713; w/ parental consent</td>
+      <td class="no">&#x2717; Same classroom only</td>
+      <td class="no">&#x2717; Same classroom only</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr class="highlight">
+      <td>COPPA Compliant</td>
+      <td class="yes">&#x2713; (Phase 10 planned)</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+    </tr>
+    <tr>
+      <td>Parental Consent Gating</td>
+      <td class="yes">&#x2713; Per-student consent</td>
+      <td class="partial">~ Account-level</td>
+      <td class="partial">~ Account-level</td>
+      <td class="partial">~ Account-level</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Billing & Flexibility -->
+<div class="card">
+  <div class="card-header" style="background: linear-gradient(135deg, #0891b2, #0e7490);">Billing & Flexibility</div>
+  <table>
+    <tr><th>Feature</th><th>Atlas (Ours)</th><th>Khanmigo</th><th>IXL</th><th>Synthesis</th></tr>
+    <tr class="highlight">
+      <td>Promo / Discount Codes</td>
+      <td class="yes">&#x2713; Admin-managed</td>
+      <td class="no">&#x2717;</td>
+      <td class="partial">~ Seasonal sales</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr>
+      <td>Gift Subscriptions</td>
+      <td class="yes">&#x2713; Donor pays for family</td>
+      <td class="no">&#x2717;</td>
+      <td class="no">&#x2717;</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr class="highlight">
+      <td>Scholarship / Exemptions</td>
+      <td class="yes">&#x2713; Admin exemption system</td>
+      <td class="partial">~ District partnerships</td>
+      <td class="no">&#x2717;</td>
+      <td class="no">&#x2717;</td>
+    </tr>
+    <tr>
+      <td>Self-Service Billing</td>
+      <td class="yes">&#x2713; Stripe Portal</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+      <td class="yes">&#x2713;</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Verdict -->
+<div class="verdict">
+  <h2>Positioning Summary</h2>
+  <p><strong>vs. Khanmigo ($4/mo):</strong> Khanmigo is cheaper but relies on Khan Academy's existing content library. We generate adaptive, personalized content per student. We have diagnostics, book review, practice mode, flashcards, and teacher cross-family visibility — none of which Khanmigo offers. Their advantage: multi-language support and image upload.</p>
+  <p><strong>vs. IXL ($10–20/mo):</strong> IXL has the deepest drill library (17K+ skills) and solid diagnostics, but zero AI tutoring — it's a traditional adaptive platform. We match on diagnostics and surpass on everything AI-driven. Their classroom plan at $299/yr is a barrier; our teachers are free. Our $19/mo Family tier delivers more than their $20/mo 4-subject plan.</p>
+  <p><strong>vs. Synthesis ($29/mo):</strong> Synthesis is math-only and ages 5–11. At the same $29/mo price point, our Academy tier covers all subjects, grades 6–12, uses the upgraded Sonnet model, and includes teacher mode, book review, and 8 students. We offer dramatically more value at the same price.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "session_id": "f4535b12-367",
+  "book_title": "Charlotte's Web",
+  "author": "E.B. White",
+  "total_chapters": 2,
+  "current_chapter": 2,
+  "status": "complete",
+  "started_at": "2026-03-25T12:43:48.657446",
+  "chapters": {
+    "chapter_1": {
+      "score": 100,
+      "passed": true,
+      "attempts": 1,
+      "completed_at": "2026-03-25T12:48:06.692803"
+    },
+    "chapter_2": {
+      "score": 100,
+      "passed": true,
+      "attempts": 1,
+      "completed_at": "2026-03-25T12:48:48.541035"
+    }
+  },
+  "overall_score": 100,
+  "total_questions": 10,
+  "total_correct": 10,
+  "completed_at": "2026-03-25T12:48:48.544874"
+}

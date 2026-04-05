@@ -1,0 +1,16 @@
+{
+  "student_id": "afb452da",
+  "name": "Test Student",
+  "pin": "1234",
+  "avatar": "\ud83d\udc66",
+  "grade": 8,
+  "created_at": "2026-03-26T23:58:27.315632",
+  "badges": {},
+  "preferences": {},
+  "activity_dates": [
+    "2026-03-26"
+  ],
+  "conversation_mode": "open",
+  "session_count": 0,
+  "complexity_tiers": {}
+}

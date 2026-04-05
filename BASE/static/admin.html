@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Atlas</title>
+<link rel="icon" type="image/svg+xml" href="img/atlas-compass-rose.svg">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.6; }
+:root { --primary: #1B4F72; --primary-light: #2E86C1; --accent: #4F46E5; --success: #059669; --warning: #D97706; --danger: #DC2626; --card: #fff; --text-muted: #6b7280; --border: #e5e7eb; --light-bg: #f8fafc; }
+
+/* ─── Header ─────────────────────────────────── */
+.admin-header {
+  background: white; border-bottom: 1px solid var(--border); padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.admin-header h1 { font-size: 22px; color: var(--primary); }
+.header-links { display: flex; gap: 16px; }
+.header-links a { color: var(--primary-light); font-size: 14px; text-decoration: none; }
+.header-links a:hover { text-decoration: underline; }
+
+/* ─── Layout ─────────────────────────────────── */
+.admin-main { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+/* ─── Tabs ───────────────────────────────────── */
+.tab-bar {
+  display: flex; gap: 4px; margin-bottom: 24px; background: white;
+  border-radius: 12px; padding: 4px; border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tab-btn {
+  flex: 1; padding: 12px 16px; border: none; background: none; border-radius: 10px;
+  font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-muted);
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.tab-btn:hover { background: var(--light-bg); color: var(--primary); }
+.tab-btn.active { background: var(--accent); color: white; }
+.tab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; border-radius: 10px; font-size: 11px; font-weight: 700;
+  padding: 0 6px;
+}
+.tab-btn.active .tab-badge { background: rgba(255,255,255,0.3); color: white; }
+.tab-btn:not(.active) .tab-badge { background: var(--danger); color: white; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ─── Stats Grid ─────────────────────────────── */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--card); border-radius: 12px; padding: 20px; text-align: center;
+  border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.stat-value { font-size: 32px; font-weight: 700; color: var(--primary); }
+.stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* ─── Card ───────────────────────────────────── */
+.card {
+  background: var(--card); border-radius: 16px; padding: 24px; margin-bottom: 20px;
+  border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+.card-header h2 { font-size: 17px; color: var(--primary); }
+
+/* ─── Search / Filter ────────────────────────── */
+.search-bar {
+  display: flex; gap: 10px; margin-bottom: 20px;
+}
+.search-input {
+  flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-size: 14px; outline: none; transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--accent); }
+.filter-select {
+  padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-size: 14px; outline: none; background: white; cursor: pointer;
+}
+
+/* ─── Instance Table ─────────────────────────── */
+.instance-table { width: 100%; border-collapse: collapse; }
+.instance-table th {
+  text-align: left; font-size: 12px; color: var(--text-muted); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px;
+  border-bottom: 2px solid var(--border);
+}
+.instance-table td {
+  padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px;
+  vertical-align: middle;
+}
+.instance-table tr:hover { background: var(--light-bg); }
+.instance-table tr.inactive td { opacity: 0.5; }
+.instance-name { font-weight: 600; color: var(--primary); cursor: pointer; }
+.instance-name:hover { text-decoration: underline; }
+.status-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 600;
+}
+.status-active { background: #d1fae5; color: var(--success); }
+.status-inactive { background: #fee2e2; color: var(--danger); }
+
+/* ─── Instance Detail Panel ──────────────────── */
+.detail-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: flex-start;
+  padding: 40px 20px; overflow-y: auto;
+}
+.detail-overlay.open { display: flex; }
+.detail-panel {
+  background: white; border-radius: 20px; max-width: 700px; width: 100%;
+  padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); position: relative;
+  max-height: 90vh; overflow-y: auto;
+}
+.detail-close {
+  position: absolute; top: 16px; right: 20px; background: none; border: none;
+  font-size: 24px; cursor: pointer; color: var(--text-muted); line-height: 1;
+}
+.detail-close:hover { color: var(--primary); }
+.detail-section { margin-top: 20px; }
+.detail-section h3 {
+  font-size: 14px; color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 10px;
+}
+.detail-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-label { color: var(--text-muted); }
+.detail-value { font-weight: 600; }
+
+.student-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; background: var(--light-bg); border-radius: 10px;
+  margin-bottom: 6px; font-size: 14px;
+}
+.student-info { display: flex; align-items: center; gap: 10px; }
+.student-actions { display: flex; gap: 6px; }
+
+/* ─── Buttons ────────────────────────────────── */
+.btn-sm {
+  padding: 6px 12px; border-radius: 8px; border: none; font-size: 12px;
+  font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--primary); }
+.btn-warning { background: #fef3c7; color: var(--warning); border: 1px solid #fde68a; }
+.btn-warning:hover { background: #fde68a; }
+.btn-danger { background: #fee2e2; color: var(--danger); border: 1px solid #fecaca; }
+.btn-danger:hover { background: #fecaca; }
+.btn-success { background: #d1fae5; color: var(--success); border: 1px solid #a7f3d0; }
+.btn-success:hover { background: #a7f3d0; }
+.btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--light-bg); color: var(--primary); }
+
+/* ─── Feedback Items ─────────────────────────── */
+.fb-item {
+  background: var(--light-bg); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px; margin-bottom: 12px; transition: border-color 0.2s;
+}
+.fb-item:hover { border-color: var(--accent); }
+.fb-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.fb-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.fb-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
+}
+.fb-bug { background: #fee2e2; color: var(--danger); }
+.fb-feature { background: #dbeafe; color: var(--accent); }
+.fb-content-issue { background: #fef3c7; color: var(--warning); }
+.fb-general { background: #e5e7eb; color: var(--text-muted); }
+.fb-status-pending { background: #fef3c7; color: var(--warning); }
+.fb-status-responded { background: #dbeafe; color: var(--accent); }
+.fb-status-resolved { background: #d1fae5; color: var(--success); }
+.fb-status-acknowledged { background: #e0e7ff; color: #4338ca; }
+.fb-status-declined { background: #e5e7eb; color: var(--text-muted); }
+.fb-meta { font-size: 12px; color: var(--text-muted); }
+.fb-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+.fb-content { font-size: 14px; color: #374151; margin-bottom: 10px; line-height: 1.5; }
+.fb-reply {
+  background: rgba(79,70,229,0.06); border-left: 3px solid var(--accent);
+  padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 8px; font-size: 13px;
+}
+.fb-reply .reply-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.fb-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.reply-input {
+  flex: 1; min-width: 200px; padding: 8px 12px; border: 1.5px solid var(--border);
+  border-radius: 8px; font-size: 13px; outline: none;
+}
+.reply-input:focus { border-color: var(--accent); }
+
+/* ─── Empty State ────────────────────────────── */
+.empty { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
+
+/* ─── Modal ──────────────────────────────────── */
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 200; justify-content: center; align-items: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white; border-radius: 16px; padding: 28px; max-width: 400px; width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal h3 { font-size: 18px; color: var(--primary); margin-bottom: 16px; }
+.modal .form-group { margin-bottom: 16px; }
+.modal .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
+.modal .form-input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+  border-radius: 10px; font-size: 15px; outline: none;
+}
+.modal .form-input:focus { border-color: var(--accent); }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.modal-actions .btn-sm { padding: 10px 20px; font-size: 14px; }
+
+/* ─── Quick Links ────────────────────────────── */
+.quick-link {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 13px;
+  color: var(--primary-light); text-decoration: none; padding: 4px 8px;
+  border-radius: 6px; transition: background 0.2s;
+}
+.quick-link:hover { background: rgba(46,134,193,0.1); }
+
+/* ─── Student Overview ────────────────────────── */
+.so-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.so-avatar { font-size: 40px; }
+.so-name { font-size: 20px; font-weight: 700; color: var(--primary); }
+.so-meta { font-size: 13px; color: var(--text-muted); }
+.so-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.so-stat {
+  background: var(--light-bg); border-radius: 10px; padding: 12px; text-align: center;
+  border: 1px solid var(--border);
+}
+.so-stat-val { font-size: 22px; font-weight: 700; color: var(--primary); }
+.so-stat-lbl { font-size: 11px; color: var(--text-muted); }
+.so-section { margin-bottom: 20px; }
+.so-section h3 {
+  font-size: 14px; color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.mastery-bar-wrap {
+  display: flex; align-items: center; gap: 10px; padding: 6px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.mastery-bar-label { width: 120px; font-size: 13px; font-weight: 600; text-transform: capitalize; }
+.mastery-bar-track { flex: 1; height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden; }
+.mastery-bar-fill { height: 100%; border-radius: 5px; transition: width 0.3s; }
+.mastery-bar-pct { width: 45px; text-align: right; font-size: 13px; font-weight: 600; }
+.conv-entry {
+  padding: 8px 12px; background: var(--light-bg); border-radius: 8px; margin-bottom: 6px;
+  border: 1px solid var(--border); font-size: 13px;
+}
+.conv-entry .conv-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+.conv-entry .conv-text { color: #374151; }
+.history-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 13px;
+}
+.growth-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 13px;
+}
+.badge-chip {
+  display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px;
+  background: #fef3c7; color: var(--warning); font-weight: 600; margin: 2px 4px 2px 0;
+}
+
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .tab-btn { font-size: 12px; padding: 10px 8px; }
+  .instance-table { font-size: 12px; }
+  .search-bar { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<header class="admin-header">
+  <h1>🛠️ Admin Dashboard</h1>
+  <div class="header-links">
+    <a href="/setup">Setup Page ↗</a>
+    <a href="/">Home ↗</a>
+  </div>
+</header>
+
+<main class="admin-main">
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value" id="statInstances">-</div>
+      <div class="stat-label">Active Instances</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statStudents">-</div>
+      <div class="stat-label">Total Students</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statFeedback">-</div>
+      <div class="stat-label">Total Feedback</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statUnresolved">-</div>
+      <div class="stat-label">Unresolved</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('instances')">
+      📦 Instances <span class="tab-badge" id="tabBadgeInstances"></span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('feedback')">
+      💬 Feedback <span class="tab-badge" id="tabBadgeFeedback"></span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('invites')">
+      🔗 Invites <span class="tab-badge" id="tabBadgeInvites"></span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('safety')">
+      🛡️ Safety <span class="tab-badge" id="tabBadgeSafety"></span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('analytics')">
+      📊 Analytics
+    </button>
+    <button class="tab-btn" onclick="switchTab('health')">
+      🖥️ System
+    </button>
+  </div>
+
+  <!-- Tab: Instances -->
+  <div class="tab-panel active" id="panel-instances">
+    <div class="search-bar">
+      <input class="search-input" id="instanceSearch" type="text" placeholder="Search by family name, email, or instance ID..." oninput="filterInstances()">
+      <select class="filter-select" id="instanceStatusFilter" onchange="filterInstances()">
+        <option value="all">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </div>
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <table class="instance-table">
+        <thead>
+          <tr>
+            <th>Family</th>
+            <th>Students</th>
+            <th>Last Active</th>
+            <th>Created</th>
+            <th>Feedback</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="instanceTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab: Feedback -->
+  <div class="tab-panel" id="panel-feedback">
+    <div class="search-bar">
+      <input class="search-input" id="feedbackSearch" type="text" placeholder="Search feedback by title, content, or family..." oninput="filterFeedback()">
+      <select class="filter-select" id="feedbackTypeFilter" onchange="filterFeedback()">
+        <option value="all">All Types</option>
+        <option value="bug_report">🐛 Bug Reports</option>
+        <option value="feature_request">⭐ Feature Requests</option>
+        <option value="content_issue">📖 Content Issues</option>
+        <option value="general">💬 General</option>
+      </select>
+      <select class="filter-select" id="feedbackStatusFilter" onchange="filterFeedback()">
+        <option value="all">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="acknowledged">Acknowledged</option>
+        <option value="responded">Responded</option>
+        <option value="resolved">Resolved</option>
+        <option value="declined">Declined</option>
+      </select>
+    </div>
+    <div id="feedbackList"></div>
+  </div>
+
+  <!-- Tab: Invites -->
+  <div class="tab-panel" id="panel-invites">
+    <div class="search-bar">
+      <input class="search-input" id="inviteSearch" type="text" placeholder="Search by label, code, or creator..." oninput="filterInvites()">
+      <select class="filter-select" id="inviteStatusFilter" onchange="filterInvites()">
+        <option value="all">All Status</option>
+        <option value="active">Active</option>
+        <option value="revoked">Revoked</option>
+        <option value="expired">Expired</option>
+        <option value="maxed">Max Uses Reached</option>
+      </select>
+      <button class="btn-sm btn-primary" onclick="openCreateInvite()" style="padding: 10px 16px;">+ New Invite</button>
+    </div>
+    <div id="inviteList"></div>
+  </div>
+
+  <!-- Tab: Safety -->
+  <div class="tab-panel" id="panel-safety">
+    <div class="search-bar">
+      <input class="search-input" id="safetySearch" type="text" placeholder="Search by student, family, or message..." oninput="filterSafety()">
+      <select class="filter-select" id="safetySeverityFilter" onchange="filterSafety()">
+        <option value="all">All Severity</option>
+        <option value="high">🔴 High</option>
+        <option value="medium">🟡 Medium</option>
+        <option value="low">🟢 Low</option>
+      </select>
+      <select class="filter-select" id="safetyTypeFilter" onchange="filterSafety()">
+        <option value="all">All Types</option>
+        <option value="blocked_topic">Blocked Topic</option>
+        <option value="injection_attempt">Injection Attempt</option>
+      </select>
+    </div>
+    <div id="safetyList"><div class="empty">Loading safety logs...</div></div>
+  </div>
+
+  <!-- Tab: Analytics -->
+  <div class="tab-panel" id="panel-analytics">
+    <div id="analyticsContent"><div class="empty">Loading analytics...</div></div>
+  </div>
+
+  <!-- Tab: System Health -->
+  <div class="tab-panel" id="panel-health">
+    <div id="healthContent"><div class="empty">Loading system health...</div></div>
+  </div>
+</main>
+
+<!-- Create Invite Modal -->
+<div class="modal-overlay" id="inviteModal" onclick="if(event.target===this) closeInviteModal()">
+  <div class="modal">
+    <h3>Create New Invite</h3>
+    <div class="form-group">
+      <label class="form-label">Label (optional)</label>
+      <input class="form-input" id="inviteLabelInput" type="text" placeholder="e.g. Spring 2026 cohort">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Max Uses (0 = unlimited)</label>
+      <input class="form-input" id="inviteMaxUsesInput" type="number" value="0" min="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Expires In (days, 0 = never)</label>
+      <input class="form-input" id="inviteExpiresInput" type="number" value="0" min="0">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm btn-ghost" onclick="closeInviteModal()">Cancel</button>
+      <button class="btn-sm btn-primary" onclick="submitCreateInvite()">Create Invite</button>
+    </div>
+  </div>
+</div>
+
+<!-- Instance Detail Overlay -->
+<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this) closeDetail()">
+  <div class="detail-panel" id="detailPanel"></div>
+</div>
+
+<!-- PIN Reset Modal -->
+<div class="modal-overlay" id="pinModal" onclick="if(event.target===this) closePinModal()">
+  <div class="modal">
+    <h3 id="pinModalTitle">Reset PIN</h3>
+    <div class="form-group">
+      <label class="form-label">New 4-digit PIN</label>
+      <input class="form-input" id="pinModalInput" type="text" maxlength="4" pattern="[0-9]{4}" placeholder="e.g., 1234" inputmode="numeric">
+    </div>
+    <div id="pinModalError" style="color: var(--danger); font-size: 13px; min-height: 20px;"></div>
+    <div class="modal-actions">
+      <button class="btn-sm btn-ghost" onclick="closePinModal()">Cancel</button>
+      <button class="btn-sm btn-primary" id="pinModalSubmit" onclick="submitPinReset()">Reset PIN</button>
+    </div>
+  </div>
+</div>
+
+<!-- Student Oversight Overlay -->
+<div class="detail-overlay" id="studentOverlay" onclick="if(event.target===this) closeStudentOverview()">
+  <div class="detail-panel" id="studentOverviewPanel" style="max-width: 800px;"></div>
+</div>
+
+<script>
+function esc(t) { if (!t) return ""; const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+function timeAgo(dateStr) {
+    if (!dateStr) return "Never";
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return "Just now";
+    if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+    if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+    if (diff < 604800) return Math.floor(diff / 86400) + "d ago";
+    return d.toLocaleDateString();
+}
+
+/* ─── State ───────────────────────────────────── */
+let allInstances = [];
+let allFeedback = [];
+let allInvites = [];
+let allSafetyEvents = [];
+let safetyLoaded = false;
+let analyticsLoaded = false;
+let healthLoaded = false;
+let pinResetContext = null; // { instance_id, type: "parent"|"student", student_id? }
+
+/* ─── Tab Switching ──────────────────────────── */
+function switchTab(tab) {
+    const tabMap = ["instances", "feedback", "invites", "safety", "analytics", "health"];
+    document.querySelectorAll(".tab-btn").forEach((b, i) => {
+        b.classList.toggle("active", tab === tabMap[i]);
+    });
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("panel-" + tab).classList.add("active");
+    if (tab === "safety" && !safetyLoaded) loadSafety();
+    if (tab === "analytics" && !analyticsLoaded) loadAnalytics();
+    if (tab === "health" && !healthLoaded) loadHealth();
+}
+
+/* ─── Load Data ──────────────────────────────── */
+async function loadAll() {
+    await Promise.all([loadInstances(), loadFeedback(), loadInvites()]);
+    updateStats();
+}
+
+async function loadInstances() {
+    try {
+        const res = await fetch("/api/admin/instances/detail");
+        const data = await res.json();
+        allInstances = data.instances || [];
+        updateStats();
+        renderInstances();
+    } catch (err) { console.error("Failed to load instances:", err); }
+}
+
+async function loadFeedback() {
+    try {
+        const res = await fetch("/api/admin/feedback/all");
+        const data = await res.json();
+        allFeedback = data.feedback || [];
+        updateFeedbackBadge();
+        renderFeedback();
+    } catch (err) { console.error("Failed to load feedback:", err); }
+}
+
+/* ─── Stats ──────────────────────────────────── */
+function updateStats() {
+    const active = allInstances.filter(i => i.status !== "inactive");
+    const totalStudents = allInstances.reduce((s, i) => s + (i.student_count || 0), 0);
+    const totalFeedback = allFeedback.length;
+    const unresolved = allFeedback.filter(f => !["resolved", "declined"].includes(f.status)).length;
+
+    document.getElementById("statInstances").textContent = active.length;
+    document.getElementById("statStudents").textContent = totalStudents;
+    document.getElementById("statFeedback").textContent = totalFeedback;
+    document.getElementById("statUnresolved").textContent = unresolved;
+
+    document.getElementById("tabBadgeInstances").textContent = allInstances.length;
+    document.getElementById("tabBadgeFeedback").textContent = unresolved || "";
+}
+
+function updateFeedbackBadge() {
+    const unresolved = allFeedback.filter(f => !["resolved", "declined"].includes(f.status)).length;
+    const badge = document.getElementById("tabBadgeFeedback");
+    badge.textContent = unresolved || "";
+    badge.style.display = unresolved ? "inline-flex" : "none";
+}
+
+/* ─── Render Instances ───────────────────────── */
+function renderInstances() {
+    const search = document.getElementById("instanceSearch").value.toLowerCase();
+    const statusFilter = document.getElementById("instanceStatusFilter").value;
+
+    const filtered = allInstances.filter(i => {
+        if (statusFilter !== "all" && i.status !== statusFilter) return false;
+        if (search) {
+            const hay = (i.family_name + " " + i.owner_email + " " + i.instance_id).toLowerCase();
+            if (!hay.includes(search)) return false;
+        }
+        return true;
+    });
+
+    const tbody = document.getElementById("instanceTableBody");
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty">No instances match your filters.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(i => {
+        const isInactive = i.status === "inactive";
+        const studentNames = (i.students || []).map(s => s.name).join(", ") || "None";
+        const unresolvedBadge = i.unresolved_feedback > 0
+            ? `<span style="background: var(--danger); color: white; border-radius: 10px; padding: 1px 7px; font-size: 11px; font-weight: 700;">${i.unresolved_feedback}</span>`
+            : `<span style="color: var(--text-muted);">${i.feedback_count}</span>`;
+        return `<tr class="${isInactive ? 'inactive' : ''}">
+            <td>
+                <span class="instance-name" onclick="openDetail('${i.instance_id}')">${esc(i.family_name)}</span>
+                <div style="font-size: 11px; color: var(--text-muted);">${i.instance_id}</div>
+            </td>
+            <td>
+                <div style="font-weight: 600;">${i.student_count}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">${esc(studentNames)}</div>
+            </td>
+            <td>${timeAgo(i.last_activity)}</td>
+            <td>${i.created_at ? new Date(i.created_at).toLocaleDateString() : "N/A"}</td>
+            <td>${unresolvedBadge}</td>
+            <td><span class="status-badge ${isInactive ? 'status-inactive' : 'status-active'}">${isInactive ? 'Inactive' : 'Active'}</span></td>
+            <td>
+                <a class="quick-link" href="/f/${i.instance_id}" target="_blank">👤 Student</a>
+                <a class="quick-link" href="/f/${i.instance_id}/parent" target="_blank">👨‍👩‍👧 Parent</a>
+                ${i.instance_id !== 'default' ? `<button class="quick-link" style="color:var(--danger);border:none;background:none;cursor:pointer;font-size:13px;" onclick="event.stopPropagation(); deleteInstance('${i.instance_id}','${esc(i.family_name)}')">🗑️ Delete</button>` : ''}
+            </td>
+        </tr>`;
+    }).join("");
+}
+
+function filterInstances() { renderInstances(); }
+
+async function deleteInstance(instanceId, familyName) {
+    if (!confirm(`Permanently delete "${familyName}" (${instanceId})?\n\nThis removes the instance from the registry and deletes all associated data (students, conversations, feedback, settings).\n\nThis action cannot be undone.`)) return;
+    // Double-confirm for safety
+    if (!confirm(`Are you sure? Type OK to confirm deletion of "${familyName}".`)) return;
+    try {
+        const res = await fetch(`/api/admin/instance/${instanceId}`, { method: "DELETE" });
+        const data = await res.json();
+        if (data.status === "ok") {
+            alert(`Deleted "${familyName}".\nData cleanup: ${data.data_cleanup}`);
+            allInstances = allInstances.filter(i => i.instance_id !== instanceId);
+            renderInstances();
+            updateStats();
+        } else {
+            alert(data.error || "Failed to delete instance");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to delete instance: " + err.message);
+    }
+}
+
+/* ─── Instance Detail ────────────────────────── */
+async function openDetail(instanceId) {
+    const panel = document.getElementById("detailPanel");
+    panel.innerHTML = '<div class="empty">Loading...</div>';
+    document.getElementById("detailOverlay").classList.add("open");
+
+    try {
+        const res = await fetch(`/api/admin/instance/${instanceId}/detail`);
+        const data = await res.json();
+        const inst = data.instance;
+        const students = data.students || [];
+        const feedback = data.feedback || [];
+        const parentPin = data.parent_pin;
+        const config = inst.customization || {};
+        const instData = allInstances.find(i => i.instance_id === instanceId) || {};
+
+        let html = `<button class="detail-close" onclick="closeDetail()">✕</button>`;
+        html += `<h2 style="font-size: 20px; color: var(--primary); margin-bottom: 4px;">${esc(inst.family_name || instData.family_name)}</h2>`;
+        html += `<div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">${instanceId}</div>`;
+
+        // Status toggle
+        const isInactive = instData.status === "inactive";
+        html += `<div style="margin-top: 8px;">`;
+        html += `<span class="status-badge ${isInactive ? 'status-inactive' : 'status-active'}" style="margin-right: 8px;">${isInactive ? 'Inactive' : 'Active'}</span>`;
+        if (isInactive) {
+            html += `<button class="btn-sm btn-success" onclick="toggleInstanceStatus('${instanceId}', 'activate')">Reactivate</button>`;
+        } else {
+            html += `<button class="btn-sm btn-danger" onclick="toggleInstanceStatus('${instanceId}', 'deactivate')">Deactivate</button>`;
+        }
+        html += `</div>`;
+
+        // Config details
+        html += `<div class="detail-section"><h3>Configuration</h3>`;
+        html += `<div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${esc(inst.owner_email) || "—"}</span></div>`;
+        html += `<div class="detail-row"><span class="detail-label">State</span><span class="detail-value">${config.state || "—"}</span></div>`;
+        html += `<div class="detail-row"><span class="detail-label">Created</span><span class="detail-value">${inst.created_at ? new Date(inst.created_at).toLocaleDateString() : "N/A"}</span></div>`;
+        html += `<div class="detail-row"><span class="detail-label">Subjects</span><span class="detail-value">${(config.enabled_subjects || []).join(", ")}</span></div>`;
+        html += `<div class="detail-row">
+            <span class="detail-label">Parent PIN</span>
+            <span class="detail-value">
+                <code style="background: var(--light-bg); padding: 2px 8px; border-radius: 4px; font-size: 16px; letter-spacing: 2px;">${esc(parentPin)}</code>
+                <button class="btn-sm btn-warning" style="margin-left: 8px;" onclick="openPinModal('${instanceId}', 'parent')">Reset</button>
+            </span>
+        </div>`;
+        html += `</div>`;
+
+        // Students
+        html += `<div class="detail-section"><h3>Students (${students.length})</h3>`;
+        if (students.length === 0) {
+            html += `<div class="empty">No students in this instance.</div>`;
+        } else {
+            students.forEach(s => {
+                html += `<div class="student-row">
+                    <div class="student-info">
+                        <span style="font-size: 24px;">${s.avatar || "🎓"}</span>
+                        <div>
+                            <div style="font-weight: 600;">${esc(s.name)}</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Grade ${s.grade || "?"} · PIN: <code>${esc(s.pin)}</code> · ${s.xp || 0} XP</div>
+                        </div>
+                    </div>
+                    <div class="student-actions">
+                        <button class="btn-sm btn-primary" onclick="openStudentOverview('${instanceId}', '${s.student_id}')">📊 Overview</button>
+                        <button class="btn-sm btn-warning" onclick="openPinModal('${instanceId}', 'student', '${s.student_id}', '${esc(s.name)}')">Reset PIN</button>
+                    </div>
+                </div>`;
+            });
+        }
+        html += `</div>`;
+
+        // Quick links
+        html += `<div class="detail-section" style="display: flex; gap: 10px;">
+            <a class="btn-sm btn-primary" href="/f/${instanceId}" target="_blank" style="text-decoration: none;">Open Student View ↗</a>
+            <a class="btn-sm btn-ghost" href="/f/${instanceId}/parent" target="_blank" style="text-decoration: none;">Open Parent Dashboard ↗</a>
+        </div>`;
+
+        panel.innerHTML = html;
+    } catch (err) {
+        panel.innerHTML = `<button class="detail-close" onclick="closeDetail()">✕</button><div class="empty">Failed to load instance details.</div>`;
+        console.error(err);
+    }
+}
+
+function closeDetail() {
+    document.getElementById("detailOverlay").classList.remove("open");
+}
+
+/* ─── Toggle Instance Status ─────────────────── */
+async function toggleInstanceStatus(instanceId, action) {
+    try {
+        const res = await fetch(`/api/admin/instance/${instanceId}/deactivate`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ action }),
+        });
+        const data = await res.json();
+        if (data.status === "ok") {
+            await loadInstances();
+            openDetail(instanceId); // Refresh the panel
+        }
+    } catch (err) { console.error(err); }
+}
+
+/* ─── PIN Reset Modal ────────────────────────── */
+function openPinModal(instanceId, type, studentId, studentName) {
+    pinResetContext = { instance_id: instanceId, type, student_id: studentId };
+    document.getElementById("pinModalTitle").textContent =
+        type === "parent" ? "Reset Parent PIN" : `Reset PIN for ${studentName || "Student"}`;
+    document.getElementById("pinModalInput").value = "";
+    document.getElementById("pinModalError").textContent = "";
+    document.getElementById("pinModal").classList.add("open");
+    setTimeout(() => document.getElementById("pinModalInput").focus(), 100);
+}
+
+function closePinModal() {
+    document.getElementById("pinModal").classList.remove("open");
+    pinResetContext = null;
+}
+
+async function submitPinReset() {
+    const pin = document.getElementById("pinModalInput").value.trim();
+    if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+        document.getElementById("pinModalError").textContent = "PIN must be exactly 4 digits.";
+        return;
+    }
+    if (!pinResetContext) return;
+
+    const { instance_id, type, student_id } = pinResetContext;
+    const url = type === "parent"
+        ? `/api/admin/instance/${instance_id}/reset-parent-pin`
+        : `/api/admin/instance/${instance_id}/reset-student-pin`;
+    const body = type === "parent"
+        ? { new_pin: pin }
+        : { student_id, new_pin: pin };
+
+    try {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (data.status === "ok") {
+            closePinModal();
+            openDetail(instance_id); // Refresh
+        } else {
+            document.getElementById("pinModalError").textContent = data.error || "Failed to reset PIN.";
+        }
+    } catch (err) {
+        document.getElementById("pinModalError").textContent = "Connection error.";
+        console.error(err);
+    }
+}
+
+/* ─── Student Overview ────────────────────────── */
+async function openStudentOverview(instanceId, studentId) {
+    const panel = document.getElementById("studentOverviewPanel");
+    panel.innerHTML = '<div class="empty">Loading student data...</div>';
+    document.getElementById("studentOverlay").classList.add("open");
+
+    try {
+        const [overviewRes, convRes] = await Promise.all([
+            fetch(`/api/admin/instance/${instanceId}/student/${studentId}/overview`),
+            fetch(`/api/admin/instance/${instanceId}/student/${studentId}/conversations?limit=30`),
+        ]);
+        const data = await overviewRes.json();
+        const convData = await convRes.json();
+
+        const s = data.student;
+        const ov = data.overview || {};
+        const subjects = data.subjects || {};
+        const gaps = data.skill_gaps || [];
+        const history = data.history || [];
+        const growth = data.growth || {};
+        const badges = s.badges || {};
+        const conversations = convData.entries || [];
+
+        let html = `<button class="detail-close" onclick="closeStudentOverview()">✕</button>`;
+
+        // Header
+        html += `<div class="so-header">
+            <div class="so-avatar">${s.avatar || "🎓"}</div>
+            <div>
+                <div class="so-name">${esc(s.name)}</div>
+                <div class="so-meta">Grade ${s.grade} · ${s.xp || 0} XP · Level ${s.level || 1} · PIN: <code>${esc(s.pin)}</code></div>
+                <div class="so-meta">Active ${(s.activity_dates || []).length} days · Joined ${s.created_at ? new Date(s.created_at).toLocaleDateString() : "N/A"}</div>
+            </div>
+        </div>`;
+
+        // Stats row
+        html += `<div class="so-stats">
+            <div class="so-stat"><div class="so-stat-val">${ov.diagnostics_completed || 0}</div><div class="so-stat-lbl">Diagnostics</div></div>
+            <div class="so-stat"><div class="so-stat-val">${ov.lessons_completed || 0}</div><div class="so-stat-lbl">Lessons</div></div>
+            <div class="so-stat"><div class="so-stat-val">${ov.practice_sessions || 0}</div><div class="so-stat-lbl">Practice</div></div>
+            <div class="so-stat"><div class="so-stat-val">${ov.practice_accuracy ? Math.round(ov.practice_accuracy) + "%" : "—"}</div><div class="so-stat-lbl">Accuracy</div></div>
+        </div>`;
+
+        // Badges
+        const badgeKeys = Object.keys(badges);
+        if (badgeKeys.length > 0) {
+            html += `<div class="so-section"><h3>Badges (${badgeKeys.length})</h3><div>`;
+            badgeKeys.forEach(bk => {
+                const b = badges[bk];
+                html += `<span class="badge-chip">${b.icon || "🏅"} ${esc(b.name || bk)}</span>`;
+            });
+            html += `</div></div>`;
+        }
+
+        // Subject Mastery
+        html += `<div class="so-section"><h3>Subject Mastery</h3>`;
+        const subjectKeys = Object.keys(subjects);
+        if (subjectKeys.length === 0) {
+            html += `<div class="empty" style="padding: 12px;">No diagnostic data yet.</div>`;
+        } else {
+            subjectKeys.forEach(sk => {
+                const sub = subjects[sk];
+                const score = Math.round(sub.mastery || sub.score || 0);
+                const color = score >= 70 ? "var(--success)" : score >= 40 ? "var(--warning)" : "var(--danger)";
+                html += `<div class="mastery-bar-wrap">
+                    <div class="mastery-bar-label">${sk.replace(/_/g, " ")}</div>
+                    <div class="mastery-bar-track"><div class="mastery-bar-fill" style="width: ${score}%; background: ${color};"></div></div>
+                    <div class="mastery-bar-pct" style="color: ${color};">${score}%</div>
+                </div>`;
+            });
+        }
+        html += `</div>`;
+
+        // Skill Gaps
+        if (gaps.length > 0) {
+            html += `<div class="so-section"><h3>Skill Gaps</h3>`;
+            gaps.slice(0, 8).forEach(g => {
+                html += `<div class="history-item">
+                    <span style="text-transform: capitalize;">${esc(g.topic || g.skill || "")}</span>
+                    <span style="color: var(--danger); font-weight: 600;">${g.subject || ""} · ${Math.round(g.score || 0)}%</span>
+                </div>`;
+            });
+            html += `</div>`;
+        }
+
+        // Growth History
+        const growthHistory = growth.history || [];
+        if (growthHistory.length > 0) {
+            html += `<div class="so-section"><h3>Growth History</h3>`;
+            growthHistory.forEach(gh => {
+                if (gh.subjects) {
+                    for (const [subj, sd] of Object.entries(gh.subjects)) {
+                        const sign = sd.delta > 0 ? "+" : "";
+                        const color = sd.delta > 0 ? "var(--success)" : sd.delta < 0 ? "var(--danger)" : "var(--text-muted)";
+                        html += `<div class="growth-row">
+                            <span>${subj.replace(/_/g, " ")} checkpoint</span>
+                            <span style="font-weight: 600; color: ${color};">${sign}${Math.round(sd.delta)}% → ${Math.round(sd.new_score)}%</span>
+                            <span style="font-size: 11px; color: var(--text-muted);">${gh.date ? new Date(gh.date).toLocaleDateString() : ""}</span>
+                        </div>`;
+                    }
+                }
+            });
+            html += `</div>`;
+        }
+
+        // Recent Activity
+        if (history.length > 0) {
+            html += `<div class="so-section"><h3>Recent Activity (${history.length})</h3>`;
+            history.slice(0, 10).forEach(h => {
+                const icon = h.mode === "diagnostic" ? "🎯" : h.mode === "lesson" ? "📖" : h.mode === "practice" ? "💪" : "💬";
+                html += `<div class="history-item">
+                    <span>${icon} ${esc(h.subject || "")} · ${h.mode || "chat"}</span>
+                    <span style="color: var(--text-muted); font-size: 12px;">${timeAgo(h.timestamp || h.date)}</span>
+                </div>`;
+            });
+            html += `</div>`;
+        }
+
+        // Conversation Log
+        html += `<div class="so-section"><h3>Conversation Log (${conversations.length})</h3>`;
+        if (conversations.length === 0) {
+            html += `<div class="empty" style="padding: 12px;">No conversations logged yet.</div>`;
+        } else {
+            conversations.slice(0, 15).forEach(c => {
+                const subj = c.subject || "general";
+                const mode = c.mode || "chat";
+                html += `<div class="conv-entry">
+                    <div class="conv-meta">${subj} · ${mode} · ${timeAgo(c.timestamp)}</div>
+                    <div class="conv-text"><strong>Student:</strong> ${esc((c.user_message || "").substring(0, 150))}${(c.user_message || "").length > 150 ? "..." : ""}</div>
+                    <div class="conv-text" style="color: var(--text-muted);"><strong>Tutor:</strong> ${esc((c.assistant_message || "").substring(0, 200))}${(c.assistant_message || "").length > 200 ? "..." : ""}</div>
+                </div>`;
+            });
+        }
+        html += `</div>`;
+
+        // Quick links
+        html += `<div class="so-section" style="display: flex; gap: 10px;">
+            <a class="btn-sm btn-primary" href="/f/${instanceId}" target="_blank" style="text-decoration: none;">Open Student View ↗</a>
+            <button class="btn-sm btn-ghost" onclick="closeStudentOverview()">← Back to Instance</button>
+        </div>`;
+
+        panel.innerHTML = html;
+    } catch (err) {
+        panel.innerHTML = `<button class="detail-close" onclick="closeStudentOverview()">✕</button><div class="empty">Failed to load student data.</div>`;
+        console.error(err);
+    }
+}
+
+function closeStudentOverview() {
+    document.getElementById("studentOverlay").classList.remove("open");
+}
+
+/* ─── Render Feedback ────────────────────────── */
+function renderFeedback() {
+    const search = document.getElementById("feedbackSearch").value.toLowerCase();
+    const typeFilter = document.getElementById("feedbackTypeFilter").value;
+    const statusFilter = document.getElementById("feedbackStatusFilter").value;
+
+    const filtered = allFeedback.filter(f => {
+        if (typeFilter !== "all" && f.type !== typeFilter) return false;
+        if (statusFilter !== "all" && f.status !== statusFilter) return false;
+        if (search) {
+            const hay = ((f.title || "") + " " + (f.content || "") + " " + (f.family_name || "") + " " + (f.instance_id || "")).toLowerCase();
+            if (!hay.includes(search)) return false;
+        }
+        return true;
+    });
+
+    const list = document.getElementById("feedbackList");
+    if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty">No feedback matches your filters.</div>';
+        return;
+    }
+
+    list.innerHTML = filtered.map(f => {
+        const typeClass = f.type === "bug_report" ? "fb-bug" : f.type === "feature_request" ? "fb-feature" : f.type === "content_issue" ? "fb-content-issue" : "fb-general";
+        const typeLabel = f.type === "bug_report" ? "🐛 Bug" : f.type === "feature_request" ? "⭐ Feature" : f.type === "content_issue" ? "📖 Content" : "💬 General";
+        const statusClass = "fb-status-" + (f.status || "pending");
+        const statusLabel = (f.status || "pending").charAt(0).toUpperCase() + (f.status || "pending").slice(1);
+        const date = f.submitted_at ? timeAgo(f.submitted_at) : "";
+        const family = f.family_name || "Unknown";
+
+        // Existing replies
+        let repliesHtml = "";
+        if (f.admin_replies && f.admin_replies.length > 0) {
+            repliesHtml = f.admin_replies.map(r =>
+                `<div class="fb-reply">
+                    <div>${esc(r.text)}</div>
+                    <div class="reply-meta">Admin · ${timeAgo(r.replied_at)}</div>
+                </div>`
+            ).join("");
+        }
+
+        return `<div class="fb-item" id="fb-${f.feedback_id}">
+            <div class="fb-top">
+                <div class="fb-badges">
+                    <span class="fb-badge ${typeClass}">${typeLabel}</span>
+                    <span class="fb-badge ${statusClass}">${statusLabel}</span>
+                </div>
+                <div class="fb-meta">${esc(family)} · ${f.submitted_by || "?"} · ${date}</div>
+            </div>
+            <div class="fb-title">${esc(f.title)}</div>
+            <div class="fb-content">${esc(f.content)}</div>
+            ${repliesHtml}
+            <div class="fb-actions">
+                <input class="reply-input" id="reply-${f.feedback_id}" type="text" placeholder="Type a reply...">
+                <button class="btn-sm btn-primary" onclick="sendReply('${f.instance_id}', '${f.feedback_id}')">Reply</button>
+                ${f.status !== "resolved" ? `<button class="btn-sm btn-success" onclick="setFeedbackStatus('${f.instance_id}', '${f.feedback_id}', 'resolved')">✓ Resolve</button>` : ""}
+                ${f.status === "pending" ? `<button class="btn-sm btn-ghost" onclick="setFeedbackStatus('${f.instance_id}', '${f.feedback_id}', 'acknowledged')">Acknowledge</button>` : ""}
+                ${f.status !== "declined" && f.status !== "resolved" ? `<button class="btn-sm btn-ghost" onclick="setFeedbackStatus('${f.instance_id}', '${f.feedback_id}', 'declined')" style="color: var(--danger);">Decline</button>` : ""}
+            </div>
+        </div>`;
+    }).join("");
+}
+
+function filterFeedback() { renderFeedback(); }
+
+/* ─── Feedback Actions ───────────────────────── */
+async function sendReply(instanceId, feedbackId) {
+    const input = document.getElementById("reply-" + feedbackId);
+    const text = input.value.trim();
+    if (!text) return;
+
+    try {
+        const res = await fetch("/api/admin/feedback/reply", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ instance_id: instanceId, feedback_id: feedbackId, reply: text }),
+        });
+        const data = await res.json();
+        if (data.status === "ok") {
+            input.value = "";
+            // Update local state
+            const fb = allFeedback.find(f => f.feedback_id === feedbackId);
+            if (fb) {
+                fb.admin_replies = data.feedback.admin_replies;
+                fb.status = data.feedback.status;
+            }
+            renderFeedback();
+            updateStats();
+        }
+    } catch (err) { console.error(err); }
+}
+
+async function setFeedbackStatus(instanceId, feedbackId, newStatus) {
+    try {
+        const res = await fetch("/api/admin/feedback/status", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ instance_id: instanceId, feedback_id: feedbackId, status: newStatus }),
+        });
+        const data = await res.json();
+        if (data.status === "ok") {
+            const fb = allFeedback.find(f => f.feedback_id === feedbackId);
+            if (fb) fb.status = newStatus;
+            renderFeedback();
+            updateStats();
+        }
+    } catch (err) { console.error(err); }
+}
+
+/* ─── Invite Management (29E) ───────────────── */
+async function loadInvites() {
+    try {
+        const res = await fetch("/api/admin/invites");
+        const data = await res.json();
+        allInvites = data.invites || [];
+        updateInviteBadge();
+        renderInvites();
+    } catch (err) { console.error("Failed to load invites:", err); }
+}
+
+function updateInviteBadge() {
+    const active = allInvites.filter(i => i.status === "active").length;
+    const badge = document.getElementById("tabBadgeInvites");
+    badge.textContent = active || "";
+    badge.style.display = active ? "inline-flex" : "none";
+}
+
+function renderInvites() {
+    const search = (document.getElementById("inviteSearch")?.value || "").toLowerCase();
+    const statusFilter = document.getElementById("inviteStatusFilter")?.value || "all";
+
+    const filtered = allInvites.filter(inv => {
+        if (statusFilter !== "all" && inv.status !== statusFilter) return false;
+        if (search) {
+            const hay = ((inv.label || "") + " " + (inv.code || "") + " " + (inv.creator_family || "") + " " + (inv.created_by_instance || "")).toLowerCase();
+            if (!hay.includes(search)) return false;
+        }
+        return true;
+    });
+
+    const list = document.getElementById("inviteList");
+    if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty">No invites match your filters.</div>';
+        return;
+    }
+
+    list.innerHTML = filtered.map(inv => {
+        const statusColors = {
+            active: "background: #d1fae5; color: #059669;",
+            revoked: "background: #fee2e2; color: #DC2626;",
+            expired: "background: #e5e7eb; color: #6b7280;",
+            maxed: "background: #fef3c7; color: #D97706;"
+        };
+        const statusStyle = statusColors[inv.status] || statusColors.active;
+        const statusLabel = inv.status === "maxed" ? "Max Reached" : inv.status.charAt(0).toUpperCase() + inv.status.slice(1);
+        const created = inv.created_at ? new Date(inv.created_at).toLocaleDateString() : "—";
+        const expires = inv.expires_at ? new Date(inv.expires_at).toLocaleDateString() : "Never";
+        const maxUses = inv.max_uses ? inv.max_uses : "Unlimited";
+        const usedBy = inv.used_by || [];
+        const invUrl = location.origin + "/invite/" + inv.code;
+
+        let usedByHtml = "";
+        if (usedBy.length > 0) {
+            usedByHtml = `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);">
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">Used by (${usedBy.length}):</div>
+                ${usedBy.map(u => `<span style="display: inline-block; background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 6px; font-size: 11px; margin: 2px 2px;">${esc(u.family_name || u.instance_id)}</span>`).join("")}
+            </div>`;
+        }
+
+        return `<div class="fb-item" style="border-left: 4px solid ${inv.status === "active" ? "#059669" : inv.status === "revoked" ? "#DC2626" : "#6b7280"};">
+            <div class="fb-top">
+                <div>
+                    <span style="font-weight: 700; font-size: 15px; color: var(--primary);">${esc(inv.label || inv.code)}</span>
+                    <span class="fb-badge" style="${statusStyle}; margin-left: 8px;">${statusLabel}</span>
+                </div>
+                <div class="fb-meta">${esc(inv.creator_family || "Admin")} · ${created}</div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--text-muted); margin: 8px 0;">
+                <span>📋 Code: <code style="background: var(--light-bg); padding: 2px 6px; border-radius: 4px; font-weight: 600; color: var(--primary);">${esc(inv.code)}</code></span>
+                <span>👥 Uses: <strong style="color: var(--primary);">${inv.use_count}</strong> / ${maxUses}</span>
+                <span>📅 Expires: ${expires}</span>
+            </div>
+            <div style="margin: 8px 0;">
+                <input type="text" readonly value="${invUrl}" style="width: 100%; padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; background: var(--light-bg); color: var(--text-muted); cursor: text;" onclick="this.select(); navigator.clipboard.writeText(this.value);">
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Click to copy invite link</div>
+            </div>
+            ${usedByHtml}
+            <div style="margin-top: 10px; display: flex; gap: 8px;">
+                <button class="btn-sm btn-ghost" onclick="navigator.clipboard.writeText('${invUrl}'); this.textContent='✓ Copied!'; setTimeout(() => this.textContent='📋 Copy Link', 1500);">📋 Copy Link</button>
+                ${inv.status === "active" ? `<button class="btn-sm btn-danger" onclick="revokeInvite('${inv.code}')">Revoke</button>` : ""}
+            </div>
+        </div>`;
+    }).join("");
+}
+
+function filterInvites() { renderInvites(); }
+
+function openCreateInvite() {
+    document.getElementById("inviteLabelInput").value = "";
+    document.getElementById("inviteMaxUsesInput").value = "0";
+    document.getElementById("inviteExpiresInput").value = "0";
+    document.getElementById("inviteModal").classList.add("open");
+}
+
+function closeInviteModal() {
+    document.getElementById("inviteModal").classList.remove("open");
+}
+
+async function submitCreateInvite() {
+    const label = document.getElementById("inviteLabelInput").value.trim();
+    const maxUses = parseInt(document.getElementById("inviteMaxUsesInput").value) || 0;
+    const expiresInDays = parseInt(document.getElementById("inviteExpiresInput").value) || 0;
+
+    try {
+        const res = await fetch("/api/admin/invites/create", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ label, max_uses: maxUses, expires_in_days: expiresInDays }),
+        });
+        const data = await res.json();
+        if (data.status === "created") {
+            closeInviteModal();
+            await loadInvites();
+            updateStats();
+        } else {
+            alert(data.error || "Failed to create invite");
+        }
+    } catch (err) { console.error(err); alert("Failed to create invite"); }
+}
+
+async function revokeInvite(code) {
+    if (!confirm("Revoke this invite code? Existing users won't be affected, but no new signups can use it.")) return;
+    try {
+        const res = await fetch("/api/admin/invites/revoke", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ invite_code: code }),
+        });
+        const data = await res.json();
+        if (data.status === "revoked") {
+            await loadInvites();
+            updateStats();
+        } else {
+            alert(data.error || "Failed to revoke invite");
+        }
+    } catch (err) { console.error(err); alert("Failed to revoke invite"); }
+}
+
+/* ─── Safety & Moderation (29D) ────────────── */
+async function loadSafety() {
+    const container = document.getElementById("safetyList");
+    container.innerHTML = '<div class="empty">Loading safety logs...</div>';
+    try {
+        const res = await fetch("/api/admin/safety");
+        const data = await res.json();
+        allSafetyEvents = data.events || [];
+        safetyLoaded = true;
+        // Update badge
+        const badge = document.getElementById("tabBadgeSafety");
+        if (badge) {
+            if (data.high_count > 0) {
+                badge.textContent = data.high_count;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        renderSafety(allSafetyEvents);
+    } catch (err) {
+        console.error("Safety load error:", err);
+        container.innerHTML = '<div class="empty">Failed to load safety logs.</div>';
+    }
+}
+
+function renderSafety(events) {
+    const container = document.getElementById("safetyList");
+    if (!events.length) {
+        container.innerHTML = '<div class="empty">No safety events found. This is good!</div>';
+        return;
+    }
+    const severityBadge = s => s === 'high' ? '<span style="color:#e74c3c;font-weight:600;">🔴 High</span>'
+        : s === 'medium' ? '<span style="color:#f39c12;font-weight:600;">🟡 Medium</span>'
+        : '<span style="color:#27ae60;font-weight:600;">🟢 Low</span>';
+    const typeBadge = t => t === 'blocked_topic' ? '<span style="background:#fce4ec;color:#c0392b;padding:2px 8px;border-radius:8px;font-size:0.8em;">Blocked Topic</span>'
+        : t === 'injection_attempt' ? '<span style="background:#fff3e0;color:#e65100;padding:2px 8px;border-radius:8px;font-size:0.8em;">Injection Attempt</span>'
+        : `<span style="background:#e8eaf6;color:#3949ab;padding:2px 8px;border-radius:8px;font-size:0.8em;">${t || 'Unknown'}</span>`;
+    const escHtml = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    let html = `<div style="margin-bottom:12px;color:#666;font-size:0.9em;">${events.length} event(s) shown</div>`;
+    events.forEach(evt => {
+        const ts = new Date(evt.timestamp).toLocaleString();
+        const notesHtml = (evt.admin_notes || []).map(n =>
+            `<div style="background:#f0f4ff;padding:6px 10px;border-radius:6px;margin:4px 0;font-size:0.85em;">
+                <span style="color:#666;">${new Date(n.added_at).toLocaleString()}</span>: ${escHtml(n.text)}
+            </div>`
+        ).join('');
+
+        html += `
+        <div class="card" style="margin-bottom:10px;border-left:4px solid ${evt.severity==='high'?'#e74c3c':evt.severity==='medium'?'#f39c12':'#27ae60'};">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+                <div>
+                    ${severityBadge(evt.severity)} ${typeBadge(evt.event_type)}
+                    <span style="color:#888;font-size:0.85em;margin-left:8px;">${ts}</span>
+                </div>
+                <div style="font-size:0.85em;color:#555;">
+                    <strong>${escHtml(evt.student_name||'Unknown')}</strong> · ${escHtml(evt.family_name||'Unknown')}
+                </div>
+            </div>
+            <div style="margin-top:8px;padding:8px 12px;background:#f9f9f9;border-radius:6px;font-size:0.9em;">
+                <strong>Message:</strong> ${escHtml(evt.message || '')}
+            </div>
+            ${evt.matched_pattern ? `<div style="margin-top:4px;font-size:0.8em;color:#888;">Matched pattern: <code>${escHtml(evt.matched_pattern)}</code></div>` : ''}
+            ${notesHtml ? `<div style="margin-top:8px;"><strong style="font-size:0.85em;">Admin Notes:</strong>${notesHtml}</div>` : ''}
+            <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <input type="text" id="note-${evt.event_id}" placeholder="Add admin note..."
+                    style="flex:1;min-width:200px;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:0.85em;"
+                    onkeydown="if(event.key==='Enter') addSafetyNote('${evt.event_id}')">
+                <button class="btn-sm btn-primary" onclick="addSafetyNote('${evt.event_id}')" style="padding:6px 12px;">Add Note</button>
+                <button class="btn-sm btn-ghost" onclick="viewConversationContext('${evt.instance_id||'default'}','${evt.student_id||''}','${evt.timestamp}')" style="padding:6px 12px;">💬 Context</button>
+            </div>
+            <div id="context-${evt.event_id}" style="display:none;margin-top:8px;"></div>
+        </div>`;
+    });
+    html += `<div style="text-align:center;margin-top:12px;">
+        <button class="btn-sm btn-ghost" onclick="safetyLoaded=false; loadSafety();">🔄 Refresh</button>
+    </div>`;
+    container.innerHTML = html;
+}
+
+function filterSafety() {
+    const search = document.getElementById("safetySearch").value.toLowerCase();
+    const sev = document.getElementById("safetySeverityFilter").value;
+    const typ = document.getElementById("safetyTypeFilter").value;
+    const filtered = allSafetyEvents.filter(evt => {
+        if (sev !== "all" && evt.severity !== sev) return false;
+        if (typ !== "all" && evt.event_type !== typ) return false;
+        if (search) {
+            const hay = [evt.student_name, evt.family_name, evt.message, evt.matched_pattern, evt.event_type]
+                .filter(Boolean).join(' ').toLowerCase();
+            if (!hay.includes(search)) return false;
+        }
+        return true;
+    });
+    renderSafety(filtered);
+}
+
+async function addSafetyNote(eventId) {
+    const input = document.getElementById("note-" + eventId);
+    if (!input) return;
+    const note = input.value.trim();
+    if (!note) return;
+    try {
+        const res = await fetch("/api/admin/safety/note", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ event_id: eventId, note: note })
+        });
+        const data = await res.json();
+        if (data.status === "ok") {
+            // Update local state
+            const evt = allSafetyEvents.find(e => e.event_id === eventId);
+            if (evt) evt.admin_notes = data.notes;
+            filterSafety(); // re-render with current filters
+        } else {
+            alert(data.error || "Failed to add note");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to add note");
+    }
+}
+
+async function viewConversationContext(instanceId, studentId, timestamp) {
+    // Find the event to get its event_id for the context div
+    const evt = allSafetyEvents.find(e => (e.instance_id || 'default') === instanceId && (e.student_id || '') === studentId && e.timestamp === timestamp);
+    const contextDiv = evt ? document.getElementById("context-" + evt.event_id) : null;
+    if (!contextDiv) return;
+
+    if (contextDiv.style.display !== "none") {
+        contextDiv.style.display = "none";
+        return;
+    }
+    contextDiv.style.display = "block";
+    contextDiv.innerHTML = '<div style="color:#888;font-size:0.85em;">Loading conversation context...</div>';
+
+    try {
+        const res = await fetch(`/api/admin/safety/conversation-context?instance_id=${encodeURIComponent(instanceId)}&student_id=${encodeURIComponent(studentId)}&timestamp=${encodeURIComponent(timestamp)}`);
+        const data = await res.json();
+        if (!data.entries || data.entries.length === 0) {
+            contextDiv.innerHTML = '<div style="color:#888;font-size:0.85em;">No conversation context available.</div>';
+            return;
+        }
+        const escHtml = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        let html = '<div style="background:#f8f9fa;border-radius:8px;padding:10px;max-height:300px;overflow-y:auto;">';
+        html += '<strong style="font-size:0.85em;color:#555;">Conversation Context</strong>';
+        data.entries.forEach(entry => {
+            const role = entry.role || 'unknown';
+            const isStudent = role === 'student' || role === 'user';
+            const ts = new Date(entry.timestamp).toLocaleTimeString();
+            html += `<div style="margin:6px 0;padding:6px 10px;border-radius:6px;font-size:0.85em;
+                background:${isStudent ? '#e3f2fd' : '#f3e5f5'};">
+                <span style="font-weight:600;color:${isStudent ? '#1565c0' : '#7b1fa2'};">${isStudent ? '🧑 Student' : '🤖 Tutor'}</span>
+                <span style="color:#999;margin-left:8px;">${ts}</span>
+                <div style="margin-top:4px;">${escHtml(entry.content || entry.message || '')}</div>
+            </div>`;
+        });
+        html += '</div>';
+        contextDiv.innerHTML = html;
+    } catch (err) {
+        console.error(err);
+        contextDiv.innerHTML = '<div style="color:#e74c3c;font-size:0.85em;">Failed to load context.</div>';
+    }
+}
+
+/* ─── Analytics (29F) ───────────────────────── */
+async function loadAnalytics() {
+    const container = document.getElementById("analyticsContent");
+    container.innerHTML = '<div class="empty">Loading analytics...</div>';
+    try {
+        const res = await fetch("/api/admin/analytics");
+        const data = await res.json();
+        analyticsLoaded = true;
+        renderAnalytics(data);
+    } catch (err) {
+        console.error("Failed to load analytics:", err);
+        container.innerHTML = '<div class="empty">Failed to load analytics.</div>';
+    }
+}
+
+function renderAnalytics(data) {
+    const o = data.overview;
+    const container = document.getElementById("analyticsContent");
+
+    // Build subject bars
+    const maxSubjTotal = Math.max(1, ...data.subject_popularity.map(s => s.total));
+    const subjBarsHtml = data.subject_popularity.map(s => {
+        const pct = Math.round(s.total / maxSubjTotal * 100);
+        const colors = { math: "#3B82F6", science: "#10B981", ela: "#8B5CF6", social_studies: "#F59E0B" };
+        const color = colors[s.subject] || "#6B7280";
+        return `<div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                <span style="font-weight: 600; text-transform: capitalize;">${esc(s.name)}</span>
+                <span style="color: var(--text-muted);">${s.total} sessions (${s.diagnostics}D · ${s.lessons}L · ${s.practice}P)</span>
+            </div>
+            <div style="height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden;">
+                <div style="height: 100%; width: ${pct}%; background: ${color}; border-radius: 5px;"></div>
+            </div>
+        </div>`;
+    }).join("") || '<div class="empty">No subject data yet.</div>';
+
+    // Build activity sparkline (last 30 days) using simple CSS bars
+    const maxDay = Math.max(1, ...data.daily_trend.map(d => d.sessions));
+    const sparkBarsHtml = data.daily_trend.map(d => {
+        const h = Math.max(2, Math.round(d.sessions / maxDay * 80));
+        const dayLabel = d.date.slice(5); // MM-DD
+        const isToday = d.date === new Date().toISOString().slice(0, 10);
+        return `<div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;" title="${d.date}: ${d.sessions} active students">
+            <div style="width: 100%; max-width: 18px; height: ${h}px; background: ${isToday ? "var(--accent)" : d.sessions > 0 ? "var(--primary-light)" : "#e5e7eb"}; border-radius: 3px 3px 0 0;"></div>
+        </div>`;
+    }).join("");
+
+    // Build inactive students list
+    let inactiveHtml = "";
+    if (data.inactive_students.length > 0) {
+        inactiveHtml = data.inactive_students.slice(0, 10).map(s => {
+            const daysText = s.days_inactive ? `${s.days_inactive}d ago` : "Never active";
+            return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--light-bg); border-radius: 8px; margin-bottom: 4px; font-size: 13px;">
+                <div><strong>${esc(s.name)}</strong> <span style="color: var(--text-muted);">· ${esc(s.family)}</span></div>
+                <span style="color: ${s.days_inactive > 14 ? "var(--danger)" : "var(--warning)"}; font-weight: 600; font-size: 12px;">${daysText}</span>
+            </div>`;
+        }).join("");
+    } else {
+        inactiveHtml = '<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 16px;">All students active in the last 7 days!</div>';
+    }
+
+    container.innerHTML = `
+        <!-- Overview Cards -->
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px;">
+            <div class="stat-card">
+                <div class="stat-value">${o.active_instances}</div>
+                <div class="stat-label">Active Instances</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${o.total_students}</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${o.active_students_7d}</div>
+                <div class="stat-label">Active (7d)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${o.sessions_this_week}</div>
+                <div class="stat-label">Sessions (7d)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${o.total_sessions}</div>
+                <div class="stat-label">Total Sessions</div>
+            </div>
+        </div>
+
+        <!-- Second row: Lessons / Practice / Diagnostics -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--primary-light);">${o.total_lessons}</div>
+                <div class="stat-label">Lessons Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--success);">${o.total_practice}</div>
+                <div class="stat-label">Practice Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--accent);">${o.total_diagnostics}</div>
+                <div class="stat-label">Diagnostics Taken</div>
+            </div>
+        </div>
+
+        <!-- Activity Trend -->
+        <div class="card">
+            <div class="card-header"><h2>Activity Trend (Last 30 Days)</h2></div>
+            <div style="display: flex; align-items: flex-end; height: 90px; gap: 2px; padding: 0 4px;">
+                ${sparkBarsHtml}
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--text-muted);">
+                <span>${data.daily_trend[0]?.date.slice(5) || ""}</span>
+                <span>Today</span>
+            </div>
+        </div>
+
+        <!-- Subject Popularity -->
+        <div class="card">
+            <div class="card-header"><h2>Subject Popularity</h2></div>
+            ${subjBarsHtml}
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">D = Diagnostics · L = Lessons · P = Practice</div>
+        </div>
+
+        <!-- Inactive Students -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Inactive Students</h2>
+                <span style="font-size: 12px; color: var(--text-muted);">Not active in 7+ days</span>
+            </div>
+            ${inactiveHtml}
+        </div>
+
+        <div style="text-align: center; margin-top: 12px;">
+            <button class="btn-sm btn-ghost" onclick="analyticsLoaded=false; loadAnalytics();">🔄 Refresh Analytics</button>
+        </div>
+    `;
+}
+
+/* ─── System Health (29G) ───────────────────── */
+async function loadHealth() {
+    const container = document.getElementById("healthContent");
+    container.innerHTML = '<div class="empty">Loading system health...</div>';
+    try {
+        const res = await fetch("/api/admin/health");
+        const data = await res.json();
+        healthLoaded = true;
+        renderHealth(data);
+    } catch (err) {
+        console.error("Failed to load health:", err);
+        container.innerHTML = '<div class="empty">Failed to load system health.</div>';
+    }
+}
+
+function fmtNum(n) { return n.toLocaleString(); }
+
+function renderHealth(data) {
+    const s = data.server;
+    const a = data.api_usage;
+    const st = data.storage;
+    const container = document.getElementById("healthContent");
+
+    // Status indicator
+    const statusColor = s.status === "running" ? "#059669" : "#DC2626";
+    const statusDot = `<span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${statusColor}; margin-right: 6px;"></span>`;
+
+    // API trend bars
+    const maxCalls = Math.max(1, ...data.daily_api_trend.map(d => d.calls));
+    const trendBars = data.daily_api_trend.map(d => {
+        const h = Math.max(2, Math.round(d.calls / maxCalls * 60));
+        const isToday = d.date === new Date().toISOString().slice(0, 10);
+        return `<div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;" title="${d.date}: ${d.calls} calls">
+            <div style="width: 100%; max-width: 22px; height: ${h}px; background: ${isToday ? "var(--accent)" : d.calls > 0 ? "var(--primary-light)" : "#e5e7eb"}; border-radius: 3px 3px 0 0;"></div>
+        </div>`;
+    }).join("");
+
+    // Error list
+    let errorsHtml = "";
+    if (data.recent_errors.length > 0) {
+        errorsHtml = data.recent_errors.slice(0, 10).map(e => {
+            const ts = e.ts ? new Date(e.ts).toLocaleString() : "";
+            return `<div style="padding: 8px 12px; background: #fef2f2; border-left: 3px solid var(--danger); border-radius: 0 8px 8px 0; margin-bottom: 6px; font-size: 13px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 600; color: var(--danger);">${esc(e.type)}</span>
+                    <span style="font-size: 11px; color: var(--text-muted);">${ts}</span>
+                </div>
+                <div style="color: #374151; margin-top: 2px; word-break: break-word;">${esc(e.message?.substring(0, 200) || "")}</div>
+                ${e.context ? `<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Context: ${esc(e.context)}</div>` : ""}
+            </div>`;
+        }).join("");
+    } else {
+        errorsHtml = '<div style="text-align: center; color: var(--success); font-size: 13px; padding: 16px;">No errors recorded.</div>';
+    }
+
+    container.innerHTML = `
+        <!-- Server Status -->
+        <div class="card">
+            <div class="card-header">
+                <h2>${statusDot} Server Status</h2>
+                <span style="font-size: 13px; color: var(--text-muted);">Started ${new Date(s.started_at).toLocaleString()}</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${esc(s.uptime)}</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Uptime</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${esc(s.model.split("-").slice(0,2).join(" "))}</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">AI Model</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; font-weight: 700; color: ${a.error_rate > 5 ? "var(--danger)" : "var(--success)"}">${a.error_rate}%</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Error Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Usage -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+            <div class="stat-card">
+                <div class="stat-value">${fmtNum(a.total_calls)}</div>
+                <div class="stat-label">Total API Calls</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${fmtNum(a.calls_today)}</div>
+                <div class="stat-label">Calls Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${fmtNum(a.calls_this_week)}</div>
+                <div class="stat-label">Calls (7d)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${Math.round(a.avg_duration_ms)}ms</div>
+                <div class="stat-label">Avg Response</div>
+            </div>
+        </div>
+
+        <!-- Token Usage & Cost -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+            <div class="stat-card">
+                <div class="stat-value" style="font-size: 22px;">${fmtNum(a.total_input_tokens)}</div>
+                <div class="stat-label">Input Tokens (All)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="font-size: 22px;">${fmtNum(a.total_output_tokens)}</div>
+                <div class="stat-label">Output Tokens (All)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--warning);">$${a.est_cost_today}</div>
+                <div class="stat-label">Est. Cost Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--warning);">$${a.est_cost_total}</div>
+                <div class="stat-label">Est. Cost Total</div>
+            </div>
+        </div>
+
+        <!-- API Call Trend -->
+        <div class="card">
+            <div class="card-header"><h2>API Calls (Last 14 Days)</h2></div>
+            <div style="display: flex; align-items: flex-end; height: 70px; gap: 3px; padding: 0 4px;">
+                ${trendBars}
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--text-muted);">
+                <span>${data.daily_api_trend[0]?.date.slice(5) || ""}</span>
+                <span>Today</span>
+            </div>
+        </div>
+
+        <!-- Storage -->
+        <div class="card">
+            <div class="card-header"><h2>Storage</h2></div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${st.data_dir_mb} MB</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Data Directory</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${fmtNum(st.file_count)}</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Files</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${st.instance_count}</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Instances</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Errors -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Recent Errors</h2>
+                <span style="font-size: 12px; color: var(--text-muted);">${a.total_errors} total</span>
+            </div>
+            ${errorsHtml}
+        </div>
+
+        <div style="text-align: center; margin-top: 12px;">
+            <button class="btn-sm btn-ghost" onclick="healthLoaded=false; loadHealth();">🔄 Refresh</button>
+        </div>
+    `;
+}
+
+/* ─── Enter key for reply inputs ─────────────── */
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && e.target.classList.contains("reply-input")) {
+        const id = e.target.id.replace("reply-", "");
+        const fb = allFeedback.find(f => f.feedback_id === id);
+        if (fb) sendReply(fb.instance_id, id);
+    }
+});
+
+/* ─── Enter key for PIN modal ────────────────── */
+document.getElementById("pinModalInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") submitPinReset();
+});
+
+/* ─── Init ───────────────────────────────────── */
+loadAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "student_id": "cf89ddcb",
+  "name": "Alex",
+  "pin": "1234",
+  "avatar": "\ud83e\udd8a",
+  "grade": 8,
+  "created_at": "2026-03-09T10:50:31.747180",
+  "badges": {
+    "first_diagnostic": {
+      "earned_at": "2026-03-14T11:34:37.751755"
+    },
+    "first_lesson": {
+      "earned_at": "2026-03-14T11:47:45.426246"
+    },
+    "first_practice": {
+      "earned_at": "2026-03-14T13:30:31.715253"
+    }
+  },
+  "preferences": {
+    "socratic_mode": true
+  },
+  "activity_dates": [
+    "2026-03-14",
+    "2026-03-15",
+    "2026-03-19"
+  ],
+  "xp": 70,
+  "xp_log": [
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-15T10:16:23.607351"
+    },
+    {
+      "amount": 10,
+      "reason": "daily_login",
+      "timestamp": "2026-03-19T13:18:11.692569"
+    },
+    {
+      "amount": 50,
+      "reason": "checkpoint_complete",
+      "timestamp": "2026-03-19T14:23:50.264536"
+    }
+  ]
+}

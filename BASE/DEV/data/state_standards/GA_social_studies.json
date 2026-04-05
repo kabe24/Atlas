@@ -1,0 +1,280 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "state": "GA",
+    "state_name": "Georgia",
+    "framework": "Georgia Standards of Excellence (GSE)",
+    "description": "Georgia Social Studies standards mapping for Atlas topics",
+    "coverage": ["social_studies"],
+    "grades": [6, 7, 8, 9, 10, 11, 12],
+    "note": "Georgia organizes SS standards by domain. Grade 6 = Latin America/Canada/Europe/Australia, Grade 7 = Africa/SW Asia/S/SE Asia, Grade 8 = Georgia Studies, HS = US History/World History/Govt/Economics."
+  },
+  "social_studies": {
+    "6": {
+      "Ancient Civilizations (Mesopotamia, Egypt)": {
+        "standards": ["SS6H1.a", "SS6H1.b", "SS6G1.a", "SS6G1.b"],
+        "domain": "History / Geography",
+        "domain_code": "SS6H1",
+        "description": "Describe the impact of European exploration and colonization on Latin America and the Caribbean"
+      },
+      "Ancient Greece & Rome": {
+        "standards": ["SS6H3.a", "SS6H3.b", "SS6H3.c", "SS6H7.a"],
+        "domain": "History",
+        "domain_code": "SS6H3",
+        "description": "Analyze the rise of classical civilizations and their lasting impact on Europe"
+      },
+      "Geography Skills & Map Reading": {
+        "standards": ["SS6G1.a", "SS6G1.b", "SS6G2.a", "SS6G2.b", "SS6G4.a"],
+        "domain": "Geography",
+        "domain_code": "SS6G1",
+        "description": "Locate and describe major physical features, countries, and regions on maps"
+      },
+      "Intro to World Religions": {
+        "standards": ["SS6H3.c", "SS6H7.b"],
+        "domain": "History / Culture",
+        "domain_code": "SS6H3",
+        "description": "Describe the origins and beliefs of major world religions and their cultural impact"
+      },
+      "Early Chinese & Indian Civilizations": {
+        "standards": ["SS6H3.a", "SS6H3.b"],
+        "domain": "History",
+        "domain_code": "SS6H3",
+        "description": "Analyze contributions of ancient Asian civilizations to world development"
+      },
+      "Government & Citizenship (Intro)": {
+        "standards": ["SS6CG1.a", "SS6CG1.b", "SS6CG2.a", "SS6CG3.a"],
+        "domain": "Civics & Government",
+        "domain_code": "SS6CG1",
+        "description": "Compare and contrast various forms of government in Europe, Latin America, and other regions"
+      }
+    },
+    "7": {
+      "Medieval World & Renaissance": {
+        "standards": ["SS7H3.a", "SS7H3.b", "SS7H3.c"],
+        "domain": "History",
+        "domain_code": "SS7H3",
+        "description": "Analyze continuity and change in Africa, Southwest Asia, and Southern/Eastern Asia"
+      },
+      "Age of Exploration": {
+        "standards": ["SS7H2.a", "SS7H2.b"],
+        "domain": "History",
+        "domain_code": "SS7H2",
+        "description": "Analyze the impact of European exploration and colonization on Africa and Asia"
+      },
+      "World Geography & Cultures": {
+        "standards": ["SS7G1.a", "SS7G1.b", "SS7G2.a", "SS7G3.a", "SS7G4.a"],
+        "domain": "Geography",
+        "domain_code": "SS7G1",
+        "description": "Locate and describe physical and human features of Africa, Southwest Asia, and Asia"
+      },
+      "Enlightenment & Revolution": {
+        "standards": ["SS7H3.c", "SS7H4.a", "SS7H4.b"],
+        "domain": "History",
+        "domain_code": "SS7H4",
+        "description": "Analyze change and conflict in modern Africa, Southwest Asia, and Asia"
+      },
+      "Africa, Asia & the Americas": {
+        "standards": ["SS7H1.a", "SS7H1.b", "SS7H1.c", "SS7H2.a"],
+        "domain": "History",
+        "domain_code": "SS7H1",
+        "description": "Analyze the impact of colonialism and independence movements across regions"
+      },
+      "Economics (Supply & Demand)": {
+        "standards": ["SS7E1.a", "SS7E1.b", "SS7E2.a", "SS7E3.a", "SS7E3.b"],
+        "domain": "Economics",
+        "domain_code": "SS7E1",
+        "description": "Compare economic systems; analyze trade and voluntary exchange in Africa, SW Asia, and Asia"
+      }
+    },
+    "8": {
+      "U.S. Constitution & Government": {
+        "standards": ["SS8H5.a", "SS8H5.b", "SS8H5.c", "SS8CG1.a"],
+        "domain": "History / Civics",
+        "domain_code": "SS8H5",
+        "description": "Analyze the impact of the Constitutional Convention and the formation of the U.S. government"
+      },
+      "Civil War & Reconstruction": {
+        "standards": ["SS8H5.d", "SS8H6.a", "SS8H6.b", "SS8H6.c"],
+        "domain": "History",
+        "domain_code": "SS8H6",
+        "description": "Analyze the causes, events, and effects of the Civil War and Reconstruction in Georgia"
+      },
+      "Industrialization & Immigration": {
+        "standards": ["SS8H7.a", "SS8H7.b", "SS8H7.c"],
+        "domain": "History",
+        "domain_code": "SS8H7",
+        "description": "Evaluate key political, social, and economic developments in Georgia from 1877 to 1918"
+      },
+      "World War I & II": {
+        "standards": ["SS8H8.a", "SS8H8.b", "SS8H8.c", "SS8H8.d"],
+        "domain": "History",
+        "domain_code": "SS8H8",
+        "description": "Analyze Georgia's role in WWI, the Great Depression, and WWII"
+      },
+      "Geography & Map Skills": {
+        "standards": ["SS8G1.a", "SS8G1.b", "SS8G1.c", "SS8G1.d"],
+        "domain": "Geography",
+        "domain_code": "SS8G1",
+        "description": "Describe Georgia's geography and the impact of location on the state's development"
+      },
+      "Economics & Trade": {
+        "standards": ["SS8E1.a", "SS8E1.b", "SS8E2.a", "SS8E3.a"],
+        "domain": "Economics",
+        "domain_code": "SS8E1",
+        "description": "Analyze the role of economic factors in Georgia's development and growth"
+      }
+    },
+    "9": {
+      "U.S. Government & Politics": {
+        "standards": ["SSCG1.a", "SSCG1.b", "SSCG2.a", "SSCG2.b", "SSCG3.a"],
+        "domain": "Civics & Government",
+        "domain_code": "SSCG1",
+        "description": "Demonstrate knowledge of the political philosophies that shaped the U.S. government"
+      },
+      "The Constitution in Practice": {
+        "standards": ["SSCG3.a", "SSCG3.b", "SSCG4.a", "SSCG5.a", "SSCG5.b"],
+        "domain": "Civics & Government",
+        "domain_code": "SSCG3",
+        "description": "Demonstrate knowledge of the U.S. Constitution — structure, amendments, and application"
+      },
+      "Civil Rights & Civil Liberties": {
+        "standards": ["SSCG6.a", "SSCG6.b", "SSCG6.c"],
+        "domain": "Civics & Government",
+        "domain_code": "SSCG6",
+        "description": "Analyze the meaning and importance of each of the rights guaranteed by the Bill of Rights"
+      },
+      "State & Local Government": {
+        "standards": ["SSCG13.a", "SSCG13.b", "SSCG14.a", "SSCG14.b"],
+        "domain": "Civics & Government",
+        "domain_code": "SSCG13",
+        "description": "Demonstrate knowledge of the operation of Georgia's state and local government"
+      },
+      "Political Parties & Elections": {
+        "standards": ["SSCG9.a", "SSCG9.b", "SSCG9.c"],
+        "domain": "Civics & Government",
+        "domain_code": "SSCG9",
+        "description": "Explain the role of political parties, interest groups, and media in American politics"
+      },
+      "The Judicial System": {
+        "standards": ["SSCG7.a", "SSCG7.b", "SSCG7.c", "SSCG8.a"],
+        "domain": "Civics & Government",
+        "domain_code": "SSCG7",
+        "description": "Describe the structure and function of the judicial branch at federal and state levels"
+      }
+    },
+    "10": {
+      "World History: Ancient to Modern": {
+        "standards": ["SSWH1.a", "SSWH1.b", "SSWH1.c", "SSWH3.a"],
+        "domain": "World History",
+        "domain_code": "SSWH1",
+        "description": "Analyze the origins and impact of the earliest civilizations on world history"
+      },
+      "Imperialism & Colonialism": {
+        "standards": ["SSWH15.a", "SSWH15.b", "SSWH15.c"],
+        "domain": "World History",
+        "domain_code": "SSWH15",
+        "description": "Describe the impact of industrialization and imperialism on the modern world"
+      },
+      "World Wars & Cold War": {
+        "standards": ["SSWH16.a", "SSWH16.b", "SSWH17.a", "SSWH17.b", "SSWH18.a"],
+        "domain": "World History",
+        "domain_code": "SSWH16",
+        "description": "Identify the causes, events, and results of the World Wars and the Cold War"
+      },
+      "Globalization & Modern Conflicts": {
+        "standards": ["SSWH19.a", "SSWH19.b", "SSWH20.a"],
+        "domain": "World History",
+        "domain_code": "SSWH19",
+        "description": "Analyze the end of the Cold War and emergence of modern global challenges"
+      },
+      "Human Rights & International Law": {
+        "standards": ["SSWH19.c", "SSWH20.b"],
+        "domain": "World History",
+        "domain_code": "SSWH19",
+        "description": "Evaluate the development of human rights movements and international organizations"
+      },
+      "Comparative Government": {
+        "standards": ["SSWH14.a", "SSWH14.b", "SSWH14.c"],
+        "domain": "World History",
+        "domain_code": "SSWH14",
+        "description": "Analyze the ideologies that have shaped modern political systems globally"
+      }
+    },
+    "11": {
+      "U.S. History (Comprehensive)": {
+        "standards": ["SSUSH1.a", "SSUSH1.b", "SSUSH2.a", "SSUSH3.a"],
+        "domain": "U.S. History",
+        "domain_code": "SSUSH1",
+        "description": "Compare and contrast the development of English colonial regions and their impact"
+      },
+      "Manifest Destiny & Expansion": {
+        "standards": ["SSUSH7.a", "SSUSH7.b", "SSUSH8.a", "SSUSH8.b"],
+        "domain": "U.S. History",
+        "domain_code": "SSUSH7",
+        "description": "Explain the process of economic growth, westward expansion, and sectional conflict"
+      },
+      "The Progressive Era": {
+        "standards": ["SSUSH13.a", "SSUSH13.b", "SSUSH13.c", "SSUSH14.a"],
+        "domain": "U.S. History",
+        "domain_code": "SSUSH13",
+        "description": "Analyze efforts to reform American society and politics in the Progressive Era"
+      },
+      "The Great Depression & New Deal": {
+        "standards": ["SSUSH17.a", "SSUSH17.b", "SSUSH17.c", "SSUSH17.d"],
+        "domain": "U.S. History",
+        "domain_code": "SSUSH17",
+        "description": "Analyze the causes and consequences of the Great Depression and the New Deal"
+      },
+      "Cold War & Vietnam": {
+        "standards": ["SSUSH19.a", "SSUSH19.b", "SSUSH20.a", "SSUSH20.b"],
+        "domain": "U.S. History",
+        "domain_code": "SSUSH19",
+        "description": "Identify the origins and major events of the Cold War including the Vietnam era"
+      },
+      "Modern America (1980–Present)": {
+        "standards": ["SSUSH22.a", "SSUSH22.b", "SSUSH23.a", "SSUSH23.b"],
+        "domain": "U.S. History",
+        "domain_code": "SSUSH22",
+        "description": "Analyze political, economic, and social changes in modern America"
+      }
+    },
+    "12": {
+      "Microeconomics & Macroeconomics": {
+        "standards": ["SSEIN1.a", "SSEIN1.b", "SSEMI1.a", "SSEMI1.b", "SSEMA1.a"],
+        "domain": "Economics",
+        "domain_code": "SSEIN1",
+        "description": "Explain fundamental economic concepts: scarcity, opportunity cost, supply and demand"
+      },
+      "International Relations": {
+        "standards": ["SSEMA3.a", "SSEMA3.b", "SSEF5.a", "SSEF5.b"],
+        "domain": "Economics / Government",
+        "domain_code": "SSEMA3",
+        "description": "Explain the benefits and costs of international trade and foreign exchange"
+      },
+      "Comparative Political Systems": {
+        "standards": ["SSCG16.a", "SSCG16.b", "SSCG16.c"],
+        "domain": "Civics & Government",
+        "domain_code": "SSCG16",
+        "description": "Demonstrate knowledge of how differing political systems operate globally"
+      },
+      "Contemporary Global Issues": {
+        "standards": ["SSEF6.a", "SSEF6.b", "SSEMA4.a"],
+        "domain": "Economics / Government",
+        "domain_code": "SSEF6",
+        "description": "Analyze current issues and the role of government in addressing economic challenges"
+      },
+      "Personal Finance & Economic Policy": {
+        "standards": ["SSEF4.a", "SSEF4.b", "SSEPF1.a", "SSEPF1.b", "SSEPF2.a"],
+        "domain": "Personal Finance / Economics",
+        "domain_code": "SSEPF1",
+        "description": "Apply economic principles to personal financial decisions: budgeting, saving, investing"
+      },
+      "AP Government & Politics Review": {
+        "standards": ["SSCG1.a", "SSCG2.a", "SSCG3.a", "SSCG5.a", "SSCG6.a", "SSCG9.a"],
+        "domain": "Civics & Government",
+        "domain_code": "SSCG1",
+        "description": "Comprehensive review of American government and political institutions (AP level)"
+      }
+    }
+  }
+}

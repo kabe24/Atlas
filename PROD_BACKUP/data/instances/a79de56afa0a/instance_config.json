@@ -1,0 +1,36 @@
+{
+  "instance_id": "a79de56afa0a",
+  "family_name": "Benson",
+  "display_name": "Benson Atlas",
+  "created_at": "2026-03-21T20:11:49.842783",
+  "owner_email": "kabe34@hotmail.com",
+  "customization": {
+    "enabled_subjects": [
+      "math",
+      "science",
+      "ela",
+      "social_studies"
+    ],
+    "custom_subjects": {},
+    "default_grade": 8,
+    "branding": {
+      "app_title": "Benson Atlas",
+      "primary_color": "#4F46E5"
+    },
+    "feature_flags": {
+      "diagnostics_enabled": true,
+      "lessons_enabled": true,
+      "practice_enabled": true
+    },
+    "state": "GA",
+    "learning_goals": {
+      "categories": [
+        "struggling",
+        "enrichment",
+        "test_prep",
+        "reinforcing"
+      ],
+      "notes": ""
+    }
+  }
+}

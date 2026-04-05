@@ -1,0 +1,32 @@
+{
+  "subject": "science",
+  "topics": {
+    "Cell Structure & Function": {
+      "score": 45,
+      "level": "Developing"
+    },
+    "Human Body Systems": {
+      "score": 75,
+      "level": "Proficient"
+    },
+    "Genetics & Heredity": {
+      "score": 55,
+      "level": "Developing"
+    },
+    "Chemical Reactions (Intro)": {
+      "score": 35,
+      "level": "Needs Work"
+    },
+    "Waves & Electromagnetic Spectrum": {
+      "score": 40,
+      "level": "Developing"
+    },
+    "Ecology & Biodiversity": {
+      "score": 80,
+      "level": "Proficient"
+    }
+  },
+  "overall_score": 55,
+  "overall_level": "Developing",
+  "summary": "Shows strong understanding of human body systems and ecology concepts. Needs more support with cell structures, basic chemistry concepts, and electromagnetic spectrum terminology."
+}

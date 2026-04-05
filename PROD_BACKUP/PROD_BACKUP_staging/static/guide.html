@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training Guide — Atlas</title>
+<link rel="icon" type="image/svg+xml" href="img/atlas-compass-rose.svg">
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap");
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Outfit", Arial, sans-serif; background: #F5EFE0; color: #0B1D3A; line-height: 1.7; }
+
+:root {
+  --primary: #14305A;
+  --primary-light: #1E4D8C;
+  --accent: #1E4D8C;
+  --success: #2A9D8F;
+  --warning: #E8B84B;
+  --danger: #E76F51;
+  --bg: #F5EFE0;
+  --card: #ffffff;
+  --text: #0B1D3A;
+  --text-muted: #6B7B8D;
+  --border: #EDE7D9;
+  --atlas-compass-gold: #D4A843;
+  --atlas-midnight: #0B1D3A;
+  --atlas-deep-ocean: #14305A;
+}
+
+/* ─── Header ─────────────────────────────────────────── */
+.guide-header {
+  background: linear-gradient(135deg, #0B1D3A 0%, #14305A 100%);
+  color: white; padding: 48px 24px; text-align: center;
+}
+.guide-header h1 { font-size: 36px; margin-bottom: 8px; font-family: "Outfit", Arial, sans-serif; }
+.guide-header p { font-size: 16px; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+.guide-nav-links { margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.guide-nav-links a {
+  color: white; background: rgba(255,255,255,0.15); padding: 8px 18px;
+  border-radius: 20px; font-size: 13px; font-weight: 600; text-decoration: none;
+  transition: background 0.2s;
+}
+.guide-nav-links a:hover { background: rgba(255,255,255,0.3); }
+
+/* ─── Layout ─────────────────────────────────────────── */
+.guide-body { max-width: 860px; margin: 0 auto; padding: 32px 24px 64px; }
+
+/* ─── TOC ────────────────────────────────────────────── */
+.toc {
+  background: white; border-radius: 14px; padding: 24px 28px; margin-bottom: 32px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid var(--border);
+}
+.toc h2 { font-size: 18px; color: var(--primary); margin-bottom: 12px; }
+.toc ol { padding-left: 20px; }
+.toc li { margin-bottom: 6px; }
+.toc a { color: var(--primary-light); font-size: 14px; font-weight: 500; text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+/* ─── Section ────────────────────────────────────────── */
+.guide-section {
+  background: white; border-radius: 14px; padding: 28px 32px; margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid var(--border);
+}
+.guide-section h2 {
+  font-size: 22px; color: var(--primary); margin-bottom: 16px;
+  padding-bottom: 10px; border-bottom: 2px solid #e5e7eb;
+}
+.guide-section h3 { font-size: 17px; color: var(--primary-light); margin: 20px 0 8px; }
+.guide-section p { font-size: 14px; color: var(--text); margin-bottom: 12px; }
+.guide-section ul, .guide-section ol { padding-left: 24px; margin-bottom: 12px; }
+.guide-section li { font-size: 14px; margin-bottom: 6px; }
+
+/* ─── Callout ────────────────────────────────────────── */
+.callout {
+  border-radius: 10px; padding: 14px 18px; margin: 16px 0;
+  font-size: 14px; display: flex; gap: 10px; align-items: flex-start;
+}
+.callout-tip { background: #eef5f3; border: 1px solid #2A9D8F44; }
+.callout-info { background: #f0f4fa; border: 1px solid #1E4D8C33; }
+.callout-warning { background: #fdf8ee; border: 1px solid #E8B84B44; }
+.callout-icon { font-size: 18px; flex-shrink: 0; }
+
+/* ─── Steps ──────────────────────────────────────────── */
+.step-list { counter-reset: step-counter; list-style: none; padding-left: 0; }
+.step-list li {
+  counter-increment: step-counter; position: relative; padding-left: 40px;
+  margin-bottom: 16px; font-size: 14px;
+}
+.step-list li::before {
+  content: counter(step-counter); position: absolute; left: 0; top: 0;
+  width: 28px; height: 28px; border-radius: 50%; background: var(--primary);
+  color: white; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── Keyboard ───────────────────────────────────────── */
+kbd {
+  background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px;
+  padding: 2px 6px; font-size: 12px; font-family: monospace;
+}
+
+/* ─── Back link ──────────────────────────────────────── */
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px; color: white;
+  font-size: 14px; text-decoration: none; margin-bottom: 16px; opacity: 0.85;
+}
+.back-link:hover { opacity: 1; }
+
+/* ─── Print ──────────────────────────────────────────── */
+@media print {
+  .guide-header { background: var(--primary) !important; -webkit-print-color-adjust: exact; }
+  .guide-section { break-inside: avoid; }
+  body { background: white; }
+}
+
+@media (max-width: 600px) {
+  .guide-header h1 { font-size: 26px; }
+  .guide-body { padding: 16px 12px 48px; }
+  .guide-section { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="guide-header">
+  <a href="/" class="back-link">← Back to Atlas</a>
+  <h1><img src="img/atlas-compass-rose.svg" alt="Atlas" style="width:32px;height:32px;vertical-align:middle;margin-right:8px;">Atlas Training Guide</h1>
+  <p>Everything you need to know to get the most out of your Atlas learning experience.</p>
+  <div class="guide-nav-links">
+    <a href="#getting-started">Getting Started</a>
+    <a href="#student-guide">Student Guide</a>
+    <a href="#parent-guide">Parent Guide</a>
+    <a href="#diagnostics">Features</a>
+    <a href="#tips">Tips & Tricks</a>
+  </div>
+</header>
+
+<div class="guide-body">
+
+  <!-- Table of Contents -->
+  <nav class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#getting-started">Getting Started</a></li>
+      <li><a href="#student-login">Student Login & Navigation</a></li>
+      <li><a href="#diagnostics">Diagnostic Assessments</a></li>
+      <li><a href="#lessons">Expeditions (Lessons)</a></li>
+      <li><a href="#practice">Practice Mode</a></li>
+      <li><a href="#study">Study Mode (Flashcards & Quiz)</a></li>
+      <li><a href="#chat">Chat Tutoring</a></li>
+      <li><a href="#badges">Landmarks & Achievements</a></li>
+      <li><a href="#feedback-system">Feedback System</a></li>
+      <li><a href="#book-mastery">Book Mastery</a></li>
+      <li><a href="#parent-guide">Parent Dashboard</a></li>
+      <li><a href="#customization">Customization</a></li>
+      <li><a href="#pin-management">PIN & Account Management</a></li>
+      <li><a href="#invite-links">Invite Links</a></li>
+      <li><a href="#content-safety">Content Safety</a></li>
+      <li><a href="#grade-scaling">Grade Scaling (6–12)</a></li>
+      <li><a href="#adaptive-learning">Adaptive Learning Engine</a></li>
+      <li><a href="#standards-alignment">Standards Alignment</a></li>
+      <li><a href="#progress-checkpoints">Progress Checkpoints & Growth Tracking</a></li>
+      <li><a href="#ai-proficiency">AI Proficiency & Onboarding</a></li>
+      <li><a href="#guided-conversation">Guided Conversation Mode</a></li>
+      <li><a href="#adaptive-complexity">Adaptive Response Complexity</a></li>
+      <li><a href="#coming-soon">Coming Soon</a></li>
+      <li><a href="#admin-dashboard">Admin Dashboard</a></li>
+      <li><a href="#tips">Tips & Tricks</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1. Getting Started -->
+  <section class="guide-section" id="getting-started">
+    <h2>1. Getting Started</h2>
+    <p>Atlas is an intelligent learning platform that adapts to each student's skill level. It provides personalized diagnostics, structured expeditions (lessons), adaptive practice, and free-form chat tutoring across multiple territories (subjects).</p>
+
+    <h3>How It Works</h3>
+    <p>The learning flow follows a simple path:</p>
+    <ol class="step-list">
+      <li><strong>Take a Diagnostic</strong> — Atlas assesses your current knowledge with ~15-18 questions per territory.</li>
+      <li><strong>Get Personalized Expeditions</strong> — Based on your results, expeditions target your weakest areas first.</li>
+      <li><strong>Practice & Improve</strong> — Drill questions that automatically adjust to your difficulty level.</li>
+      <li><strong>Track Progress</strong> — See your growth through landmarks (badges), skill levels, and parent dashboard reports.</li>
+    </ol>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>Start with a diagnostic assessment in your first territory — this unlocks personalized expeditions and sets the right difficulty level for practice.</div>
+    </div>
+  </section>
+
+  <!-- 2. Student Login -->
+  <section class="guide-section" id="student-login">
+    <h2>2. Student Login & Navigation</h2>
+    <p>Students log in with their name and 4-digit PIN on the Atlas login page. After logging in, you'll see My Map — the home screen with all available territories (subjects).</p>
+
+    <h3>Navigation</h3>
+    <p>The sidebar (or bottom nav on mobile) has these sections:</p>
+    <ul>
+      <li><strong>🧭 My Map</strong> — Your main screen with territories and quick access to diagnostics</li>
+      <li><strong>📊 Diagnostics</strong> — View diagnostic scores and skill levels per topic</li>
+      <li><strong>📖 Expeditions</strong> — Access structured lessons (unlocked after completing a diagnostic)</li>
+      <li><strong>🎯 Practice</strong> — Drill questions with adaptive difficulty</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ️</span>
+      <div>The <strong>?</strong> button in the bottom-right corner gives you quick access to the interactive tour, help page, and this training guide at any time.</div>
+    </div>
+  </section>
+
+  <!-- 3. Diagnostics -->
+  <section class="guide-section" id="diagnostics">
+    <h2>3. Diagnostic Assessments</h2>
+    <p>Diagnostics are the foundation of personalized learning. Each diagnostic assesses your knowledge across all topics in a subject.</p>
+
+    <h3>How Diagnostics Work</h3>
+    <ul>
+      <li>Each diagnostic asks approximately 15-18 questions spanning all topics in the subject</li>
+      <li>Questions adapt based on your responses — answer correctly and they get harder</li>
+      <li>You receive a skill rating for each topic: <strong style="color: var(--danger);">Needs Work</strong>, <strong style="color: var(--warning);">Developing</strong>, <strong style="color: var(--success);">Proficient</strong>, or <strong style="color: #2563eb;">Advanced</strong></li>
+      <li>Results are saved and visible on both the student Results page and parent dashboard</li>
+    </ul>
+
+    <h3>Taking a Diagnostic</h3>
+    <ol class="step-list">
+      <li>From the Home screen, find the "Diagnostic Assessments" section at the bottom</li>
+      <li>Click <strong>Start Diagnostic</strong> on any subject</li>
+      <li>Answer each question by typing your response in the chat input</li>
+      <li>When the diagnostic completes, you'll see a summary of your scores per topic</li>
+    </ol>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>Don't worry about getting perfect scores — the diagnostic is designed to find areas where you can improve, so lessons can target those areas.</div>
+    </div>
+  </section>
+
+  <!-- 4. Lessons -->
+  <section class="guide-section" id="lessons">
+    <h2>4. Expeditions (Lessons)</h2>
+    <p>Expeditions become available after completing a diagnostic. They focus on topics where you scored lowest, helping you build up your weakest areas.</p>
+
+    <h3>The 5-Step Expedition Structure</h3>
+    <ol class="step-list">
+      <li><strong>Hook</strong> — An engaging introduction that connects the topic to something interesting or relatable</li>
+      <li><strong>Concept</strong> — Core teaching with clear explanations, examples, and analogies</li>
+      <li><strong>Guided Practice</strong> — Work through problems together with the tutor providing support</li>
+      <li><strong>Independent Practice</strong> — Try problems on your own with feedback after each attempt</li>
+      <li><strong>Wrap Up</strong> — Summary of what you learned and what to explore next</li>
+    </ol>
+
+    <h3>Navigating Expeditions</h3>
+    <ul>
+      <li>Click the <strong>Expeditions</strong> tab in the sidebar</li>
+      <li>If you've completed diagnostics in multiple territories, <strong>territory tabs</strong> appear at the top — click to switch between territories</li>
+      <li>Choose a topic — you'll see recommended topics based on your diagnostic results</li>
+      <li>The lesson moves through each step automatically</li>
+      <li>Step indicators at the top show your progress through the lesson</li>
+    </ul>
+  </section>
+
+  <!-- 5. Practice -->
+  <section class="guide-section" id="practice">
+    <h2>5. Practice Mode</h2>
+    <p>Practice mode lets you drill questions on any territory. The difficulty adapts in real time based on your performance. If you've completed diagnostics in multiple territories, <strong>territory tabs</strong> appear at the top so you can switch between them.</p>
+
+    <h3>How Difficulty Adapts</h3>
+    <ul>
+      <li><strong>3+ correct in a row</strong> → difficulty increases</li>
+      <li><strong>2+ wrong in a row</strong> → difficulty decreases</li>
+      <li>Available levels: Easy → Medium → Hard → Challenge</li>
+    </ul>
+
+    <h3>Using Hints</h3>
+    <p>If you're stuck on a question, click the <strong>Hint</strong> button. The tutor will give you a helpful nudge without revealing the full answer. Using hints doesn't count against your score.</p>
+
+    <h3>Ending Practice</h3>
+    <p>Click <strong>End Practice</strong> when you're done. You'll see a summary showing your accuracy, questions answered, difficulty progression, and any badges earned.</p>
+
+    <div class="callout callout-warning">
+      <span class="callout-icon">⚠️</span>
+      <div>Your practice score only counts questions you actually answered — ending practice early won't penalize you for unanswered questions.</div>
+    </div>
+  </section>
+
+  <!-- 6. Study Mode -->
+  <section class="guide-section" id="study">
+    <h2>6. Study Mode (Flashcards & Quiz)</h2>
+    <p>Study mode provides two quick review activities — flashcards and timed quizzes — powered by AI and personalized to each student's diagnostic results.</p>
+
+    <h3>Accessing Study Mode</h3>
+    <p>After completing a diagnostic, a <strong>🃏 Study</strong> button appears in the sidebar. Click it to open the study picker where you choose a mode and topic.</p>
+
+    <h3>Flashcards</h3>
+    <p>The AI generates a set of 10 flashcards for your chosen topic. Each card shows a question on the front — tap or click to flip and reveal the answer on the back.</p>
+    <ul>
+      <li><strong>Got It</strong> — Mark a card as learned and move on</li>
+      <li><strong>Study Again</strong> — The card goes back into the deck for another pass</li>
+    </ul>
+    <p>At the end, you see a summary with your retention percentage and earn <strong>20 XP</strong> for completing the session.</p>
+
+    <h3>Quick Quiz</h3>
+    <p>A timed multiple-choice quiz with 8 questions. Each question has 4 choices, and you get instant feedback (correct/incorrect + explanation) after each answer.</p>
+    <ul>
+      <li>A running timer tracks how long you take</li>
+      <li>Progress bar shows how far through the quiz you are</li>
+      <li>Earn <strong>25 XP</strong> for completing a quiz, plus a <strong>40 XP bonus</strong> for a perfect score</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>Flashcards are great for quick daily review. Quizzes are perfect for testing yourself before a real test. Both activities calibrate to your diagnostic level on each topic — harder if you scored well, easier if you need more practice.</div>
+    </div>
+  </section>
+
+  <!-- 7. Chat -->
+  <section class="guide-section" id="chat">
+    <h2>7. Chat Tutoring</h2>
+    <p>Beyond structured expeditions and practice, you can have free-form conversations with your Atlas guide about any topic in your territories.</p>
+
+    <h3>Starting a Chat</h3>
+    <ul>
+      <li>Click any territory button on My Map</li>
+      <li>Type your question or topic in the message input</li>
+      <li>Your Atlas guide responds with explanations tailored to your grade level and knowledge</li>
+    </ul>
+
+    <p>Chat is great for asking "why" questions, exploring curiosity, getting extra help on confusing concepts, or working through homework problems step by step.</p>
+  </section>
+
+  <!-- 7. Badges -->
+  <section class="guide-section" id="badges">
+    <h2>8. Landmarks & Achievements</h2>
+    <p>Earn landmarks (badges) as you progress through your learning journey! Landmarks appear as toast notifications when earned and are displayed in your profile and on the parent dashboard.</p>
+
+    <h3>Landmark Types</h3>
+    <ul>
+      <li><strong>🌟 First Steps</strong> — Complete your first diagnostic</li>
+      <li><strong>📊 Assessment Pro</strong> — Complete diagnostics in multiple territories</li>
+      <li><strong>📚 Expedition Learner</strong> — Complete structured expeditions</li>
+      <li><strong>🎯 Practice Makes Perfect</strong> — Complete practice sessions</li>
+      <li><strong>🔥 Expedition Streak</strong> — Answer several questions correctly in a row</li>
+      <li><strong>⭐ Mastery landmarks</strong> — Reach Proficient or Advanced in topics</li>
+    </ul>
+  </section>
+
+  <!-- 8. Feedback -->
+  <section class="guide-section" id="feedback-system">
+    <h2>9. Feedback System</h2>
+    <p>Students can submit feedback directly through the tutor interface. This includes feature requests, bug reports, content issues, or general suggestions.</p>
+
+    <h3>Submitting Feedback (Students)</h3>
+    <ul>
+      <li>Use the feedback option in the student interface</li>
+      <li>Choose a category (Feature Request, Bug Report, Content Issue, General)</li>
+      <li>Provide a title and description</li>
+      <li>Your feedback goes to the parent dashboard for review</li>
+    </ul>
+
+    <h3>Managing Feedback (Parents)</h3>
+    <ul>
+      <li>Open the <strong>Feedback</strong> tab in the parent dashboard</li>
+      <li>Filter by status: All, Pending, Approved, or Declined</li>
+      <li>Review and update the status of each feedback item</li>
+      <li>Parents can also submit their own feedback</li>
+    </ul>
+  </section>
+
+  <!-- 9. Parent Dashboard -->
+  <section class="guide-section" id="parent-guide">
+    <h2>10. Parent Dashboard</h2>
+    <p>The parent dashboard provides a comprehensive view of your child's Atlas learning journey. Access it by navigating to <kbd>/parent</kbd> (or click the parent link on the student login page).</p>
+
+    <h3>Dashboard Tabs</h3>
+    <ul>
+      <li><strong>📊 Overview</strong> — Key metrics (total sessions, subjects active, average score, badges earned), 30-day activity calendar, subject breakdown radar chart, skill gap report, session history, and badges earned</li>
+      <li><strong>🔬 Diagnostics</strong> — Schedule, view results, or reset diagnostics per subject</li>
+      <li><strong>⚙️ Customization</strong> — Toggle subjects, add custom subjects, branding, grade level, feature flags</li>
+      <li><strong>💬 Feedback</strong> — Review student feedback, manage status, submit parent feedback</li>
+      <li><strong>🔗 Invites</strong> — Create and manage invite links to share with other families</li>
+      <li><strong>🔐 Settings</strong> — Change parent PIN, add students, manage student PINs</li>
+    </ul>
+
+    <h3>Switching Between Students</h3>
+    <p>Use the dropdown selector at the top of the dashboard to switch between your children. Each student's data is kept completely separate.</p>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ️</span>
+      <div>The default parent PIN is <strong>0000</strong>. Change it immediately in Settings to keep your dashboard secure.</div>
+    </div>
+  </section>
+
+  <!-- 10. Customization -->
+  <section class="guide-section" id="customization">
+    <h2>11. Customization</h2>
+    <p>Parents can extensively customize Atlas to match their family's needs.</p>
+
+    <h3>Territory Management</h3>
+    <ul>
+      <li><strong>Toggle territories</strong> — Enable or disable any built-in territory (Math, Science, English, History, Spanish)</li>
+      <li><strong>Custom territories</strong> — Create entirely new territories with a name, icon, color, and 3-8 topics</li>
+    </ul>
+
+    <h3>Branding</h3>
+    <ul>
+      <li>Change the app title displayed in the header</li>
+      <li>Set a custom accent color to personalize the look</li>
+    </ul>
+
+    <h3>Grade Level & Features</h3>
+    <ul>
+      <li>Set the default grade level (6th - 9th grade) — this adjusts content difficulty</li>
+      <li>Toggle features on/off: Diagnostics, Lessons, Practice</li>
+    </ul>
+
+    <h3>Teaching Mode (Per Student)</h3>
+    <p>At the bottom of the Customization tab, you'll find per-student teaching settings that apply to whichever student is currently selected in the dashboard.</p>
+    <ul>
+      <li><strong>Socratic Mode</strong> (default: ON) — When enabled, the tutor guides students to discover answers through questions rather than giving direct explanations. This applies to Chat and Lessons only — diagnostics and practice are unaffected. Toggle it off if a student needs more direct instruction.</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div>Socratic mode is set per student, so you can have it on for one child and off for another. The setting takes effect immediately — no need to restart anything.</div>
+    </div>
+  </section>
+
+  <!-- 11. PIN Management -->
+  <section class="guide-section" id="pin-management">
+    <h2>12. PIN & Account Management</h2>
+
+    <h3>Parent PIN</h3>
+    <p>The parent PIN protects the dashboard. To change it, go to Settings, enter your current PIN, then set and confirm a new 4-digit PIN.</p>
+
+    <h3>Student PINs</h3>
+    <p>Each student has their own 4-digit PIN for logging in. Parents can view all student PINs and reset them from the Settings tab. Students cannot change their own PINs — only parents can do this.</p>
+
+    <h3>Adding a New Student</h3>
+    <ol class="step-list">
+      <li>Go to Settings in the parent dashboard</li>
+      <li>Under "Add Student", enter the student's name</li>
+      <li>Set a 4-digit PIN for them</li>
+      <li>Choose an avatar</li>
+      <li>Click "Add Student" — they'll appear in the student selector immediately</li>
+    </ol>
+  </section>
+
+  <!-- 12. Invite Links -->
+  <section class="guide-section" id="invite-links">
+    <h2>13. Invite Links</h2>
+    <p>Share Atlas with other families by generating invite links. When someone uses your invite link, they'll be guided through the full setup process to create their own Atlas instance.</p>
+
+    <h3>Creating an Invite</h3>
+    <ol class="step-list">
+      <li>Go to the <strong>Invites</strong> tab in the parent dashboard</li>
+      <li>Optionally add a label (e.g., "For the Johnsons") to help you remember who it's for</li>
+      <li>Set a <strong>max uses</strong> limit — choose unlimited, or restrict to 1, 3, 5, 10, or 25 uses</li>
+      <li>Set an <strong>expiration</strong> — choose never, or auto-expire after 1, 3, 7, 14, or 30 days</li>
+      <li>Click <strong>Generate Invite Link</strong> and share the link with the other family</li>
+    </ol>
+
+    <h3>What the Recipient Sees</h3>
+    <p>When someone opens your invite link, they'll see the standard setup form with a banner showing your family name as the inviter. They complete the same 4-step setup (family name, student info, subjects, goals) and get their own fully independent tutor instance.</p>
+
+    <h3>Managing Invites</h3>
+    <ul>
+      <li><strong>Status badges</strong> — Each invite shows its current status: Active, Expired, Max Reached, or Revoked</li>
+      <li><strong>Usage tracking</strong> — See how many times each invite has been used and which families signed up with it</li>
+      <li><strong>Copy link</strong> — Re-copy any active invite link to share again</li>
+      <li><strong>Revoke</strong> — Permanently disable an invite so it can't be used anymore</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ️</span>
+      <div>Each family that signs up via an invite gets their own completely separate instance — they cannot see your data and you cannot see theirs.</div>
+    </div>
+  </section>
+
+  <!-- 14. Content Safety -->
+  <section class="guide-section" id="content-safety">
+    <h2>14. Content Safety</h2>
+    <p>Atlas enforces multiple layers of content safety to keep every interaction age-appropriate and academically focused. These rules are built into the AI's instructions and cannot be bypassed by students.</p>
+
+    <h3>AI Content Rules</h3>
+    <p>The following rules are enforced on every AI response across all modes (chat, lessons, diagnostics, practice, flashcards, and quizzes):</p>
+    <ol>
+      <li><strong>Age-appropriate content only</strong> — All content is calibrated to the student's grade level. Sensitive academic topics (human reproduction, historical violence, substance abuse) use only clinical/scientific terminology at a textbook level. No graphic descriptions, slang, or innuendo.</li>
+      <li><strong>No inappropriate content</strong> — The AI will never produce content that is sexual, violent, profane, or otherwise inappropriate for a minor.</li>
+      <li><strong>Subject-focused redirection</strong> — If a student asks about something outside their current subject, the tutor gently redirects them back to the topic.</li>
+      <li><strong>Role-play and manipulation protection</strong> — If a student tries to get the AI to act as a different character, ignore its rules, or leave the academic context, it politely declines.</li>
+      <li><strong>Prompt protection</strong> — The AI will never reveal its internal instructions or system prompt, even if asked directly.</li>
+      <li><strong>Language standards</strong> — If a student uses inappropriate language, the tutor redirects without repeating it.</li>
+      <li><strong>No personal or medical advice</strong> — The tutor sticks strictly to academics and will not provide personal, medical, or non-academic guidance.</li>
+      <li><strong>Conservative by default</strong> — When in doubt about whether content is appropriate, the AI errs on the side of caution.</li>
+    </ol>
+
+    <h3>Pre-Screening Protections</h3>
+    <p>Before a student's message even reaches the AI, it passes through two layers of input screening:</p>
+    <ul>
+      <li><strong>Prompt injection detection</strong> — 15 regex patterns detect attempts to manipulate the AI (e.g., "ignore your instructions," "pretend to be," "system prompt"). These are blocked immediately with a friendly redirect.</li>
+      <li><strong>Blocked topic filter</strong> — Explicitly harmful topics (weapons, drugs, self-harm, explicit content) are blocked outright and never sent to the AI.</li>
+    </ul>
+
+    <h3>Logging</h3>
+    <p>All blocked events (both injection attempts and blocked topics) are logged with timestamps in the safety log. Every student conversation turn is also logged to a per-student conversation log file for parent review.</p>
+
+    <div class="callout">
+      <div><strong>For parents:</strong> The safety log is available via the API at <code>/api/safety-log</code>. A future update will surface this data directly in the parent dashboard so you can review safety events without technical tools.</div>
+    </div>
+  </section>
+
+  <!-- 15. Grade Scaling -->
+  <section class="guide-section" id="grade-scaling">
+    <h2>15. Grade Scaling (Grades 6–12)</h2>
+    <p>Atlas supports students from 6th grade through 12th grade. All expeditions, diagnostics, practice sessions, flashcards, and quizzes automatically adapt to the student's current grade level.</p>
+
+    <h3>How It Works</h3>
+    <ul>
+      <li><strong>Grade-aware prompts</strong> — The AI adjusts vocabulary, complexity, and teaching style based on grade level. Younger students (grades 6–7) get simpler language, more encouragement, and concrete examples. Older students (grades 11–12) get academic rigor, college-level vocabulary, and more independent problem-solving.</li>
+      <li><strong>Grade-specific topics</strong> — Each subject has a full set of topics appropriate for the student's grade. For example, Math grade 6 covers ratios and basic geometry, while Math grade 11 covers trigonometry and pre-calculus.</li>
+      <li><strong>Grade-aware safety rules</strong> — Content safety rules adapt to the student's age range (e.g., grade 6 = ages 10–12, grade 12 = ages 16–18).</li>
+      <li><strong>Grade progression</strong> — Parents can change a student's grade from the student header in the parent dashboard. The grade dropdown appears next to the student's name.</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Note:</strong> Changing a student's grade immediately affects all new lessons, diagnostics, and practice sessions. Existing completed work (past diagnostics, lesson history) is preserved regardless of grade changes.
+    </div>
+  </section>
+
+  <!-- 16. Adaptive Learning Engine -->
+  <section class="guide-section" id="adaptive-learning">
+    <h2>16. Adaptive Learning Engine</h2>
+    <p>Atlas uses a smart adaptive engine that tracks your mastery across every topic and automatically adjusts what to study next.</p>
+
+    <h3>How It Works</h3>
+    <p>Each topic gets a <strong>blended mastery score</strong> (0–100%) computed from three signals:</p>
+    <ul>
+      <li><strong>Diagnostic score (40%)</strong> — Your initial assessment result</li>
+      <li><strong>Practice accuracy (45%)</strong> — How you perform on practice questions for that topic</li>
+      <li><strong>Lesson completions (15%)</strong> — Bonus credit for completing lessons on the topic</li>
+    </ul>
+
+    <h3>Spaced Repetition</h3>
+    <p>The engine schedules review sessions based on your mastery tier. Topics you know well are reviewed less often, while weak topics come back sooner:</p>
+    <ul>
+      <li><strong>Needs Work (0–39%)</strong> — Review daily</li>
+      <li><strong>Developing (40–64%)</strong> — Review every 3 days</li>
+      <li><strong>Proficient (65–84%)</strong> — Review weekly</li>
+      <li><strong>Advanced (85–100%)</strong> — Review every 2 weeks</li>
+    </ul>
+
+    <h3>Study Plan</h3>
+    <p>On the home screen, students see a prioritized study plan with up to 5 recommended topics. The plan ranks items by urgency:</p>
+    <ul>
+      <li>Weak topics that are also due for review (highest priority)</li>
+      <li>Topics due for spaced repetition review</li>
+      <li>Weak topics not yet due (proactive strengthening)</li>
+      <li>Proficient topics that could be pushed to advanced</li>
+    </ul>
+    <p>Clicking a study plan item takes students directly to the appropriate lesson or practice session.</p>
+
+    <h3>Adaptive Difficulty</h3>
+    <p>When starting a practice session, the difficulty (easy/medium/hard) is now set from the blended mastery score rather than just the diagnostic. As students practice more, the difficulty adapts to their actual performance.</p>
+
+    <h3>Parent Dashboard</h3>
+    <p>Parents can find the <strong>Adaptive Learning</strong> section under the <strong>📈 Analytics</strong> tab on the parent dashboard, showing per-subject mastery breakdowns, which topics are due for review, and the recommended study plan.</p>
+
+    <div class="callout">
+      <div><strong>Tip:</strong></div>
+      <div>The more your student practices, the smarter the engine becomes. Diagnostic scores are the starting point, but practice accuracy has the highest weight — consistent effort improves mastery scores even if the initial diagnostic was low.</div>
+    </div>
+  </section>
+
+  <!-- 17. Standards Alignment -->
+  <section class="guide-section" id="standards-alignment">
+    <h2>17. Standards Alignment</h2>
+    <p>Atlas maps student progress to nationally recognized and state-specific academic standards, giving parents and students a clear picture of how skills align with grade-level expectations.</p>
+
+    <h3>What's Covered</h3>
+    <p>Standards are mapped across all four core subjects for grades 6–12:</p>
+    <ul>
+      <li><strong>Math &amp; ELA</strong> — Common Core State Standards (CCSS). Topics map to specific domain codes like 8.EE, RL.8, HSF-IF, etc.</li>
+      <li><strong>Science</strong> — Next Generation Science Standards (NGSS). Topics map to Performance Expectations in Physical Science (PS), Life Science (LS), Earth &amp; Space Science (ESS), and Engineering (ETS).</li>
+      <li><strong>Social Studies</strong> — State-specific standards loaded based on the state set during family setup. For Georgia, this uses the Georgia Standards of Excellence (GSE) with domain codes like SS8H5, SSCG1, SSUSH17, etc.</li>
+    </ul>
+    <p>Custom subjects (e.g., Latin, Spanish) do not have mapped standards frameworks and are noted as such in the report.</p>
+
+    <h3>How Mastery Is Calculated</h3>
+    <p>Standards mastery comes from the same blended score used by the adaptive engine — diagnostic results (40%), practice accuracy (45%), and lesson completions (15%). Each domain shows an aggregated mastery percentage based on the topics that map to it.</p>
+
+    <h3>Parent Dashboard View</h3>
+    <p>The parent dashboard's <strong>📈 Analytics</strong> tab includes a <strong>Standards Alignment</strong> section showing:</p>
+    <ul>
+      <li>Overall mastery per subject with tier labels (Needs Work → Advanced)</li>
+      <li>The framework name displayed per subject (e.g., "Common Core", "NGSS", "Georgia Standards of Excellence")</li>
+      <li>Number of standards assessed vs. total standards for the grade</li>
+      <li>Per-domain breakdown with mastery bars and expandable standard details</li>
+      <li>Each standard code linked to its source topic for transparency</li>
+    </ul>
+
+    <h3>Student View</h3>
+    <p>Students can access their standards progress via the <strong>📏 Standards</strong> button in the sidebar (appears after completing a diagnostic in any core subject). This shows a simplified domain-level view with mastery scores for all assessed subjects.</p>
+
+    <h3>Grade Configuration</h3>
+    <p>Each instance can configure a grade range (default 6–12). The standards displayed match the student's grade level. For example, a Grade 8 student sees 8.EE (Math), RL.8 (ELA), MS-PS (Science), and SS8H5 (Social Studies), while a Grade 10 student sees HSG-CO, RL.9-10, HS-PS, and SSWH1 respectively.</p>
+
+    <h3>State Selection</h3>
+    <p>During family setup, parents select their state. This determines which state-specific standards file is loaded for Social Studies. Currently Georgia (GSE) is fully supported. Additional state mappings can be added as JSON files in the <code>data/state_standards/</code> directory.</p>
+
+    <div class="callout">
+      <div><strong>Note:</strong></div>
+      <div>Custom subjects (Latin, Spanish, etc.) do not have national or state standards frameworks and are excluded from the standards report. If your state's Social Studies standards are not yet available, the section will note this.</div>
+    </div>
+  </section>
+
+  <!-- 18. Progress Checkpoints & Growth Tracking -->
+  <section class="guide-section" id="progress-checkpoints">
+    <h2>18. Progress Checkpoints & Growth Tracking</h2>
+    <p>Progress Checkpoints are periodic reassessments that track student growth over time. Unlike the initial diagnostic (which covers all topics), checkpoints are shorter, focused assessments that only test topics where the student still has room to improve.</p>
+
+    <h3>How It Works</h3>
+    <ul>
+      <li><strong>Auto-scheduled</strong> — Checkpoints become due on a configurable interval (default: every 2 weeks) after the student's last diagnostic or checkpoint</li>
+      <li><strong>Focused scope</strong> — Only topics scoring below 90% mastery are included; fully mastered topics are skipped</li>
+      <li><strong>Shorter format</strong> — 6-10 questions per checkpoint (vs. ~18 for a full diagnostic)</li>
+      <li><strong>All enabled subjects</strong> — Any subject with a completed diagnostic and weak topics is eligible</li>
+    </ul>
+
+    <h3>Student Experience</h3>
+    <p>When a checkpoint is due, a blue banner appears on the student's home screen: <em>"📈 Progress Checkpoint Ready!"</em> with the subjects listed. The student clicks "Start Checkpoint" to begin. The flow works just like a diagnostic — answer questions in the chat, and results are recorded when complete. After finishing, a <strong>Growth Summary</strong> appears showing score changes per topic, with level-up celebrations for any tier improvements.</p>
+
+    <h3>Parent Controls</h3>
+    <p>Parents manage checkpoints from the <strong>📈 Analytics</strong> tab on their dashboard under <strong>Growth Tracking</strong>:</p>
+    <ul>
+      <li><strong>Adjust interval</strong> — Change from 1 to 8 weeks between checkpoints</li>
+      <li><strong>Snooze</strong> — Delay a due checkpoint by 3 or 7 days</li>
+      <li><strong>Enable/Disable</strong> — Turn periodic checkpoints on or off entirely</li>
+      <li><strong>Trigger Now</strong> — Mark a checkpoint as due immediately so the student sees it on their next login</li>
+    </ul>
+
+    <h3>Growth Charts</h3>
+    <p>The Analytics tab displays per-subject growth timelines showing the progression from the initial diagnostic through each checkpoint. Each entry shows the date, score, and per-topic deltas (improvements or declines). Level-ups (tier changes like "Developing → Proficient") are highlighted with celebration indicators.</p>
+
+    <div class="callout">
+      <div><strong>Note:</strong></div>
+      <div>Checkpoint results merge back into the student's profile, updating their mastery scores. This means lessons, practice, and study plans all adapt based on the latest checkpoint results — not just the original diagnostic.</div>
+    </div>
+  </section>
+
+  <!-- 19. Book Mastery -->
+  <section class="guide-section" id="book-mastery">
+    <h2>19. Book Mastery</h2>
+    <p>Book Mastery lets students prove they've read a book by completing chapter-by-chapter comprehension quizzes. The AI generates questions that test genuine reading comprehension — not just surface-level details a summary could provide.</p>
+
+    <h3>Starting a Book</h3>
+    <p>Click the <strong>📖 Book Mastery</strong> button in the sidebar (available after completing at least one diagnostic). Enter the book title, author, and total number of chapters, then click "Begin Book Mastery" to start.</p>
+
+    <h3>Chapter Quizzes</h3>
+    <p>Each chapter has 5 questions — a mix of multiple-choice and open-ended short-answer questions. Questions test:</p>
+    <ul>
+      <li><strong>Key events</strong> — What happened in this chapter?</li>
+      <li><strong>Character motivations</strong> — Why did a character make a certain choice?</li>
+      <li><strong>Important details</strong> — Specific scenes, dialogue, or descriptions only a reader would know</li>
+      <li><strong>Cause and effect</strong> — How did one event lead to another?</li>
+      <li><strong>Themes</strong> — What larger ideas does the chapter explore?</li>
+    </ul>
+
+    <h3>Scoring & Advancement</h3>
+    <p>You need a score of <strong>70% or higher</strong> to pass a chapter and advance to the next one. If you don't pass, you can retry with a fresh set of questions. The AI evaluates open-ended answers for genuine comprehension — vague or generic answers that could come from a summary alone won't earn full credit.</p>
+
+    <h3>Completion & Rewards</h3>
+    <p>After passing all chapters, the book is marked as "Mastered" and you receive:</p>
+    <ul>
+      <li><strong>15 XP</strong> per chapter passed</li>
+      <li><strong>50 XP</strong> for completing the entire book</li>
+      <li><strong>75 XP bonus</strong> if all chapters score 90% or higher</li>
+      <li>A <strong>congratulatory book summary</strong> with themes and a reflection prompt</li>
+      <li><strong>Bookworm badge</strong> after your first mastered book, and <strong>Literary Scholar badge</strong> after 5 books</li>
+    </ul>
+
+    <h3>Your Bookshelf</h3>
+    <p>The Book Mastery screen shows your personal bookshelf with all books in progress and completed. Click any mastered book to re-read the summary. In-progress books can be resumed where you left off.</p>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>Book Mastery works best when you read each chapter carefully before attempting the quiz. The questions are designed to be answerable only if you've actually read the material — so take your time and enjoy the book!</div>
+    </div>
+  </section>
+
+  <!-- 20. AI Proficiency & Onboarding (Feature 59) -->
+  <section class="guide-section" id="ai-proficiency">
+    <h2>20. AI Proficiency & Onboarding</h2>
+    <p>During setup, families choose their AI familiarity level. Atlas uses this to tailor the onboarding experience and set smart defaults throughout the platform.</p>
+
+    <h3>Proficiency Levels</h3>
+    <ul>
+      <li><strong>🌱 New to AI (Low)</strong> — The parent tour auto-launches on first login. Students see a 3-screen mini-tutorial explaining how to use Atlas. The parent dashboard shows a "Getting Started with Atlas" card with first-week guidance steps. Contextual tooltips appear on key dashboard elements. Guided Conversation Mode defaults to guided, and Adaptive Response Complexity starts at a lower tier.</li>
+      <li><strong>🌿 Somewhat Familiar (Medium)</strong> — The parent tour is offered on first login. Standard tooltips and defaults. This is the default if no selection is made during setup.</li>
+      <li><strong>🌳 Comfortable (High)</strong> — Minimal onboarding. The tour is available through the Help menu but not auto-triggered. Guided Conversation Mode defaults to open, and Adaptive Response Complexity starts at a higher tier.</li>
+    </ul>
+
+    <h3>Getting Started Card</h3>
+    <p>For low-proficiency families, the parent dashboard Overview tab shows a guided first-week checklist:</p>
+    <ul>
+      <li><strong>Day 1:</strong> Complete a diagnostic assessment</li>
+      <li><strong>Day 2–3:</strong> Review results on the dashboard</li>
+      <li><strong>Day 4–5:</strong> Start a lesson (expedition) in a weak area</li>
+      <li><strong>Week 1:</strong> Check the Analytics tab for progress</li>
+    </ul>
+    <p>Steps auto-complete as they're detected. The card can be dismissed permanently.</p>
+
+    <h3>Changing Your Setting</h3>
+    <p>The AI proficiency level is stored in your instance configuration. Contact support or use the admin tools to update it if your family's comfort level changes over time.</p>
+
+    <div class="callout">
+      <div><strong>Why does this matter?</strong></div>
+      <div>Families new to AI benefit from extra guidance and encouragement. Experienced users prefer less hand-holding. Atlas adapts so everyone gets the right level of support.</div>
+    </div>
+  </section>
+
+  <!-- 21. Guided Conversation Mode (Feature 57) -->
+  <section class="guide-section" id="guided-conversation">
+    <h2>21. Guided Conversation Mode</h2>
+    <p>Atlas supports two conversation modes that control how the AI tutor interacts with students. Parents can switch modes per student from the Settings tab.</p>
+
+    <h3>Modes</h3>
+    <ul>
+      <li><strong>🧭 Guided Mode (Default)</strong> — Follow-up suggestion chips appear after every AI response, giving students clear next steps. The tutor checks understanding more frequently and uses structured progression. Best for younger students or those new to AI tutoring.</li>
+      <li><strong>💬 Open Mode</strong> — The student leads the conversation. Suggestions appear as subtle text rather than prominent chips. The tutor gives the student more room to explore and ask their own questions. Best for confident, self-directed learners.</li>
+    </ul>
+
+    <h3>Follow-up Chips</h3>
+    <p>In guided mode, clickable suggestion chips appear below each AI response in chat, lessons, and practice. Students can tap a chip to continue the conversation, or type their own message. In open mode, suggestions are woven into the response text instead of appearing as separate buttons.</p>
+
+    <h3>"I'm Stuck" Button</h3>
+    <p>A persistent "I'm Stuck" button appears in the chat input area. When a student taps it, Atlas re-explains the concept using a different approach. If the student taps it twice in a row, Atlas switches to guided practice mode with step-by-step scaffolding.</p>
+
+    <h3>Session Warm-up</h3>
+    <p>For new students (first 3 sessions), Atlas shows a brief orientation message at the start of each chat session reminding them how the conversation works and encouraging them to ask questions freely.</p>
+
+    <h3>Smart Defaults</h3>
+    <p>The default conversation mode is determined by the family's AI proficiency setting from setup:</p>
+    <ul>
+      <li><strong>🌱 New to AI</strong> — Defaults to Guided mode</li>
+      <li><strong>🌿 Somewhat Familiar</strong> — Defaults to Guided mode</li>
+      <li><strong>🌳 Comfortable</strong> — Defaults to Open mode</li>
+    </ul>
+
+    <div class="callout">
+      <div><strong>Changing modes</strong></div>
+      <div>Go to the parent dashboard Settings tab to toggle between Guided and Open mode for each student. The change takes effect on the next chat session.</div>
+    </div>
+  </section>
+
+  <!-- 22. Adaptive Response Complexity (Feature 58) -->
+  <section class="guide-section" id="adaptive-complexity">
+    <h2>22. Adaptive Response Complexity</h2>
+    <p>Atlas automatically adjusts the sophistication and vocabulary of its responses based on each student's demonstrated ability. This ensures explanations are neither too simple nor too advanced.</p>
+
+    <h3>Complexity Tiers</h3>
+    <ul>
+      <li><strong>Tier 1 — Foundational</strong> — Short sentences, everyday vocabulary, lots of examples and analogies. Used for students who are just starting or struggling with a subject.</li>
+      <li><strong>Tier 2 — Developing</strong> — Clear explanations with some academic vocabulary introduced gradually. Concrete examples before abstract concepts.</li>
+      <li><strong>Tier 3 — Proficient</strong> — Standard academic language, multi-step reasoning, connections between topics. Encourages deeper thinking.</li>
+      <li><strong>Tier 4 — Advanced</strong> — Sophisticated vocabulary, complex reasoning, real-world applications, and cross-disciplinary connections. Challenges the student to extend their thinking.</li>
+    </ul>
+
+    <h3>How Tiers Are Calculated</h3>
+    <p>Each student gets a complexity tier per subject, calculated from four factors:</p>
+    <ul>
+      <li><strong>Diagnostic score (50%)</strong> — The student's most recent diagnostic assessment score in that subject</li>
+      <li><strong>Grade level (20%)</strong> — Higher grades receive a slight upward bias</li>
+      <li><strong>Learning goals (20%)</strong> — If the student or parent has set learning goals, they factor into tier selection</li>
+      <li><strong>AI proficiency (10%)</strong> — The family's AI familiarity setting from setup provides a small adjustment</li>
+    </ul>
+
+    <h3>Dynamic Adjustment</h3>
+    <p>If a student indicates confusion during a conversation (using the "I'm Stuck" button), Atlas temporarily drops the complexity tier by one level for that session. This helps struggling students get simpler explanations without permanently changing their tier.</p>
+
+    <h3>Viewing Tiers</h3>
+    <p>Parents can view their child's current complexity tier per subject in the Settings tab under "Response Complexity." Tiers update automatically as the student completes diagnostics and practice sessions.</p>
+
+    <div class="callout">
+      <div><strong>Automatic, not manual</strong></div>
+      <div>Complexity tiers are calculated automatically — there's nothing parents need to configure. The system adapts as your child learns and grows.</div>
+    </div>
+  </section>
+
+  <!-- 23. Coming Soon -->
+  <section class="guide-section" id="coming-soon">
+    <h2>23. Coming Soon</h2>
+    <p>These features are planned for upcoming releases:</p>
+
+    <h3>ADD/ADHD Adaptability</h3>
+    <p>A suite of parent-configurable accommodations designed for students with attention challenges. These features help with focus, pacing, and reducing cognitive overload.</p>
+    <ul>
+      <li><strong>Chunking controls</strong> — Break lessons into smaller steps and reduce practice questions per session</li>
+      <li><strong>Break reminders</strong> — Configurable session lengths with Pomodoro-style breaks</li>
+      <li><strong>Reduced cognitive load mode</strong> — Simplified UI showing one thing at a time</li>
+      <li><strong>Refocus prompts</strong> — Gentle nudges when the tutor detects extended inactivity</li>
+      <li><strong>Enhanced progress cues</strong> — Always-visible countdown indicators and time remaining</li>
+      <li><strong>Adjustable encouragement</strong> — Parents can set how frequently the tutor offers positive reinforcement</li>
+    </ul>
+
+    <div class="callout">
+      <div><strong>Have ideas?</strong></div>
+      <div>Use the Feedback system in the app to suggest features or improvements. Student feedback goes to parents for review, and parents can promote ideas to the platform level.</div>
+    </div>
+  </section>
+
+  <!-- 24. Admin Dashboard -->
+  <section class="guide-section" id="admin-dashboard">
+    <h2>24. Admin Dashboard</h2>
+    <p>The Admin Dashboard is a management interface for platform administrators to oversee all family instances and manage feedback across the system. Access it by navigating to <kbd>/admin</kbd>. No PIN is required — the admin dashboard is a separate authentication system.</p>
+
+    <h3>Instance Management</h3>
+    <p>The primary tab displays all family instances in a comprehensive table with the following columns:</p>
+    <ul>
+      <li><strong>Name</strong> — The family's name</li>
+      <li><strong>Students</strong> — Number of students in the instance</li>
+      <li><strong>Last Active</strong> — When the instance was last used</li>
+      <li><strong>Created</strong> — When the instance was set up</li>
+      <li><strong>Feedback Count</strong> — Total feedback items submitted</li>
+      <li><strong>Status</strong> — Current status badge (Active, Inactive, etc.)</li>
+    </ul>
+
+    <h3>Search & Filter</h3>
+    <p>Use the search bar to filter instances by:</p>
+    <ul>
+      <li><strong>Family name</strong> — Full or partial match</li>
+      <li><strong>Email</strong> — Parent email address</li>
+      <li><strong>Instance ID</strong> — Unique instance identifier</li>
+      <li><strong>Status</strong> — Filter by Active or Inactive</li>
+    </ul>
+
+    <h3>Instance Details</h3>
+    <p>Click any instance row to open the full details view, which includes:</p>
+    <ul>
+      <li><strong>Configuration</strong> — Instance settings (subjects, grade level, feature flags)</li>
+      <li><strong>Students List</strong> — All students with their login PINs</li>
+      <li><strong>Topics</strong> — Enabled subjects and their topics</li>
+    </ul>
+
+    <h3>PIN Management</h3>
+    <p>From the instance details view, administrators can:</p>
+    <ul>
+      <li><strong>Reset Parent PIN</strong> — Generate a new parent PIN for the family (the default becomes 0000)</li>
+      <li><strong>Reset Student PIN</strong> — Generate a new PIN for any student</li>
+    </ul>
+
+    <h3>Instance Status Control</h3>
+    <p>Administrators can manage instance availability:</p>
+    <ul>
+      <li><strong>Deactivate instances</strong> — Disable an instance temporarily or permanently (families cannot access their tutor)</li>
+      <li><strong>Reactivate instances</strong> — Re-enable a previously deactivated instance</li>
+      <li><strong>Delete instances</strong> — Permanently remove an instance from the platform. Click the red <strong>🗑️ Delete</strong> button in the Actions column. You will be asked to confirm twice before deletion proceeds. This removes the instance from the registry and cleans up all associated data (students, conversations, feedback, settings). The default instance cannot be deleted.</li>
+    </ul>
+
+    <h3>Quick Actions</h3>
+    <p>Each instance detail view includes quick-access buttons:</p>
+    <ul>
+      <li><strong>📱 Open Student View</strong> — Launch the student login page for this instance (useful for testing)</li>
+      <li><strong>👨‍👩‍👧 Open Parent Dashboard</strong> — Access the parent dashboard (requires you to enter the parent PIN)</li>
+    </ul>
+
+    <h3>Feedback Management</h3>
+    <p>Switch to the Feedback tab to manage feedback across all instances.</p>
+
+    <h3>Unified Feedback Inbox</h3>
+    <p>The feedback tab displays a unified inbox of all feedback submissions from all family instances.</p>
+
+    <h3>Feedback Filters</h3>
+    <p>Filter feedback by:</p>
+    <ul>
+      <li><strong>Title or content</strong> — Search keyword in feedback text</li>
+      <li><strong>Family name</strong> — Which family submitted the feedback</li>
+      <li><strong>Type</strong> — Category (Bug Report, Feature Request, Content Issue, General)</li>
+      <li><strong>Status</strong> — Unresolved, Resolved, Acknowledged, Declined</li>
+    </ul>
+
+    <h3>Feedback Status Tracking</h3>
+    <p>Feedback items display status badges showing:</p>
+    <ul>
+      <li><strong>Unresolved</strong> — Feedback waiting for action (shown with unresolved count in header)</li>
+      <li><strong>Resolved</strong> — Completed and closed</li>
+      <li><strong>Acknowledged</strong> — Received and reviewed</li>
+      <li><strong>Declined</strong> — Not actionable or rejected</li>
+    </ul>
+
+    <h3>Feedback Actions</h3>
+    <p>Administrators can:</p>
+    <ul>
+      <li><strong>Reply to feedback</strong> — Send a message back to the family with updates or questions</li>
+      <li><strong>Mark as Resolved</strong> — Close the feedback item after addressing it</li>
+      <li><strong>Mark as Acknowledged</strong> — Confirm receipt without immediate resolution</li>
+      <li><strong>Mark as Declined</strong> — Indicate the feedback cannot be acted upon</li>
+    </ul>
+
+    <h3>Student Oversight</h3>
+    <p>From any instance detail view, click the <strong>📊 Overview</strong> button next to a student to open their full academic profile. This gives administrators a read-only view of a student's progress without needing to log in as the student or parent.</p>
+
+    <h3>Student Overview Details</h3>
+    <p>The student oversight panel displays:</p>
+    <ul>
+      <li><strong>Profile Header</strong> — Avatar, name, grade, XP, level, PIN, activity days, and join date</li>
+      <li><strong>Stats Cards</strong> — Total diagnostics completed, lessons taken, practice sessions, and overall accuracy</li>
+      <li><strong>Subject Mastery</strong> — Color-coded progress bars for each subject (green for 70%+, yellow for 40%+, red below 40%)</li>
+      <li><strong>Skill Gaps</strong> — Topics where the student needs additional support</li>
+      <li><strong>Growth History</strong> — Session-by-session progress with score deltas</li>
+      <li><strong>Recent Activity</strong> — Last 10 sessions with dates and types</li>
+      <li><strong>Conversation Log</strong> — Recent tutor interactions showing questions and responses</li>
+    </ul>
+
+    <h3>Student Quick Actions</h3>
+    <p>From the student overview, administrators can:</p>
+    <ul>
+      <li><strong>Open Student View</strong> — Launch the student's login page directly</li>
+      <li><strong>Back to Instance</strong> — Return to the family instance detail</li>
+    </ul>
+
+    <h3>Invite Management</h3>
+    <p>The Invites tab lets administrators manage all invite codes across the platform. Switch to the Invites tab to see a unified view of every invite code.</p>
+
+    <h3>Viewing Invites</h3>
+    <p>Each invite card displays:</p>
+    <ul>
+      <li><strong>Label</strong> — A descriptive name for the invite</li>
+      <li><strong>Status</strong> — Active, Revoked, Expired, or Max Reached</li>
+      <li><strong>Code</strong> — The unique invite code</li>
+      <li><strong>Uses</strong> — How many times it has been used vs. the maximum allowed</li>
+      <li><strong>Expiration</strong> — When the invite expires (or "Never" for no expiration)</li>
+      <li><strong>Creator</strong> — Which family or admin created the invite</li>
+      <li><strong>Used By</strong> — Which families were created using this invite</li>
+      <li><strong>Invite Link</strong> — A clickable/copyable URL to share with new families</li>
+    </ul>
+
+    <h3>Creating Invites</h3>
+    <p>Click the <strong>+ New Invite</strong> button to create a new invite code. You can set:</p>
+    <ul>
+      <li><strong>Label</strong> — An optional description (e.g., "Spring 2026 cohort")</li>
+      <li><strong>Max Uses</strong> — Limit how many families can use it (0 = unlimited)</li>
+      <li><strong>Expiration</strong> — How many days before it expires (0 = never)</li>
+    </ul>
+
+    <h3>Revoking Invites</h3>
+    <p>Click the <strong>Revoke</strong> button on any active invite to disable it immediately. Existing families created from that invite are not affected — only new signups are blocked.</p>
+
+    <h3>Safety & Moderation</h3>
+    <p>The Safety tab aggregates all safety events across every family instance into a single moderation view. Safety events are generated when the content safety system blocks a message due to a prohibited topic or detects a prompt injection attempt.</p>
+
+    <h3>Viewing Safety Events</h3>
+    <p>Each safety event card displays:</p>
+    <ul>
+      <li><strong>Severity</strong> — Color-coded badge: 🔴 High (blocked topics like weapons/drugs), 🟡 Medium (injection attempts), or 🟢 Low (other)</li>
+      <li><strong>Type</strong> — "Blocked Topic" or "Injection Attempt" label</li>
+      <li><strong>Student & Family</strong> — The student name and family instance that triggered the event</li>
+      <li><strong>Message</strong> — The original message that was flagged</li>
+      <li><strong>Matched Pattern</strong> — The safety rule pattern that triggered the block</li>
+      <li><strong>Timestamp</strong> — When the event occurred</li>
+    </ul>
+
+    <h3>Filtering Safety Events</h3>
+    <p>Use the search bar to filter events by student name, family name, or message content. The severity and type dropdown filters let you quickly isolate high-priority events or focus on a specific category.</p>
+
+    <h3>Admin Notes</h3>
+    <p>Add notes to any safety event by typing in the note field and clicking <strong>Add Note</strong> (or pressing Enter). Notes are timestamped and persist across sessions, making it easy to track review status and follow-up actions.</p>
+
+    <h3>Conversation Context</h3>
+    <p>Click the <strong>💬 Context</strong> button on any event to expand a panel showing the surrounding conversation — messages from both the student and Atlas around the time of the safety event. This helps you understand the full context of what happened.</p>
+
+    <h3>Usage Analytics</h3>
+    <p>The Analytics tab provides platform-wide metrics and engagement data. Click the Analytics tab to load a comprehensive view of how the tutor is being used.</p>
+
+    <h3>Analytics Overview</h3>
+    <p>The analytics dashboard displays:</p>
+    <ul>
+      <li><strong>Overview Cards</strong> — Active instances, total students, students active in the last 7 days, sessions this week, and total sessions</li>
+      <li><strong>Session Breakdown</strong> — Total lessons completed, practice sessions, and diagnostics taken across the platform</li>
+      <li><strong>Activity Trend</strong> — A 30-day bar chart showing daily student activity levels, making it easy to spot usage patterns and drops</li>
+      <li><strong>Subject Popularity</strong> — Color-coded bars ranking subjects by total activity, with a breakdown of diagnostics (D), lessons (L), and practice (P) for each</li>
+      <li><strong>Inactive Students</strong> — A list of students who haven't been active in 7+ days, sorted by how long they've been away, with their family name for context</li>
+    </ul>
+    <p>Click <strong>Refresh Analytics</strong> at the bottom to reload the data at any time.</p>
+
+    <h3>System Health</h3>
+    <p>The System tab provides operational visibility into the platform. Click the System tab to view server status, API usage, and error logs.</p>
+
+    <h3>System Health Details</h3>
+    <p>The system health dashboard displays:</p>
+    <ul>
+      <li><strong>Server Status</strong> — Green/red indicator, uptime duration, AI model in use, and overall error rate</li>
+      <li><strong>API Usage</strong> — Total API calls, calls today, calls this week, and average response time</li>
+      <li><strong>Token & Cost Tracking</strong> — Input/output token counts and estimated costs (today and all-time)</li>
+      <li><strong>API Call Trend</strong> — A 14-day bar chart showing daily API call volume</li>
+      <li><strong>Storage</strong> — Data directory size, total file count, and number of instances</li>
+      <li><strong>Recent Errors</strong> — A log of the most recent server errors with timestamps, error types, and messages</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>Use the Analytics tab to monitor engagement and the System tab to monitor operational health. Together, they give you full visibility into both how the tutor is being used and whether it's running smoothly.</div>
+    </div>
+  </section>
+
+  <!-- 22. Tips -->
+  <section class="guide-section" id="tips">
+    <h2>25. Tips & Tricks</h2>
+
+    <h3>For Students</h3>
+    <ul>
+      <li><strong>Start with diagnostics</strong> — They unlock personalized expeditions and set practice to the right level</li>
+      <li><strong>Use hints wisely</strong> — In practice mode, hints help you learn without just giving the answer</li>
+      <li><strong>Ask "why"</strong> — In chat mode, asking why things work the way they do leads to deeper understanding</li>
+      <li><strong>Practice regularly</strong> — Short daily sessions are more effective than long cramming sessions</li>
+      <li><strong>Explore different territories</strong> — Atlas covers Math, Science, English, History, and Spanish (plus any custom territories)</li>
+    </ul>
+
+    <h3>For Parents</h3>
+    <ul>
+      <li><strong>Check the activity calendar</strong> — See at a glance which days your child was active</li>
+      <li><strong>Review skill gaps</strong> — The gap report highlights exactly which topics need attention</li>
+      <li><strong>Use custom subjects</strong> — Add topics your child is studying at school for extra practice</li>
+      <li><strong>Change the default PIN</strong> — Keep your dashboard secure by changing from 0000</li>
+      <li><strong>Read feedback</strong> — Your child's feedback can reveal what they find helpful or frustrating</li>
+      <li><strong>Share with other families</strong> — Use invite links to bring other families onboard. You can track who signed up from the Invites tab</li>
+    </ul>
+  </section>
+
+  <!-- 23. Troubleshooting -->
+  <section class="guide-section" id="troubleshooting">
+    <h2>26. Troubleshooting</h2>
+
+    <h3>Common Issues</h3>
+    <ul>
+      <li><strong>"Unknown subject" error</strong> — This can happen if a custom subject was deleted. Try refreshing the page.</li>
+      <li><strong>Diagnostic doesn't start</strong> — Make sure diagnostics are enabled in the parent Customization tab.</li>
+      <li><strong>Expeditions not showing</strong> — Expeditions require a completed diagnostic in that territory first. If you've completed multiple diagnostics, use the territory tabs at the top of the Expeditions or Practice page to switch territories.</li>
+      <li><strong>PIN not working</strong> — Double-check you're entering the right PIN. Parents can reset student PINs from Settings.</li>
+      <li><strong>Server error</strong> — Check that the server is running. Try refreshing the page after a few seconds.</li>
+    </ul>
+
+    <h3>Still Need Help?</h3>
+    <p>Use the <strong>Feedback</strong> system to report issues, or click the <strong>?</strong> help button in the app for quick guidance.</p>
+  </section>
+
+</div>
+
+</body>
+</html>

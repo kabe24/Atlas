@@ -1,0 +1,20 @@
+[
+  {
+    "session_id": "dc77553d",
+    "date": "2026-03-27",
+    "started_at": "2026-03-27T10:23:23.210113",
+    "subject": "Math",
+    "study_minutes": 25,
+    "duration_minutes": 25.0,
+    "goals": {
+      "type": "problems",
+      "target": 10,
+      "achieved": 10,
+      "topic_focus": "fractions & decimals"
+    },
+    "xp_earned": 40,
+    "completed": true,
+    "completed_at": "2026-03-27T10:23:23.218025",
+    "goals_met": true
+  }
+]
