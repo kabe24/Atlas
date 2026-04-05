@@ -4,3 +4,4 @@ anthropic==0.42.0
 python-dotenv==1.0.1
 python-multipart==0.0.22
 supabase>=2.0.0
+supabase
