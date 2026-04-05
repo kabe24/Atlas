@@ -701,10 +701,7 @@ def create_instance(family_name: str, owner_email: str = "", default_subjects: l
 
     # Create parent config with default PIN
     parent_config = {"pin": "0000", "created_at": datetime.now().isoformat(), "instance_id": instance_id}
-    parent_path = get_instance_path(instance_id) / "parent_config.json"
-    tmp = parent_path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(parent_config, indent=2))
-    tmp.rename(parent_path)
+    storage.save_instance_parent_config(instance_id, parent_config)
 
     # Create subdirectories
     (get_instance_path(instance_id) / "students").mkdir(exist_ok=True)
@@ -712,10 +709,7 @@ def create_instance(family_name: str, owner_email: str = "", default_subjects: l
     (get_instance_path(instance_id) / "safety_logs").mkdir(exist_ok=True)
 
     # Initialize diagnostics pending
-    pending_path = get_instance_path(instance_id) / "diagnostics_pending.json"
-    tmp = pending_path.with_suffix(".tmp")
-    tmp.write_text(json.dumps({}, indent=2))
-    tmp.rename(pending_path)
+    storage.save_diagnostics_pending(instance_id, {})
 
     # Update registry
     registry = load_instances_registry()
@@ -874,19 +868,7 @@ def save_instance_student(instance_id: str, student_id: str, data: dict):
 
 def list_instance_students(instance_id: str) -> list:
     """Return list of students for an instance (without PINs)."""
-    students_dir = get_instance_students_dir(instance_id)
-    students = []
-    for f in students_dir.glob("*.json"):
-        data = safe_json_load(f, default=None)
-        if isinstance(data, dict):
-            students.append({
-                "student_id": data.get("student_id", f.stem),
-                "name": data.get("name", "Student"),
-                "avatar": data.get("avatar", "\U0001f393"),
-                "grade": data.get("grade", 8),
-                "created_at": data.get("created_at"),
-            })
-    return students
+    return storage.list_students(instance_id)
 
 
 def get_instance_student_dirs(instance_id: str, student_id: str) -> dict:
@@ -2590,7 +2572,8 @@ async def api_update_student(request: StudentUpdateRequest, instance_id: str = N
 
 
 @app.get("/api/student/stats/{student_id}")
-async def api_student_stats(student_id: str, instance_id: str = None):
+async def api_student_detailed_stats(student_id: str, instance_id: str = None):
+    """Get detailed stats: diagnostics, lessons, practice, and gamification."""
     student = load_student(student_id, instance_id=instance_id)
     if not student:
         return {"error": "Student not found"}

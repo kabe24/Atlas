@@ -542,274 +542,352 @@ class SupabaseStorage(StorageBackend):
     # ── Student metadata ──
 
     def load_student(self, student_id: str, instance_id: str = None) -> dict | None:
-        result = self._table("atlas_students").select("*").eq("profile_id", student_id).maybe_single().execute()
-        return result.data if result.data else None
+        try:
+            result = self._table("atlas_students").select("*").eq("profile_id", student_id).maybe_single().execute()
+            return result.data if result.data else None
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_student error: {e}")
+            return None
 
     def save_student(self, student_id: str, data: dict, instance_id: str = None):
-        row = {
-            "profile_id": student_id,
-            "family_id": instance_id,
-            "data": data,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_students").upsert(row, on_conflict="profile_id").execute()
+        try:
+            row = {
+                "profile_id": student_id,
+                "family_id": instance_id,
+                "data": data,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_students").upsert(row, on_conflict="profile_id").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_student error: {e}")
 
     def list_students(self, instance_id: str = None) -> list:
-        query = self._table("atlas_students").select("profile_id, data")
-        if instance_id:
-            query = query.eq("family_id", instance_id)
-        result = query.execute()
-        students = []
-        for row in (result.data or []):
-            d = row.get("data", {})
-            students.append({
-                "student_id": row["profile_id"],
-                "name": d.get("name", "Student"),
-                "avatar": d.get("avatar", "\U0001f393"),
-                "grade": d.get("grade", 8),
-                "created_at": d.get("created_at"),
-            })
-        return students
+        try:
+            query = self._table("atlas_students").select("profile_id, data")
+            if instance_id:
+                query = query.eq("family_id", instance_id)
+            result = query.execute()
+            students = []
+            for row in (result.data or []):
+                d = row.get("data", {})
+                students.append({
+                    "student_id": row["profile_id"],
+                    "name": d.get("name", "Student"),
+                    "avatar": d.get("avatar", "\U0001f393"),
+                    "grade": d.get("grade", 8),
+                    "created_at": d.get("created_at"),
+                })
+            return students
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.list_students error: {e}")
+            return []
 
     # ── Subject profiles ──
 
     def load_profile(self, subject: str, student_id: str = None, instance_id: str = None) -> dict | None:
         if not student_id:
             return None
-        result = (self._table("atlas_profiles")
-                  .select("*")
-                  .eq("profile_id", student_id)
-                  .eq("subject", subject)
-                  .maybe_single()
-                  .execute())
-        if result.data:
-            # Reconstruct the profile dict from Supabase columns
-            row = result.data
-            return {
-                "subject": row["subject"],
-                "grade": row.get("grade"),
-                "topics": row.get("topics", {}),
-                "proficiency": row.get("proficiency", {}),
-                "current_lesson": row.get("current_lesson", {}),
-                "preferences": row.get("preferences", {}),
-                **(row.get("extra_data", {}) or {}),
-            }
-        return None
+        try:
+            result = (self._table("atlas_profiles")
+                      .select("*")
+                      .eq("profile_id", student_id)
+                      .eq("subject", subject)
+                      .maybe_single()
+                      .execute())
+            if result.data:
+                # Reconstruct the profile dict from Supabase columns
+                row = result.data
+                return {
+                    "subject": row["subject"],
+                    "grade": row.get("grade"),
+                    "topics": row.get("topics", {}),
+                    "proficiency": row.get("proficiency", {}),
+                    "current_lesson": row.get("current_lesson", {}),
+                    "preferences": row.get("preferences", {}),
+                    **(row.get("extra_data", {}) or {}),
+                }
+            return None
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_profile error: {e}")
+            return None
 
     def save_profile(self, subject: str, profile: dict, student_id: str = None, instance_id: str = None):
         if not student_id:
             return
-        # Separate known columns from extra data
-        known_keys = {"subject", "grade", "topics", "proficiency", "current_lesson", "preferences"}
-        extra = {k: v for k, v in profile.items() if k not in known_keys}
-        row = {
-            "profile_id": student_id,
-            "family_id": instance_id,
-            "subject": subject,
-            "grade": profile.get("grade"),
-            "topics": profile.get("topics", {}),
-            "proficiency": profile.get("proficiency", {}),
-            "current_lesson": profile.get("current_lesson", {}),
-            "preferences": profile.get("preferences", {}),
-            "extra_data": extra if extra else None,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_profiles").upsert(row, on_conflict="profile_id,subject").execute()
+        try:
+            # Separate known columns from extra data
+            known_keys = {"subject", "grade", "topics", "proficiency", "current_lesson", "preferences"}
+            extra = {k: v for k, v in profile.items() if k not in known_keys}
+            row = {
+                "profile_id": student_id,
+                "family_id": instance_id,
+                "subject": subject,
+                "grade": profile.get("grade"),
+                "topics": profile.get("topics", {}),
+                "proficiency": profile.get("proficiency", {}),
+                "current_lesson": profile.get("current_lesson", {}),
+                "preferences": profile.get("preferences", {}),
+                "extra_data": extra if extra else None,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_profiles").upsert(row, on_conflict="profile_id,subject").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_profile error: {e}")
 
     # ── Diagnostics ──
 
     def load_diagnostic(self, subject: str, student_id: str = None, instance_id: str = None) -> dict | None:
         if not student_id:
             return None
-        result = (self._table("atlas_diagnostics")
-                  .select("data")
-                  .eq("profile_id", student_id)
-                  .eq("subject", subject)
-                  .order("created_at", desc=True)
-                  .limit(1)
-                  .maybe_single()
-                  .execute())
-        return result.data["data"] if result.data else None
+        try:
+            result = (self._table("atlas_diagnostics")
+                      .select("data")
+                      .eq("profile_id", student_id)
+                      .eq("subject", subject)
+                      .order("created_at", desc=True)
+                      .limit(1)
+                      .maybe_single()
+                      .execute())
+            return result.data["data"] if result.data else None
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_diagnostic error: {e}")
+            return None
 
     def save_diagnostic(self, subject: str, state: dict, student_id: str = None, instance_id: str = None):
         if not student_id:
             return
-        # Upsert by profile_id + subject (most recent)
-        row = {
-            "profile_id": student_id,
-            "subject": subject,
-            "data": state,
-            "status": state.get("status", "in_progress"),
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_diagnostics").upsert(row, on_conflict="profile_id,subject").execute()
+        try:
+            # Upsert by profile_id + subject (most recent)
+            row = {
+                "profile_id": student_id,
+                "subject": subject,
+                "data": state,
+                "status": state.get("status", "in_progress"),
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_diagnostics").upsert(row, on_conflict="profile_id,subject").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_diagnostic error: {e}")
 
     # ── Sessions ──
 
     def load_session(self, subject: str, student_id: str = None, instance_id: str = None) -> list:
         if not student_id:
             return []
-        result = (self._table("atlas_sessions")
-                  .select("messages")
-                  .eq("profile_id", student_id)
-                  .eq("subject", subject)
-                  .maybe_single()
-                  .execute())
-        return result.data["messages"] if result.data else []
+        try:
+            result = (self._table("atlas_sessions")
+                      .select("messages")
+                      .eq("profile_id", student_id)
+                      .eq("subject", subject)
+                      .maybe_single()
+                      .execute())
+            return result.data["messages"] if result.data else []
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_session error: {e}")
+            return []
 
     def save_session(self, subject: str, messages: list, student_id: str = None, instance_id: str = None):
         if not student_id:
             return
-        row = {
-            "profile_id": student_id,
-            "subject": subject,
-            "messages": messages,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_sessions").upsert(row, on_conflict="profile_id,subject").execute()
+        try:
+            row = {
+                "profile_id": student_id,
+                "subject": subject,
+                "messages": messages,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_sessions").upsert(row, on_conflict="profile_id,subject").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_session error: {e}")
 
     # ── Lessons ──
 
     def load_lesson(self, subject: str, lesson_id: str, student_id: str = None, instance_id: str = None) -> dict | None:
         if not student_id:
             return None
-        result = (self._table("atlas_lessons")
-                  .select("data")
-                  .eq("profile_id", student_id)
-                  .eq("subject", subject)
-                  .eq("lesson_id", lesson_id)
-                  .maybe_single()
-                  .execute())
-        return result.data["data"] if result.data else None
+        try:
+            result = (self._table("atlas_lessons")
+                      .select("data")
+                      .eq("profile_id", student_id)
+                      .eq("subject", subject)
+                      .eq("lesson_id", lesson_id)
+                      .maybe_single()
+                      .execute())
+            return result.data["data"] if result.data else None
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_lesson error: {e}")
+            return None
 
     def save_lesson(self, subject: str, lesson_id: str, state: dict, student_id: str = None, instance_id: str = None):
         if not student_id:
             return
-        row = {
-            "profile_id": student_id,
-            "subject": subject,
-            "lesson_id": lesson_id,
-            "data": state,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_lessons").upsert(row, on_conflict="profile_id,subject,lesson_id").execute()
+        try:
+            row = {
+                "profile_id": student_id,
+                "subject": subject,
+                "lesson_id": lesson_id,
+                "data": state,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_lessons").upsert(row, on_conflict="profile_id,subject,lesson_id").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_lesson error: {e}")
 
     def load_lesson_log(self, subject: str, student_id: str = None, instance_id: str = None) -> list:
         if not student_id:
             return []
-        result = (self._table("atlas_lesson_log")
-                  .select("data")
-                  .eq("profile_id", student_id)
-                  .eq("subject", subject)
-                  .maybe_single()
-                  .execute())
-        return result.data["data"] if result.data else []
+        try:
+            result = (self._table("atlas_lesson_log")
+                      .select("data")
+                      .eq("profile_id", student_id)
+                      .eq("subject", subject)
+                      .maybe_single()
+                      .execute())
+            return result.data["data"] if result.data else []
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_lesson_log error: {e}")
+            return []
 
     def save_lesson_log(self, subject: str, log: list, student_id: str = None, instance_id: str = None):
         if not student_id:
             return
-        row = {
-            "profile_id": student_id,
-            "subject": subject,
-            "data": log,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_lesson_log").upsert(row, on_conflict="profile_id,subject").execute()
+        try:
+            row = {
+                "profile_id": student_id,
+                "subject": subject,
+                "data": log,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_lesson_log").upsert(row, on_conflict="profile_id,subject").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_lesson_log error: {e}")
 
     # ── Practice ──
 
     def load_practice(self, subject: str, practice_id: str, student_id: str = None, instance_id: str = None) -> dict | None:
         if not student_id:
             return None
-        result = (self._table("atlas_practice_sessions")
-                  .select("data")
-                  .eq("profile_id", student_id)
-                  .eq("subject", subject)
-                  .eq("practice_id", practice_id)
-                  .maybe_single()
-                  .execute())
-        return result.data["data"] if result.data else None
+        try:
+            result = (self._table("atlas_practice_sessions")
+                      .select("data")
+                      .eq("profile_id", student_id)
+                      .eq("subject", subject)
+                      .eq("practice_id", practice_id)
+                      .maybe_single()
+                      .execute())
+            return result.data["data"] if result.data else None
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_practice error: {e}")
+            return None
 
     def save_practice(self, subject: str, practice_id: str, state: dict, student_id: str = None, instance_id: str = None):
         if not student_id:
             return
-        row = {
-            "profile_id": student_id,
-            "subject": subject,
-            "practice_id": practice_id,
-            "data": state,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_practice_sessions").upsert(row, on_conflict="profile_id,subject,practice_id").execute()
+        try:
+            row = {
+                "profile_id": student_id,
+                "subject": subject,
+                "practice_id": practice_id,
+                "data": state,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_practice_sessions").upsert(row, on_conflict="profile_id,subject,practice_id").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_practice error: {e}")
 
     def load_practice_log(self, subject: str, student_id: str = None, instance_id: str = None) -> list:
         if not student_id:
             return []
-        result = (self._table("atlas_practice_log")
-                  .select("data")
-                  .eq("profile_id", student_id)
-                  .eq("subject", subject)
-                  .maybe_single()
-                  .execute())
-        return result.data["data"] if result.data else []
+        try:
+            result = (self._table("atlas_practice_log")
+                      .select("data")
+                      .eq("profile_id", student_id)
+                      .eq("subject", subject)
+                      .maybe_single()
+                      .execute())
+            return result.data["data"] if result.data else []
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_practice_log error: {e}")
+            return []
 
     def save_practice_log(self, subject: str, log: list, student_id: str = None, instance_id: str = None):
         if not student_id:
             return
-        row = {
-            "profile_id": student_id,
-            "subject": subject,
-            "data": log,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_practice_log").upsert(row, on_conflict="profile_id,subject").execute()
+        try:
+            row = {
+                "profile_id": student_id,
+                "subject": subject,
+                "data": log,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_practice_log").upsert(row, on_conflict="profile_id,subject").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_practice_log error: {e}")
 
     # ── Instance config ──
     # In Supabase mode, instance_id maps to family_id in KmUnity
 
     def load_instance_config(self, instance_id: str) -> dict:
-        result = (self._table("atlas_instance_config")
-                  .select("data")
-                  .eq("family_id", instance_id)
-                  .maybe_single()
-                  .execute())
-        return result.data["data"] if result.data else {}
+        try:
+            result = (self._table("atlas_instance_config")
+                      .select("data")
+                      .eq("family_id", instance_id)
+                      .maybe_single()
+                      .execute())
+            return result.data["data"] if result.data else {}
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_instance_config error: {e}")
+            return {}
 
     def save_instance_config(self, instance_id: str, config: dict):
-        row = {
-            "family_id": instance_id,
-            "data": config,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_instance_config").upsert(row, on_conflict="family_id").execute()
+        try:
+            row = {
+                "family_id": instance_id,
+                "data": config,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_instance_config").upsert(row, on_conflict="family_id").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_instance_config error: {e}")
 
     def load_instance_parent_config(self, instance_id: str) -> dict:
-        result = (self._table("atlas_parent_config")
-                  .select("data")
-                  .eq("family_id", instance_id)
-                  .maybe_single()
-                  .execute())
-        return result.data["data"] if result.data else {}
+        try:
+            result = (self._table("atlas_parent_config")
+                      .select("data")
+                      .eq("family_id", instance_id)
+                      .maybe_single()
+                      .execute())
+            return result.data["data"] if result.data else {}
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_instance_parent_config error: {e}")
+            return {}
 
     def save_instance_parent_config(self, instance_id: str, config: dict):
-        row = {
-            "family_id": instance_id,
-            "data": config,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_parent_config").upsert(row, on_conflict="family_id").execute()
+        try:
+            row = {
+                "family_id": instance_id,
+                "data": config,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_parent_config").upsert(row, on_conflict="family_id").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_instance_parent_config error: {e}")
 
     def load_instances_registry(self) -> list:
         # In Supabase mode, instances = families. Pull from families table.
-        result = self._table("families").select("id, name, created_by, created_at").execute()
-        instances = []
-        for row in (result.data or []):
-            instances.append({
-                "instance_id": row["id"],
-                "family_name": row.get("name", "Family"),
-                "created_at": row.get("created_at"),
-            })
-        return instances
+        try:
+            result = self._table("families").select("id, name, created_by, created_at").execute()
+            instances = []
+            for row in (result.data or []):
+                instances.append({
+                    "instance_id": row["id"],
+                    "family_name": row.get("name", "Family"),
+                    "created_at": row.get("created_at"),
+                })
+            return instances
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_instances_registry error: {e}")
+            return []
 
     def save_instances_registry(self, instances: list):
         # In Supabase mode, the families table IS the registry. No-op.
@@ -818,87 +896,120 @@ class SupabaseStorage(StorageBackend):
     # ── Diagnostics pending ──
 
     def load_diagnostics_pending(self, instance_id: str) -> dict:
-        result = (self._table("atlas_diagnostics_pending")
-                  .select("data")
-                  .eq("family_id", instance_id)
-                  .maybe_single()
-                  .execute())
-        return result.data["data"] if result.data else {}
+        try:
+            result = (self._table("atlas_diagnostics_pending")
+                      .select("data")
+                      .eq("family_id", instance_id)
+                      .maybe_single()
+                      .execute())
+            return result.data["data"] if result.data else {}
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_diagnostics_pending error: {e}")
+            return {}
 
     def save_diagnostics_pending(self, instance_id: str, data: dict):
-        row = {
-            "family_id": instance_id,
-            "data": data,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_diagnostics_pending").upsert(row, on_conflict="family_id").execute()
+        try:
+            row = {
+                "family_id": instance_id,
+                "data": data,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_diagnostics_pending").upsert(row, on_conflict="family_id").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_diagnostics_pending error: {e}")
 
     # ── Reassessment ──
 
     def load_reassessment_meta(self, student_id: str, instance_id: str = None) -> dict:
-        result = (self._table("atlas_reassessment_meta")
-                  .select("data")
-                  .eq("profile_id", student_id)
-                  .maybe_single()
-                  .execute())
-        default = {
-            "interval_weeks": 4,
-            "enabled": True,
-            "snoozed_until": None,
-            "history": [],
-        }
-        if result.data:
-            data = result.data["data"]
-            for k, v in default.items():
-                if k not in data:
-                    data[k] = v
-            return data
-        return default
+        try:
+            result = (self._table("atlas_reassessment_meta")
+                      .select("data")
+                      .eq("profile_id", student_id)
+                      .maybe_single()
+                      .execute())
+            default = {
+                "interval_weeks": 4,
+                "enabled": True,
+                "snoozed_until": None,
+                "history": [],
+            }
+            if result.data:
+                data = result.data["data"]
+                for k, v in default.items():
+                    if k not in data:
+                        data[k] = v
+                return data
+            return default
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_reassessment_meta error: {e}")
+            return {
+                "interval_weeks": 4,
+                "enabled": True,
+                "snoozed_until": None,
+                "history": [],
+            }
 
     def save_reassessment_meta(self, student_id: str, meta: dict, instance_id: str = None):
-        row = {
-            "profile_id": student_id,
-            "data": meta,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_reassessment_meta").upsert(row, on_conflict="profile_id").execute()
+        try:
+            row = {
+                "profile_id": student_id,
+                "data": meta,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_reassessment_meta").upsert(row, on_conflict="profile_id").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_reassessment_meta error: {e}")
 
     # ── Admin / safety ──
 
     def load_admin_safety_notes(self) -> dict:
-        result = (self._table("atlas_admin_data")
-                  .select("data")
-                  .eq("key", "safety_notes")
-                  .maybe_single()
-                  .execute())
-        return result.data["data"] if result.data else {}
+        try:
+            result = (self._table("atlas_admin_data")
+                      .select("data")
+                      .eq("key", "safety_notes")
+                      .maybe_single()
+                      .execute())
+            return result.data["data"] if result.data else {}
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_admin_safety_notes error: {e}")
+            return {}
 
     def save_admin_safety_notes(self, notes: dict):
-        row = {
-            "key": "safety_notes",
-            "data": notes,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_admin_data").upsert(row, on_conflict="key").execute()
+        try:
+            row = {
+                "key": "safety_notes",
+                "data": notes,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_admin_data").upsert(row, on_conflict="key").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_admin_safety_notes error: {e}")
 
     # ── Invites ──
 
     def load_invites(self) -> list:
-        result = (self._table("atlas_admin_data")
-                  .select("data")
-                  .eq("key", "invites")
-                  .maybe_single()
-                  .execute())
-        data = result.data["data"] if result.data else []
-        return data if isinstance(data, list) else []
+        try:
+            result = (self._table("atlas_admin_data")
+                      .select("data")
+                      .eq("key", "invites")
+                      .maybe_single()
+                      .execute())
+            data = result.data["data"] if result.data else []
+            return data if isinstance(data, list) else []
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.load_invites error: {e}")
+            return []
 
     def save_invites(self, invites: list):
-        row = {
-            "key": "invites",
-            "data": invites,
-            "updated_at": datetime.now().isoformat(),
-        }
-        self._table("atlas_admin_data").upsert(row, on_conflict="key").execute()
+        try:
+            row = {
+                "key": "invites",
+                "data": invites,
+                "updated_at": datetime.now().isoformat(),
+            }
+            self._table("atlas_admin_data").upsert(row, on_conflict="key").execute()
+        except Exception as e:
+            print(f"⚠ SupabaseStorage.save_invites error: {e}")
 
     # ── Complexity tiers ──
 
