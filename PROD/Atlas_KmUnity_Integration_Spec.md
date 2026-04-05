@@ -2,7 +2,8 @@
 
 **Author:** Claude (AI) + Kalib
 **Date:** April 4, 2026
-**Status:** Draft
+**Last Updated:** April 5, 2026
+**Status:** Phases A, C, D, E complete. Phase B partially complete.
 **Depends on:** KmUnity Phase 1 (complete), Atlas v1.4.0 (complete)
 
 ---
@@ -582,7 +583,29 @@ Each React screen replaces the iframe for that route. The Python API doesn't cha
 
 ---
 
-## 12. Sequencing Summary
+## 12. Implementation Status (as of April 5, 2026)
+
+### Completed
+
+- **Phase A:** Atlas Python backend deployed to Railway. Express proxy routes active. Storage abstraction (`storage.py`) with `FileStorage` and `SupabaseStorage` implementations. Supabase tables created (14 atlas_* tables). Auth bridge middleware operational. All env vars configured on Railway.
+- **Phase C:** AtlasEmbed component at `/tools/atlas` with iframe embedding. Path whitelist validation (`/index.html`, `/parent.html`, `/`). Query key whitelist (`subject`, `mode`). 15-second loading timeout with error message.
+- **Phase D:** Parent Hub sidebar section (parent-only visibility). ParentHubOverview page with error state handling. ParentHubAtlas page embedding parent.html. Route definitions in App.jsx.
+- **Phase E:** Migration script built and run (207 rows migrated across 14 tables). `STORAGE_BACKEND=supabase` active on Railway. 007b migration converted UUID→TEXT columns for Atlas short hex IDs.
+
+### Security Hardening (April 5, 2026 audit fixes)
+
+- **Proxy:** Bearer token format validation, 403 on missing profile, `ATLAS_BACKEND_URL` env var guard (throws in production if missing), simplified `onProxyRes` (removed broken response buffering)
+- **Backend:** All 30+ SupabaseStorage `.execute()` calls wrapped in try-except. Duplicate `api_student_stats` renamed. `list_instance_students()` and `create_instance()` wired through storage API.
+- **Frontend:** AtlasEmbed path/query whitelists, loading timeout. ParentHubOverview error state. Dead code cleanup in ParentHubAtlas.
+
+### Remaining Work
+
+- **Phase B (partial):** Token tracking on Atlas AI calls (proxy `onProxyRes` was simplified — token interception needs reimplementation server-side). Safety middleware for Atlas AI calls. Tool activation in Supabase tools registry. Rate limiting. Session tracking.
+- **Audit backlog:** Badges/feedback/book mastery still bypass storage abstraction (#1 remaining). No Supabase tables for safety logs, feedback, book mastery (#6). Performance optimizations (#15-16). Code quality items (#17-25). See `AUDIT_REPORT.md` for full list.
+
+---
+
+## 13. Sequencing Summary
 
 ```
 Week 1:  Phase A (Foundation) — Railway deploy, proxy, storage abstraction, Supabase tables

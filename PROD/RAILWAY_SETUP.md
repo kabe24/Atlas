@@ -50,9 +50,29 @@ cd kmunity-app
 npm install http-proxy-middleware
 ```
 
-## Step 6: Run Supabase Migration
+## Step 6: Run Supabase Migrations
 
-Run `supabase/migrations/007_atlas_tables.sql` in the Supabase SQL Editor. This creates all Atlas data tables and activates the Atlas tool.
+Run these migrations in order in the Supabase SQL Editor:
+
+1. `migrations/007_atlas_tables.sql` — creates all Atlas data tables (`atlas_students`, `atlas_profiles`, `atlas_diagnostics`, etc.) and RLS policies
+2. `migrations/007b_atlas_tables_text_ids.sql` — converts `profile_id` and `family_id` columns from UUID to TEXT (required because Atlas uses short hex IDs, not UUIDs)
+
+## Step 6b: Migrate Existing Data (if applicable)
+
+If migrating from file-based storage to Supabase with existing student data:
+
+```bash
+cd PROD
+pip3 install supabase
+
+# Dry run first — shows what would be migrated without writing
+python3 migrations/migrate_json_to_supabase.py --dry-run
+
+# Live migration
+python3 migrations/migrate_json_to_supabase.py
+```
+
+The script discovers all instances and students from the `data/` directory and upserts into Supabase tables. It's idempotent — safe to re-run. See `migrations/CUTOVER_CHECKLIST.md` for the full cutover procedure.
 
 ## Step 7: Verify
 

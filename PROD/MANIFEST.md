@@ -45,9 +45,32 @@ Parents can set a "Focus This Week" subject per student from the dashboard Setti
 | `static/parent.html` | Focus Subject UI in Settings tab (~80 lines) |
 | `VERSION` | 1.3.3 → 1.4.0 |
 
+## New Infrastructure (Added Post-v1.4.0)
+
+### Storage Abstraction Layer
+| File | Description |
+|------|-------------|
+| `storage.py` | `StorageBackend` base class with `FileStorage` and `SupabaseStorage` implementations. All data I/O in `app.py` delegates to `storage.*()` methods. Controlled by `STORAGE_BACKEND` env var. |
+
+### Supabase Migrations
+| File | Description |
+|------|-------------|
+| `migrations/007_atlas_tables.sql` | Creates 14 atlas_* tables with RLS policies |
+| `migrations/007b_atlas_tables_text_ids.sql` | Converts UUID columns to TEXT for Atlas short hex IDs |
+| `migrations/migrate_json_to_supabase.py` | JSON→Supabase migration script (dry-run support, idempotent) |
+| `migrations/CUTOVER_CHECKLIST.md` | Step-by-step production cutover procedure |
+
+### Audit & Hardening
+| File | Description |
+|------|-------------|
+| `AUDIT_REPORT.md` | Full code audit findings and resolution status |
+
 ## Dependencies
 
-No new Python packages. No new npm packages. No configuration changes required.
+**Python packages** (see `requirements.txt`):
+- `supabase` — required for Supabase storage backend
+
+No new npm packages. Configuration changes: `STORAGE_BACKEND`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` env vars (see `.env.example`).
 
 ## Deploy Instructions
 
